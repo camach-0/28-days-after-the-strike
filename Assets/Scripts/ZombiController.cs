@@ -123,18 +123,16 @@ public class ZombiController : Entidad
             return;
         }
 
-        agente.isStopped = false;
-        agente.speed = velocidadMovimiento;
-        agente.SetDestination(objetivoJugador.position);
-
-        // NUEVO SISTEMA DE ATAQUE (Estilo Left 4 Dead)
-        // Medimos matemáticamente la distancia entre el zombi y el jugador
+        // Medimos la distancia exacta
         float distanciaAlJugador = Vector2.Distance(transform.position, objetivoJugador.position);
 
-        // Si el jugador está a 1.3 metros o menos (rango de ataque)
-        if (distanciaAlJugador <= 1.3f)
+        // 1. EL TRUCO: Si está en rango de ataque (1.2m), APAGAMOS EL MOTOR A LA FUERZA
+        if (distanciaAlJugador <= 1.2f)
         {
-            // Verificamos el temporizador de enfriamiento
+            agente.isStopped = true; // Corta el cálculo de rutas
+            agente.velocity = Vector3.zero; // Elimina cualquier inercia o micro-ajuste
+
+            // Lógica de daño
             if (Time.time >= tiempoSiguienteAtaque)
             {
                 Entidad vidaJugador = objetivoJugador.GetComponent<Entidad>();
@@ -146,6 +144,13 @@ public class ZombiController : Entidad
                     Debug.Log("¡El zombi atacó por cercanía! Siguiente ataque en: " + velocidadAtaque + "s");
                 }
             }
+        }
+        // 2. Si el jugador se aleja, ENCENDEMOS EL MOTOR de nuevo
+        else
+        {
+            agente.isStopped = false;
+            agente.speed = velocidadMovimiento;
+            agente.SetDestination(objetivoJugador.position);
         }
     }
 
