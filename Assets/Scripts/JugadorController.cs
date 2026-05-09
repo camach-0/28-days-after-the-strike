@@ -26,6 +26,21 @@ public class JugadorController : Entidad
 
     public override void Start()
     {
+        // 1. Obtenemos el índice del jugador (P1 es 0, P2 es 1, etc.)
+        PlayerInput pi = GetComponent<PlayerInput>();
+        if (pi != null)
+        {
+            int idJugador = pi.playerIndex;
+
+            // 2. Le pedimos al UIManager la barra que nos toca
+            if (UIManager.Instancia != null && idJugador < UIManager.Instancia.barrasDeVida.Length)
+            {
+                // Asignamos la barra a la variable que heredamos de Entidad
+                barraDeVidaUI = UIManager.Instancia.barrasDeVida[idJugador];
+            }
+        }
+
+        // 3. Llamamos al Start base de Entidad para que inicialice la vida
         base.Start();
         velocidadMovimiento = 6f;
         direccionPendiente = direccionMirando;

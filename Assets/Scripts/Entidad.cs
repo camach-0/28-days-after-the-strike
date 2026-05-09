@@ -1,33 +1,32 @@
 using UnityEngine;
+using UnityEngine.UI; // OBLIGATORIO AÑADIR ESTO PARA USAR UI
 
-// No le ponemos "abstract" a la clase todavía para mantenerlo simple en las pruebas.
-// Esta clase será el padre de JugadorController y de EnemigoBase.
 public class Entidad : MonoBehaviour
 {
     [Header("Estadísticas Base")]
     public float vidaMaxima = 100f;
     public float vidaActual;
-    public float velocidadMovimiento = 5f;
-
-    [Header("Estados")]
+    public float velocidadMovimiento = 5f; // ¡AQUÍ ESTÁ LA VARIABLE QUE SE NOS BORRÓ!
     public bool estaMuerto = false;
 
-    // Start se ejecuta al inicio del juego. 
-    // Lo hacemos "virtual" para que los hijos (como el jugador) puedan añadirle cosas si quieren.
+    [Header("Interfaz Visual")]
+    public Image barraDeVidaUI;
+
     public virtual void Start()
     {
-        // Al aparecer, la entidad tiene la vida llena
         vidaActual = vidaMaxima;
+        ActualizarBarraDeVida();
     }
 
-    // Método universal para recibir daño.
-    // También es "virtual" por si el Tank recibe daño de forma distinta (ej. armadura).
     public virtual void RecibirDano(float cantidadDano)
     {
-        if (estaMuerto) return; // Si ya está muerto, ignorar
+        if (estaMuerto) return;
 
         vidaActual -= cantidadDano;
-        Debug.Log(gameObject.name + " recibió " + cantidadDano + " de daño. Vida restante: " + vidaActual);
+
+        ActualizarBarraDeVida();
+
+        StartCoroutine(EfectoDano());
 
         if (vidaActual <= 0)
         {
@@ -35,15 +34,30 @@ public class Entidad : MonoBehaviour
         }
     }
 
-    // Método universal para morir
+    private void ActualizarBarraDeVida()
+    {
+        if (barraDeVidaUI != null)
+        {
+            barraDeVidaUI.fillAmount = vidaActual / vidaMaxima;
+        }
+    }
+
+    private System.Collections.IEnumerator EfectoDano()
+    {
+        SpriteRenderer sr = GetComponentInChildren<SpriteRenderer>();
+        if (sr != null)
+        {
+            Color colorOriginal = sr.color;
+            sr.color = Color.red;
+            yield return new WaitForSeconds(0.1f);
+            sr.color = colorOriginal;
+        }
+    }
+
     public virtual void Morir()
     {
         estaMuerto = true;
-        vidaActual = 0;
         Debug.Log(gameObject.name + " ha muerto.");
-
-        // Más adelante, aquí avisaremos al GameDirector o reproduciremos una animación.
-        // Por ahora, simplemente destruimos el cuadrado de la escena.
         Destroy(gameObject);
     }
 }

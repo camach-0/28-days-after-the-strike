@@ -1,38 +1,50 @@
+using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.AI; // Necesario para el NavMesh
+using UnityEngine.AI;
 
-// Heredamos de Entidad para que tenga vida y pueda recibir daño de las balas
 [RequireComponent(typeof(NavMeshAgent))]
 public class ZombiController : Entidad
 {
-    // Definimos los posibles "estados mentales" del zombi
     public enum EstadoZombi { Deambulando, Persiguiendo }
 
     [Header("Cerebro de IA")]
     public EstadoZombi estadoActual = EstadoZombi.Deambulando;
-    public bool esDeHorda = false; // El Director marcará esto como TRUE al crear hordas
+    public bool esDeHorda = false;
+
+    [Header("Variantes de Zombi")]
+    [Tooltip("Si se marca, el zombi se quedará quieto hasta ver al jugador.")]
+    public bool esEstatico = false;
+    public float multiplicadorVelocidadPatrulla = 0.3f; // 0.3 es el 30% de su velocidad normal
 
     [Header("Sensores")]
     public float radioVision = 5f;
     private Transform objetivoJugador;
 
-    // Herramienta de navegación
+    [Header("Patrullaje")]
+    public float radioPatrullaje = 8f;
+    private float tiempoEsperaPatrulla;
+    [Header("Ataque")]
+    public float danoAlJugador = 10f;
+    public float velocidadAtaque = 1.0f; // Tiempo en segundos entre golpes
+    private float tiempoSiguienteAtaque = 0f;
+
     private NavMeshAgent agente;
 
     public override void Start()
     {
-        base.Start(); // Inicializa la vida de Entidad.cs
-
+        base.Start();
         agente = GetComponent<NavMeshAgent>();
 
-        // Configuraciones vitales para que el NavMesh 3D funcione en nuestro juego 2D
         agente.updateRotation = false;
         agente.updateUpAxis = false;
 
-        // Si el Director genera este zombi como Horda, pasa a persecución de inmediato
         if (esDeHorda)
         {
             estadoActual = EstadoZombi.Persiguiendo;
+        }
+        else
+        {
+            tiempoEsperaPatrulla = Random.Range(1f, 3f);
         }
     }
 
@@ -40,16 +52,15 @@ public class ZombiController : Entidad
     {
         if (estaMuerto)
         {
-            agente.isStopped = true; // Si muere, deja de caminar
+            agente.isStopped = true;
             return;
         }
 
-        // El cerebro toma decisiones cada frame dependiendo de su estado
         switch (estadoActual)
         {
             case EstadoZombi.Deambulando:
                 ComportamientoDeambular();
-                BuscarJugadorCercano(); // Mientras camina, usa sus "ojos"
+                BuscarJugadorCercano();
                 break;
 
             case EstadoZombi.Persiguiendo:
@@ -60,45 +71,92 @@ public class ZombiController : Entidad
 
     private void BuscarJugadorCercano()
     {
-        // Buscamos a todos los jugadores en la escena usando la etiqueta
         GameObject[] jugadores = GameObject.FindGameObjectsWithTag("Player");
-
         foreach (GameObject jugador in jugadores)
         {
-            // Medimos la distancia entre el zombi y este jugador
             float distancia = Vector2.Distance(transform.position, jugador.transform.position);
-
-            // Si el jugador entra en el círculo de visión del zombi...
             if (distancia <= radioVision)
             {
-                objetivoJugador = jugador.transform; // Fija el objetivo
-                estadoActual = EstadoZombi.Persiguiendo; // ¡Se alerta y empieza a correr!
-                break; // Deja de buscar
+                objetivoJugador = jugador.transform;
+                estadoActual = EstadoZombi.Persiguiendo;
+                break;
             }
         }
     }
 
     private void ComportamientoDeambular()
     {
-        // (Aquí programaremos que elija puntos al azar en el NavMesh)
-        agente.speed = velocidadMovimiento * 0.5f; // Camina lento cuando está tranquilo
+        // 1. Si marcamos a este zombi como ESTÁTICO en Unity, cancelamos su patrullaje aquí mismo
+        if (esEstatico)
+        {
+            agente.isStopped = true; // Se queda congelado en su sitio
+            return;
+        }
+
+        // 2. Si no es estático, le aplicamos la velocidad lenta y lo dejamos caminar
+        agente.isStopped = false;
+        agente.speed = velocidadMovimiento * multiplicadorVelocidadPatrulla;
+
+        if (!agente.pathPending && agente.remainingDistance < 0.5f)
+        {
+            tiempoEsperaPatrulla -= Time.deltaTime;
+
+            if (tiempoEsperaPatrulla <= 0f)
+            {
+                Vector2 puntoAleatorio = (Vector2)transform.position + Random.insideUnitCircle * radioPatrullaje;
+                NavMeshHit hit;
+
+                if (NavMesh.SamplePosition(puntoAleatorio, out hit, radioPatrullaje, NavMesh.AllAreas))
+                {
+                    agente.SetDestination(hit.position);
+                    tiempoEsperaPatrulla = Random.Range(2f, 5f);
+                }
+            }
+        }
     }
 
     private void ComportamientoPerseguir()
     {
-        agente.speed = velocidadMovimiento; // Corre a máxima velocidad
-
-        // Si tiene un objetivo válido, le decimos al NavMesh que calcule la ruta esquivando paredes
-        if (objetivoJugador != null)
+        if (objetivoJugador == null)
         {
-            agente.SetDestination(objetivoJugador.position);
+            estadoActual = EstadoZombi.Deambulando;
+            return;
+        }
+
+        agente.isStopped = false;
+        agente.speed = velocidadMovimiento;
+        agente.SetDestination(objetivoJugador.position);
+
+        // NUEVO SISTEMA DE ATAQUE (Estilo Left 4 Dead)
+        // Medimos matemáticamente la distancia entre el zombi y el jugador
+        float distanciaAlJugador = Vector2.Distance(transform.position, objetivoJugador.position);
+
+        // Si el jugador está a 1.3 metros o menos (rango de ataque)
+        if (distanciaAlJugador <= 1.3f)
+        {
+            // Verificamos el temporizador de enfriamiento
+            if (Time.time >= tiempoSiguienteAtaque)
+            {
+                Entidad vidaJugador = objetivoJugador.GetComponent<Entidad>();
+
+                if (vidaJugador != null && !vidaJugador.estaMuerto)
+                {
+                    vidaJugador.RecibirDano(danoAlJugador);
+                    tiempoSiguienteAtaque = Time.time + velocidadAtaque;
+                    Debug.Log("¡El zombi atacó por cercanía! Siguiente ataque en: " + velocidadAtaque + "s");
+                }
+            }
         }
     }
 
-    // Método especial para dibujar el "radio de visión" en la pantalla de Unity (útil para ti como programador)
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, radioVision);
+
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, radioPatrullaje);
     }
+    // El cambio está aquí adentro de los paréntesis: (Collision2D collision)
+    
 }

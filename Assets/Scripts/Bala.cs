@@ -32,12 +32,19 @@ public class Bala : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        // Evitamos que la bala choque con el propio jugador que la disparó
-        if (!collision.gameObject.CompareTag("Player"))
+        // 1. Evitamos chocar con el jugador que nos disparó o con paredes invisibles
+        if (collision.CompareTag("Player")) return;
+
+        // 2. Buscamos si el objeto con el que chocamos tiene el script "Entidad" (o sea, si está vivo)
+        Entidad objetivo = collision.GetComponent<Entidad>();
+
+        // 3. Si tiene el script, ¡le hacemos daño!
+        if (objetivo != null)
         {
-            // Más adelante, aquí detectaremos si chocó con un "Entidad" para restarle vida
-            Debug.Log("La bala chocó con: " + collision.name);
-            Destroy(gameObject); // La bala se destruye al impactar
+            objetivo.RecibirDano(dano); // Usamos la variable 'dano' que ya tenías arriba (ej. 25f)
         }
+
+        // 4. Sin importar si chocó con un enemigo o con una pared de tu mapa, la bala se destruye
+        Destroy(gameObject);
     }
 }
