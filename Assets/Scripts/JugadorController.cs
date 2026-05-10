@@ -26,24 +26,13 @@ public class JugadorController : Entidad
 
     public override void Start()
     {
-        // 1. Obtenemos el índice del jugador (P1 es 0, P2 es 1, etc.)
-        PlayerInput pi = GetComponent<PlayerInput>();
-        if (pi != null)
+        base.Start(); // Esto es vital para que se configure su vida de Entidad
+
+        // ¡NUEVO! Le avisamos al árbitro que acabamos de unirnos a la partida
+        if (GameManager.Instancia != null)
         {
-            int idJugador = pi.playerIndex;
-
-            // 2. Le pedimos al UIManager la barra que nos toca
-            if (UIManager.Instancia != null && idJugador < UIManager.Instancia.barrasDeVida.Length)
-            {
-                // Asignamos la barra a la variable que heredamos de Entidad
-                barraDeVidaUI = UIManager.Instancia.barrasDeVida[idJugador];
-            }
+            GameManager.Instancia.RegistrarJugador(this);
         }
-
-        // 3. Llamamos al Start base de Entidad para que inicialice la vida
-        base.Start();
-        velocidadMovimiento = 6f;
-        direccionPendiente = direccionMirando;
     }
 
     public void OnMover(InputValue valor)
@@ -116,5 +105,17 @@ public class JugadorController : Entidad
     {
         if (estaMuerto) return;
         rb.MovePosition(rb.position + direccionMovimiento * velocidadMovimiento * Time.fixedDeltaTime);
+    }
+    public override void Morir()
+    {
+        base.Morir(); // Llama a la base para poner estaMuerto = true
+
+        // ... (Tu código de apagar sprites y armas que ya tenemos) ...
+
+        // EL ARREGLO: Avisamos al árbitro
+        if (GameManager.Instancia != null)
+        {
+            GameManager.Instancia.VerificarEstadoJugadores();
+        }
     }
 }

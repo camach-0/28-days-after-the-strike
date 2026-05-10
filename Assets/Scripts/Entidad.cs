@@ -1,13 +1,18 @@
+using System.Collections; 
 using UnityEngine;
-using UnityEngine.UI; // OBLIGATORIO AÑADIR ESTO PARA USAR UI
+using UnityEngine.UI;
 
 public class Entidad : MonoBehaviour
 {
     [Header("Estadísticas Base")]
     public float vidaMaxima = 100f;
     public float vidaActual;
-    public float velocidadMovimiento = 5f; // ¡AQUÍ ESTÁ LA VARIABLE QUE SE NOS BORRÓ!
+    public float velocidadMovimiento = 5f;
     public bool estaMuerto = false;
+
+    private SpriteRenderer spriteRenderer;
+    private Color colorOriginal;
+    private Coroutine rutinaParpadeo;
 
     [Header("Interfaz Visual")]
     public Image barraDeVidaUI;
@@ -16,6 +21,12 @@ public class Entidad : MonoBehaviour
     {
         vidaActual = vidaMaxima;
         ActualizarBarraDeVida();
+
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        if (spriteRenderer != null)
+        {
+            colorOriginal = spriteRenderer.color;
+        }
     }
 
     public virtual void RecibirDano(float cantidadDano)
@@ -23,10 +34,19 @@ public class Entidad : MonoBehaviour
         if (estaMuerto) return;
 
         vidaActual -= cantidadDano;
-
         ActualizarBarraDeVida();
 
-        StartCoroutine(EfectoDano());
+        // 2. Activamos el parpadeo seguro (borramos la línea duplicada que tenías antes)
+        if (spriteRenderer != null)
+        {
+            // Si ya estaba parpadeando, DETENEMOS el cronómetro viejo
+            if (rutinaParpadeo != null)
+            {
+                StopCoroutine(rutinaParpadeo);
+            }
+            // Iniciamos uno nuevo y lo guardamos en nuestra variable
+            rutinaParpadeo = StartCoroutine(EfectoDano());
+        }
 
         if (vidaActual <= 0)
         {
@@ -42,22 +62,22 @@ public class Entidad : MonoBehaviour
         }
     }
 
-    private System.Collections.IEnumerator EfectoDano()
+    private IEnumerator EfectoDano()
     {
-        SpriteRenderer sr = GetComponentInChildren<SpriteRenderer>();
-        if (sr != null)
-        {
-            Color colorOriginal = sr.color;
-            sr.color = Color.red;
-            yield return new WaitForSeconds(0.1f);
-            sr.color = colorOriginal;
-        }
+        spriteRenderer.color = Color.red;
+        yield return new WaitForSeconds(0.15f);
+        spriteRenderer.color = colorOriginal;
     }
 
     public virtual void Morir()
     {
         estaMuerto = true;
+
+        // ¡ESTE ES EL CULPABLE!
+        if (gameObject.CompareTag("Enemy"))
+        {
+            Destroy(gameObject);
+        }
         Debug.Log(gameObject.name + " ha muerto.");
-        Destroy(gameObject);
     }
 }

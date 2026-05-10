@@ -32,35 +32,51 @@ public class ZombiController : Entidad
 
     public override void Start()
     {
-        base.Start();
-        agente = GetComponent<NavMeshAgent>();
+        base.Start(); // Llama al Start de Entidad (para la vida y color)
 
+        agente = GetComponent<NavMeshAgent>();
         agente.updateRotation = false;
         agente.updateUpAxis = false;
 
+        // NUEVA LÓGICA DE HORDA:
         if (esDeHorda)
         {
-            estadoActual = EstadoZombi.Persiguiendo;
+            esEstatico = false; // Un zombi de horda jamás es estático
+            BuscarJugadorCercano(); // Busca inmediatamente a su presa
+
+            // Si encontró a alguien, arranca a correr
+            if (objetivoJugador != null)
+            {
+                estadoActual = EstadoZombi.Persiguiendo;
+                agente.isStopped = false;
+                agente.speed = velocidadMovimiento;
+            }
+            else
+            {
+                estadoActual = EstadoZombi.Deambulando;
+            }
         }
         else
         {
-            tiempoEsperaPatrulla = Random.Range(1f, 3f);
+            estadoActual = EstadoZombi.Deambulando;
+            tiempoEsperaPatrulla = Random.Range(0f, 2f);
         }
     }
 
-    private void Update()
+    void Update()
     {
-        if (estaMuerto)
-        {
-            agente.isStopped = true;
-            return;
-        }
+        if (estaMuerto) return;
 
         switch (estadoActual)
         {
             case EstadoZombi.Deambulando:
+                // Si es horda y está deambulando, significa que perdió a su presa o acaba de nacer.
+                // Le pedimos que busque otra vez sin descanso.
+                if (esDeHorda) BuscarJugadorCercano();
+
                 ComportamientoDeambular();
-                BuscarJugadorCercano();
+                // Si no es horda, solo busca si entra en su visión normal
+                if (!esDeHorda) BuscarJugadorCercano();
                 break;
 
             case EstadoZombi.Persiguiendo:
@@ -72,15 +88,40 @@ public class ZombiController : Entidad
     private void BuscarJugadorCercano()
     {
         GameObject[] jugadores = GameObject.FindGameObjectsWithTag("Player");
+        float distanciaCorta = Mathf.Infinity;
+        GameObject jugadorMasCercano = null;
+
         foreach (GameObject jugador in jugadores)
         {
-            float distancia = Vector2.Distance(transform.position, jugador.transform.position);
-            if (distancia <= radioVision)
+            Entidad vidaJugador = jugador.GetComponent<Entidad>();
+
+            // Solo buscamos jugadores que sigan vivos
+            if (vidaJugador != null && !vidaJugador.estaMuerto)
             {
-                objetivoJugador = jugador.transform;
-                estadoActual = EstadoZombi.Persiguiendo;
-                break;
+                float distancia = Vector2.Distance(transform.position, jugador.transform.position);
+
+                // LA CLAVE: Si es de horda, no importa la distancia (olfato infinito).
+                // Si es ambiental, solo lo ve si está dentro del radio de visión.
+                if (esDeHorda || distancia <= radioVision)
+                {
+                    if (distancia < distanciaCorta)
+                    {
+                        distanciaCorta = distancia;
+                        jugadorMasCercano = jugador;
+                    }
+                }
             }
+        }
+
+        if (jugadorMasCercano != null)
+        {
+            objetivoJugador = jugadorMasCercano.transform;
+            estadoActual = EstadoZombi.Persiguiendo;
+        }
+        else
+        {
+            // Si no hay nadie vivo a quien perseguir, deambula por las calles
+            estadoActual = EstadoZombi.Deambulando;
         }
     }
 
@@ -97,7 +138,7 @@ public class ZombiController : Entidad
         agente.isStopped = false;
         agente.speed = velocidadMovimiento * multiplicadorVelocidadPatrulla;
 
-        if (!agente.pathPending && agente.remainingDistance < 0.5f)
+        if (!agente.pathPending && (agente.remainingDistance <= agente.stoppingDistance + 0.1f || !agente.hasPath))
         {
             tiempoEsperaPatrulla -= Time.deltaTime;
 
@@ -123,30 +164,42 @@ public class ZombiController : Entidad
             return;
         }
 
+        Entidad vidaObjetivo = objetivoJugador.GetComponent<Entidad>();
+
+        // REVISAMOS SI LA PRESA ACABA DE MORIR
+        if (vidaObjetivo != null && vidaObjetivo.estaMuerto)
+        {
+            objetivoJugador = null;
+            estadoActual = EstadoZombi.Deambulando;
+
+            // EL ARREGLO DEFINITIVO:
+            agente.ResetPath(); // Borramos la ruta vieja hacia el cadáver
+            agente.isStopped = false;
+            tiempoEsperaPatrulla = 0f;
+
+            return;
+        }
+
         // Medimos la distancia exacta
         float distanciaAlJugador = Vector2.Distance(transform.position, objetivoJugador.position);
 
-        // 1. EL TRUCO: Si está en rango de ataque (1.2m), APAGAMOS EL MOTOR A LA FUERZA
+        // Si está en rango de ataque (1.2m), APAGAMOS EL MOTOR
         if (distanciaAlJugador <= 1.2f)
         {
-            agente.isStopped = true; // Corta el cálculo de rutas
-            agente.velocity = Vector3.zero; // Elimina cualquier inercia o micro-ajuste
+            agente.isStopped = true;
+            agente.velocity = Vector3.zero;
 
             // Lógica de daño
             if (Time.time >= tiempoSiguienteAtaque)
             {
-                Entidad vidaJugador = objetivoJugador.GetComponent<Entidad>();
-
-                if (vidaJugador != null && !vidaJugador.estaMuerto)
+                if (vidaObjetivo != null && !vidaObjetivo.estaMuerto)
                 {
-                    vidaJugador.RecibirDano(danoAlJugador);
+                    vidaObjetivo.RecibirDano(danoAlJugador);
                     tiempoSiguienteAtaque = Time.time + velocidadAtaque;
-                    Debug.Log("¡El zombi atacó por cercanía! Siguiente ataque en: " + velocidadAtaque + "s");
                 }
             }
         }
-        // 2. Si el jugador se aleja, ENCENDEMOS EL MOTOR de nuevo
-        else
+        else // Si se aleja, encendemos el motor
         {
             agente.isStopped = false;
             agente.speed = velocidadMovimiento;

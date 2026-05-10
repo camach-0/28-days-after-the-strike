@@ -15,6 +15,7 @@ public class ZonaInfeccion : MonoBehaviour
     private List<GameObject> zombisVivos = new List<GameObject>();
     private bool zonaActiva = false;
     private BoxCollider2D area;
+    private bool zonaAgotada = false; // Este es nuestro candado
 
     private void Start()
     {
@@ -24,8 +25,8 @@ public class ZonaInfeccion : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        // Si el jugador entra a la zona y estaba apagada, la encendemos
-        if (collision.CompareTag("Player") && !zonaActiva)
+        // Si el jugador entra, la zona está apagada, y NUNCA se ha usado antes...
+        if (collision.CompareTag("Player") && !zonaActiva && !zonaAgotada)
         {
             ActivarZona();
         }
@@ -43,7 +44,11 @@ public class ZonaInfeccion : MonoBehaviour
     private void ActivarZona()
     {
         zonaActiva = true;
+        zonaAgotada = true; // ¡CERRAMOS EL CANDADO PARA SIEMPRE!
 
+        Debug.Log("Jugador entró a la zona: Generando " + cantidadZombis + " zombis. Zona agotada.");
+
+       
         for (int i = 0; i < cantidadZombis; i++)
         {
             Vector2 puntoAleatorio = new Vector2(
