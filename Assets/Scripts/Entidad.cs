@@ -1,6 +1,6 @@
-using System.Collections; 
 using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 
 public class Entidad : MonoBehaviour
 {
@@ -8,76 +8,82 @@ public class Entidad : MonoBehaviour
     public float vidaMaxima = 100f;
     public float vidaActual;
     public float velocidadMovimiento = 5f;
+    public Image barraDeVidaUI;
     public bool estaMuerto = false;
 
-    private SpriteRenderer spriteRenderer;
-    private Color colorOriginal;
-    private Coroutine rutinaParpadeo;
+    [Header("Feedback Visual y Equilibrio (I-Frames)")]
+    public float tiempoInvulnerabilidad = 0.4f;
+    private float tiempoUltimoGolpe = -100f;
 
-    [Header("Interfaz Visual")]
-    public Image barraDeVidaUI;
+    [SerializeField] private float duracionFlashRojo = 0.15f;
+    private SpriteRenderer sr;
+    private Color colorOriginal;
+
+    private bool inicializado = false; // ¡NUEVO! Control para bots
+
+    // NUEVO: Método que asegura que la vida se cargue siempre
+    private void InicializarSeguro()
+    {
+        if (inicializado) return; // Si ya se configuró, no hace nada
+
+        vidaActual = vidaMaxima;
+        estaMuerto = false;
+        sr = GetComponent<SpriteRenderer>();
+        if (sr != null) colorOriginal = sr.color;
+
+        inicializado = true;
+    }
 
     public virtual void Start()
     {
-        vidaActual = vidaMaxima;
-        ActualizarBarraDeVida();
-
-        spriteRenderer = GetComponent<SpriteRenderer>();
-        if (spriteRenderer != null)
-        {
-            colorOriginal = spriteRenderer.color;
-        }
+        InicializarSeguro(); // Los humanos se inicializan aquí
     }
 
-    public virtual void RecibirDano(float cantidadDano)
+    public virtual void RecibirDano(float cantidad)
     {
+        InicializarSeguro(); // ¡TRUCO! Los bots se inicializan justo antes de recibir el golpe
+
         if (estaMuerto) return;
 
-        vidaActual -= cantidadDano;
-        ActualizarBarraDeVida();
-
-        // 2. Activamos el parpadeo seguro (borramos la línea duplicada que tenías antes)
-        if (spriteRenderer != null)
+        if (Time.time < tiempoUltimoGolpe + tiempoInvulnerabilidad)
         {
-            // Si ya estaba parpadeando, DETENEMOS el cronómetro viejo
-            if (rutinaParpadeo != null)
-            {
-                StopCoroutine(rutinaParpadeo);
-            }
-            // Iniciamos uno nuevo y lo guardamos en nuestra variable
-            rutinaParpadeo = StartCoroutine(EfectoDano());
+            return;
         }
 
-        if (vidaActual <= 0)
-        {
-            Morir();
-        }
-    }
+        tiempoUltimoGolpe = Time.time;
+        vidaActual -= cantidad;
 
-    private void ActualizarBarraDeVida()
-    {
         if (barraDeVidaUI != null)
         {
             barraDeVidaUI.fillAmount = vidaActual / vidaMaxima;
         }
+
+        if (sr != null && gameObject.activeInHierarchy)
+        {
+            StartCoroutine(FlashRojoDano());
+        }
+
+        if (vidaActual <= 0)
+        {
+            vidaActual = 0;
+            Morir();
+        }
     }
 
-    private IEnumerator EfectoDano()
+    private IEnumerator FlashRojoDano()
     {
-        spriteRenderer.color = Color.red;
-        yield return new WaitForSeconds(0.15f);
-        spriteRenderer.color = colorOriginal;
+        sr.color = Color.red;
+        yield return new WaitForSeconds(duracionFlashRojo);
+
+        if (!estaMuerto && sr != null)
+        {
+            sr.color = colorOriginal;
+        }
     }
 
     public virtual void Morir()
     {
+        if (estaMuerto) return;
         estaMuerto = true;
-
-        // ¡ESTE ES EL CULPABLE!
-        if (gameObject.CompareTag("Enemy"))
-        {
-            Destroy(gameObject);
-        }
-        Debug.Log(gameObject.name + " ha muerto.");
     }
 }

@@ -216,5 +216,13 @@ public class ZombiController : Entidad
         Gizmos.DrawWireSphere(transform.position, radioPatrullaje);
     }
     // El cambio está aquí adentro de los paréntesis: (Collision2D collision)
-    
+    public override void Morir()
+    {
+        base.Morir(); // Le avisa a la Entidad que está muerto internamente
+
+        // ¡NUEVO! Destruimos el objeto del zombi para que desaparezca de la escena
+        // (Opcional: Si luego quieres que dejen un charco de sangre, lo instanciarías aquí justo antes del Destroy)
+        Destroy(gameObject);
+    }
+
 }

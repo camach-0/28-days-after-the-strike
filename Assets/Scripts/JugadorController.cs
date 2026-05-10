@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI; // ¡NUEVO! Necesario para controlar las barras de vida
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class JugadorController : Entidad
@@ -10,13 +11,16 @@ public class JugadorController : Entidad
 
     [Header("Referencias Visuales")]
     public Transform pivoteArma;
+    
+
     [Header("Armas y Disparo")]
     public GameObject balaPrefab;
     public Transform puntoDisparo;
+
     [Header("Filtros Anti-Bugs")]
     private Vector2 direccionPendiente;
     private float temporizadorGhosting = 0f;
-    private float tiempoGracia = 0.05f; // 50 milisegundos para perdonar errores humanos al soltar teclas
+    private float tiempoGracia = 0.05f;
 
     private void Awake()
     {
@@ -26,28 +30,31 @@ public class JugadorController : Entidad
 
     public override void Start()
     {
-        base.Start(); // Esto es vital para que se configure su vida de Entidad
+        base.Start();
 
-        // ¡NUEVO! Le avisamos al árbitro que acabamos de unirnos a la partida
+        // Notificamos al GameManager que este superviviente ya está en el mapa
         if (GameManager.Instancia != null)
         {
             GameManager.Instancia.RegistrarJugador(this);
         }
+
+        // Inicializamos la barra de vida al 100%
+        if (barraDeVidaUI != null)
+        {
+            barraDeVidaUI.fillAmount = 1f;
+        }
     }
+
+    
 
     public void OnMover(InputValue valor)
     {
         Vector2 inputBruto = valor.Get<Vector2>();
 
-        // 1. SOLUCIÓN AL MANDO: Ignoramos el rebote del resorte con un límite mayor (0.15f)
         if (inputBruto.magnitude > 0.15f)
         {
             direccionMovimiento = inputBruto;
-
-            // Redondeamos para mantener el estilo 16-bits
             Vector2 nuevaDir = new Vector2(Mathf.Round(inputBruto.x), Mathf.Round(inputBruto.y)).normalized;
-
-            // SOLUCIÓN AL MANDO (Parte 2): Si por error se redondea a cero, NO lo guardamos
             if (nuevaDir != Vector2.zero)
             {
                 direccionPendiente = nuevaDir;
@@ -55,45 +62,36 @@ public class JugadorController : Entidad
         }
         else
         {
-            // El jugador se detuvo por completo
             direccionMovimiento = Vector2.zero;
-
-            // SOLUCIÓN AL TECLADO (Parte 1): Cancelamos el cambio de dirección accidental del último milisegundo
             direccionPendiente = direccionMirando;
         }
     }
-    // Unity detecta automáticamente la acción "Disparar" de tu ControlesJuego
+
     public void OnDisparar(InputValue valor)
     {
-        // isPressed verifica si apretamos el botón (y no si lo estamos soltando)
         if (valor.isPressed && !estaMuerto && balaPrefab != null && puntoDisparo != null)
         {
-            // 1. Instanciar (Crear) la bala en las coordenadas del PuntoDisparo
             GameObject nuevaBala = Instantiate(balaPrefab, puntoDisparo.position, Quaternion.identity);
-
-            // 2. Comunicarnos con el script de la bala para decirle hacia dónde ir
             nuevaBala.GetComponent<Bala>().ConfigurarDireccion(direccionMirando);
         }
     }
 
     private void Update()
     {
-        // SOLUCIÓN AL TECLADO (Parte 2): Aplicamos el Tiempo de Gracia
+        // El Update solo corre para los Humanos. Los Bots usan AliadoBotController.
         if (direccionMirando != direccionPendiente)
         {
             temporizadorGhosting -= Time.deltaTime;
             if (temporizadorGhosting <= 0)
             {
-                // Si el jugador sostuvo la nueva dirección por más de 50ms, la aceptamos como real
                 direccionMirando = direccionPendiente;
             }
         }
         else
         {
-            temporizadorGhosting = tiempoGracia; // Reiniciamos el temporizador
+            temporizadorGhosting = tiempoGracia;
         }
 
-        // Rotar el pivote hacia la dirección oficial
         if (pivoteArma != null && !estaMuerto)
         {
             float angulo = Mathf.Atan2(direccionMirando.y, direccionMirando.x) * Mathf.Rad2Deg;
@@ -106,16 +104,27 @@ public class JugadorController : Entidad
         if (estaMuerto) return;
         rb.MovePosition(rb.position + direccionMovimiento * velocidadMovimiento * Time.fixedDeltaTime);
     }
+
     public override void Morir()
     {
-        base.Morir(); // Llama a la base para poner estaMuerto = true
+        // 1. Marcar como muerto internamente
+        base.Morir();
 
-        // ... (Tu código de apagar sprites y armas que ya tenemos) ...
+        Debug.Log(gameObject.name + " ha muerto.");
 
-        // EL ARREGLO: Avisamos al árbitro
+        // 2. Avisamos al GameManager para ver si todos perdieron
         if (GameManager.Instancia != null)
         {
             GameManager.Instancia.VerificarEstadoJugadores();
         }
+
+        // 3. Soltamos la cámara si nos estaba siguiendo
+        if (Camera.main != null && Camera.main.transform.parent == this.transform)
+        {
+            Camera.main.transform.SetParent(null);
+        }
+
+        // 4. El personaje desaparece
+        gameObject.SetActive(false);
     }
 }

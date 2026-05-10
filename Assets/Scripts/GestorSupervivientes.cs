@@ -13,7 +13,6 @@ public class GestorSupervivientes : MonoBehaviour
 
     private void AsignarControles()
     {
-        // Leemos cuántos humanos dijeron "LISTO" en la Escena 2
         int humanos = DatosGlobales.cantidadJugadoresHumanos;
         Debug.Log("Iniciando nivel con " + humanos + " jugadores humanos.");
 
@@ -23,25 +22,41 @@ public class GestorSupervivientes : MonoBehaviour
             PlayerInput inputHumano = personaje.GetComponent<PlayerInput>();
             JugadorController scriptHumano = personaje.GetComponent<JugadorController>();
 
+            AliadoBotController cerebroBot = personaje.GetComponent<AliadoBotController>();
+            UnityEngine.AI.NavMeshAgent agente = personaje.GetComponent<UnityEngine.AI.NavMeshAgent>();
+
             if (i < humanos)
             {
-                // ESTE ES UN HUMANO
-                // Mantenemos su control encendido
+                // --- ES UN HUMANO ---
                 if (inputHumano != null) inputHumano.enabled = true;
                 if (scriptHumano != null) scriptHumano.enabled = true;
 
+                // VITAL: Apagamos el cerebro Bot y su motor para que no peleen con tu teclado
+                if (cerebroBot != null) cerebroBot.enabled = false;
+                if (agente != null) agente.enabled = false;
+
                 personaje.name += " (Humano)";
+
+                // ARREGLO DE LA CÁMARA: Si es el Player 1 (i == 0), le decimos a la cámara que lo siga.
+                // *Nota: Dependiendo de cómo programaste tu cámara, esto puede variar. 
+                // Si usas un script propio llamado "CamaraController", sería algo así:
+                if (i == 0)
+                {
+                    Camera.main.transform.SetParent(personaje.transform);
+                    Camera.main.transform.localPosition = new Vector3(0, 0, -10); // Ajusta la distancia Z
+                }
             }
             else
             {
-                // ESTE ES UN BOT
-                // Le apagamos el control humano para que no se mueva con tu teclado
+                // --- ES UN BOT ---
                 if (inputHumano != null) inputHumano.enabled = false;
                 if (scriptHumano != null) scriptHumano.enabled = false;
 
-                personaje.name += " (Bot)";
+                // Encendemos su IA
+                if (cerebroBot != null) cerebroBot.enabled = true;
+                if (agente != null) agente.enabled = true;
 
-                // TODO: Aquí encenderemos el script AliadoBotController más adelante
+                personaje.name += " (Bot)";
             }
         }
     }

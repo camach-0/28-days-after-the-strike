@@ -1,30 +1,27 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using TMPro; // <-- Agregamos esta librería para TextMeshPro (muy común en Unity 6)
 
 public class LobbyManager : MonoBehaviour
 {
     [Header("Configuración de Slots")]
-    public GameObject[] slotsVisuales; // Arrastra aquí tus 4 paneles de slots
+    public GameObject[] slotsVisuales;
     public Button botonEmpezar;
 
     private int jugadoresUnidos = 0;
 
     private void Start()
     {
-        // Al empezar, todos los slots muestran "Presiona Start"
         ActualizarInterfaz();
     }
 
-    // Este método lo llamaremos cuando el PlayerInputManager detecte un nuevo mando/teclado
     public void AlUnirseJugador()
     {
         if (jugadoresUnidos < 4)
         {
             jugadoresUnidos++;
             ActualizarInterfaz();
-
-            // Si hay al menos uno, ya podemos jugar
             botonEmpezar.interactable = true;
         }
     }
@@ -33,27 +30,34 @@ public class LobbyManager : MonoBehaviour
     {
         for (int i = 0; i < slotsVisuales.Length; i++)
         {
-            if (i < jugadoresUnidos)
+            // 1. Cambiamos el color del panel de fondo
+            slotsVisuales[i].GetComponent<Image>().color = (i < jugadoresUnidos) ? Color.white : new Color(0.3f, 0.3f, 0.3f);
+
+            // 2. Buscamos al hijo por su nombre EXACTO, sin importar su orden
+            Transform objetoTexto = slotsVisuales[i].transform.Find("STAR");
+
+            if (objetoTexto != null)
             {
-                // Slot activado (Jugador Humano)
-                slotsVisuales[i].GetComponent<Image>().color = Color.white;
-                slotsVisuales[i].transform.GetChild(0).GetComponent<Text>().text = "LISTO";
+                string mensaje = (i < jugadoresUnidos) ? "LISTO" : "BOT";
+
+                // Intenta cambiarlo si es un Texto Clásico
+                Text textoClasico = objetoTexto.GetComponent<Text>();
+                if (textoClasico != null) textoClasico.text = mensaje;
+
+                // Intenta cambiarlo si es un TextMeshPro
+                TMP_Text textoModerno = objetoTexto.GetComponent<TMP_Text>();
+                if (textoModerno != null) textoModerno.text = mensaje;
             }
             else
             {
-                // Slot vacío (Será un Bot en la Escena 3)
-                slotsVisuales[i].GetComponent<Image>().color = new Color(0.3f, 0.3f, 0.3f);
-                slotsVisuales[i].transform.GetChild(0).GetComponent<Text>().text = "BOT";
+                Debug.LogWarning("¡Cuidado! El panel " + slotsVisuales[i].name + " no tiene un hijo llamado 'STAR'.");
             }
         }
     }
 
     public void ConfirmarYJugar()
     {
-        // GUARDAMOS EL DATO EN LA MEMORIA GLOBAL
         DatosGlobales.cantidadJugadoresHumanos = jugadoresUnidos;
-
-        // Saltamos a la escena del laberinto
         SceneManager.LoadScene("Escena_3_Juego");
     }
 }

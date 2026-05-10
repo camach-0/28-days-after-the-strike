@@ -1,18 +1,20 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement; // Necesario para reiniciar el nivel
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
-    public static GameManager Instancia; // Singleton
+    public static GameManager Instancia;
 
     [Header("Estado de la Partida")]
     public List<Entidad> jugadoresEnEscena = new List<Entidad>();
     public bool juegoTerminado = false;
 
+    [Header("Interfaz Visual")]
+    public GameObject panelGameOver; // ¡NUEVO! Conexión directa a la pantalla negra
+
     private void Awake()
     {
-        // Configuramos el Singleton
         if (Instancia == null) Instancia = this;
         else Destroy(gameObject);
     }
@@ -22,20 +24,18 @@ public class GameManager : MonoBehaviour
         if (!jugadoresEnEscena.Contains(nuevoJugador))
         {
             jugadoresEnEscena.Add(nuevoJugador);
-            Debug.Log("Un nuevo jugador ha entrado a la partida. Total: " + jugadoresEnEscena.Count);
         }
     }
 
-    // El jugador llamará a este método cuando su vida llegue a 0
     public void VerificarEstadoJugadores()
     {
         if (juegoTerminado) return;
 
         bool alguienVivo = false;
-
         foreach (Entidad jugador in jugadoresEnEscena)
         {
-            if (!jugador.estaMuerto)
+            // Verificamos que el jugador exista y siga vivo
+            if (jugador != null && !jugador.estaMuerto)
             {
                 alguienVivo = true;
                 break;
@@ -53,11 +53,17 @@ public class GameManager : MonoBehaviour
         juegoTerminado = true;
         Debug.Log("<color=red>¡GAME OVER! Todos los jugadores han caído.</color>");
 
-        // Aquí le avisamos al UIManager que muestre la pantalla negra
-        // UIManager.Instancia.MostrarPantallaGameOver();
+        // Encendemos la pantalla negra directamente, sin depender de otros scripts
+        if (panelGameOver != null)
+        {
+            panelGameOver.SetActive(true);
+        }
+        else
+        {
+            Debug.LogError("ERROR: ¡Falta arrastrar el Panel de Game Over al GameManager en el Inspector!");
+        }
     }
 
-    // Este método lo llamaremos desde un botón en la pantalla de Game Over
     public void ReiniciarNivel()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
