@@ -14,12 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nombreArma: Escoptea
   iconoArma: {fileID: 0}
-  danoBase: 40
-  cadenciaAtaque: 3
+  danoBase: 150
+  cadenciaAtaque: 0.2
   sonidoAtaque: {fileID: 0}
   municionMaxima: 120
   tamanoCargador: 12
   tiempoRecarga: 3
-  alcance: 10
+  alcance: 50
   dispersionBalas: 35
   perdigonesPorDisparo: 8

@@ -1638,6 +1638,10 @@ PrefabInstance:
       propertyPath: barraDeVidaUI
       value: 
       objectReference: {fileID: 1486904534}
+    - target: {fileID: 820988346735499244, guid: 08a7d2134f2927f4185ea9f0c945b4c2, type: 3}
+      propertyPath: camaraPrincipal
+      value: 
+      objectReference: {fileID: 519420031}
     - target: {fileID: 5420802958281585418, guid: 08a7d2134f2927f4185ea9f0c945b4c2, type: 3}
       propertyPath: m_Enabled
       value: 0

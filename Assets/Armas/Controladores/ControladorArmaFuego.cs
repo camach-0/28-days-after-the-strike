@@ -1,18 +1,17 @@
 using UnityEngine;
 using System.Collections;
 
-public class ControladorArmaFuego : MonoBehaviour
+// AHORA HEREDA DE ControladorArma (como en tu diagrama)
+public class ControladorArmaFuego : ControladorArma
 {
     [Header("Configuración del Arma")]
     public DatosArmaFuego datosFuego;
-    public Transform puntoDisparo;
-    public GameObject balaPrefab; // AÑADIDO: Para conectar nuestra Bala actual
+    public GameObject balaPrefab;
 
     [Header("Estado Actual")]
     public int municionActualCargador;
     public int municionActualReserva;
     public bool estaRecargando = false;
-    private float tiempoProximoAtaque = 0f;
 
     void Start()
     {
@@ -23,24 +22,53 @@ public class ControladorArmaFuego : MonoBehaviour
         }
     }
 
-    // ELIMINAMOS EL UPDATE CON INPUTS. 
-    // Ahora el arma es "tonta" y espera a que el JugadorController le dé la orden.
-
-    public void ApretarGatillo()
+    // Sobrescribimos el método del padre
+    public override void IntentarAtaque(Vector2 direccionApuntado)
     {
         if (datosFuego == null || estaRecargando) return;
 
+        // AQUÍ SE APLICA LA CADENCIA
         if (Time.time >= tiempoProximoAtaque && municionActualCargador > 0)
         {
             tiempoProximoAtaque = Time.time + datosFuego.cadenciaAtaque;
             municionActualCargador--;
 
-            EjecutarDisparo();
+            EjecutarDisparo(direccionApuntado);
 
             if (municionActualCargador <= 0)
             {
                 IniciarRecarga();
             }
+        }
+    }
+
+    void EjecutarDisparo(Vector2 direccionApuntado)
+    {
+        if (datosFuego.sonidoAtaque != null)
+        {
+            AudioSource.PlayClipAtPoint(datosFuego.sonidoAtaque, transform.position);
+        }
+
+        // Bucle para escopetas (si es pistola, perdigonesPorDisparo será 1)
+        for (int i = 0; i < datosFuego.perdigonesPorDisparo; i++)
+        {
+            // Calculamos el ángulo hacia donde mira el jugador en grados
+            float anguloBase = Mathf.Atan2(direccionApuntado.y, direccionApuntado.x) * Mathf.Rad2Deg;
+
+            // Le sumamos la dispersión aleatoria
+            float anguloDispersion = Random.Range(-datosFuego.dispersionBalas, datosFuego.dispersionBalas);
+
+            // Creamos la rotación final
+            Quaternion rotacionFinalBala = Quaternion.Euler(0, 0, anguloBase + anguloDispersion);
+
+            // Instanciamos
+            GameObject nuevaBala = Instantiate(balaPrefab, puntoDisparo.position, rotacionFinalBala);
+
+            // Extraemos el vector de dirección pura a partir de la rotación
+            Vector2 direccionFinal = rotacionFinalBala * Vector2.right;
+
+            nuevaBala.GetComponent<Bala>().ConfigurarDireccion(direccionFinal);
+            nuevaBala.GetComponent<Bala>().dano = (int)datosFuego.danoBase;
         }
     }
 
@@ -52,39 +80,12 @@ public class ControladorArmaFuego : MonoBehaviour
         }
     }
 
-    void EjecutarDisparo()
-    {
-        // Reproducir sonido si lo hay
-        if (datosFuego.sonidoAtaque != null)
-        {
-            AudioSource.PlayClipAtPoint(datosFuego.sonidoAtaque, transform.position);
-        }
-
-        // Lógica de disparo (Soporta múltiples perdigones como la Escopeta de tu compañero)
-        for (int i = 0; i < datosFuego.perdigonesPorDisparo; i++)
-        {
-            // Calculamos la dispersión de la bala que tu compañero configuró
-            float anguloDispersion = Random.Range(-datosFuego.dispersionBalas, datosFuego.dispersionBalas);
-            Quaternion rotacionBala = puntoDisparo.rotation * Quaternion.Euler(0, 0, anguloDispersion);
-
-            // Creamos nuestra bala
-            GameObject nuevaBala = Instantiate(balaPrefab, puntoDisparo.position, rotacionBala);
-
-            // Calculamos la dirección con el ángulo de dispersión
-            Vector2 direccion = rotacionBala * Vector2.right; // Asumiendo que el puntoDisparo mira a la derecha localmente
-
-            nuevaBala.GetComponent<Bala>().ConfigurarDireccion(direccion);
-
-            // Le pasamos el daño base del ScriptableObject a nuestra bala
-            nuevaBala.GetComponent<Bala>().dano = (int)datosFuego.danoBase;
-        }
-    }
-
     IEnumerator CorrutinaRecarga()
     {
         estaRecargando = true;
         Debug.Log("Recargando...");
 
+        // Simulamos el tiempo de recarga
         yield return new WaitForSeconds(datosFuego.tiempoRecarga);
 
         int balasFaltantes = datosFuego.tamanoCargador - municionActualCargador;
