@@ -4,7 +4,9 @@ using UnityEngine;
 // Al ser "static", su memoria sobrevive a los cambios de escena.
 public static class DatosGlobales
 {
-    public static int cantidadJugadoresHumanos = 1; // Por defecto asumimos que juega 1 persona
+    public static int cantidadJugadoresHumanos = 0;
 
-    // Más adelante aquí guardaremos quién eligió a qué personaje (ej. si el P1 eligió al de rojo o al de azul)
+    // Guardará la elección de cada jugador (0=Cholo, 1=Colla, 2=Camba, 3=Chola)
+    // El -1 significa que nadie ha elegido ese espacio aún.
+    public static int[] personajesSeleccionados = new int[4] { -1, -1, -1, -1 };
 }

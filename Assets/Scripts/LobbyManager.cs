@@ -1,63 +1,90 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
-using TMPro; // <-- Agregamos esta librería para TextMeshPro (muy común en Unity 6)
+using TMPro;
+using System.Collections.Generic;
 
 public class LobbyManager : MonoBehaviour
 {
+    public static LobbyManager Instancia;
+
     [Header("Configuración de Slots")]
     public GameObject[] slotsVisuales;
     public Button botonEmpezar;
 
-    private int jugadoresUnidos = 0;
+    private List<ControladorLobby> jugadoresConectados = new List<ControladorLobby>();
+
+    private void Awake()
+    {
+        if (Instancia == null) Instancia = this;
+    }
 
     private void Start()
     {
-        ActualizarInterfaz();
+        botonEmpezar.interactable = false;
+        DatosGlobales.cantidadJugadoresHumanos = 0;
+        ActualizarVisuales();
     }
 
-    public void AlUnirseJugador()
+    public int RegistrarNuevoJugador(ControladorLobby nuevoJugador)
     {
-        if (jugadoresUnidos < 4)
+        int nuevoID = jugadoresConectados.Count;
+        jugadoresConectados.Add(nuevoJugador);
+        DatosGlobales.cantidadJugadoresHumanos = jugadoresConectados.Count;
+        return nuevoID;
+    }
+
+    public void ActualizarVisuales()
+    {
+        // 1. Apagamos todos los paneles
+        for (int i = 0; i < slotsVisuales.Length; i++)
         {
-            jugadoresUnidos++;
-            ActualizarInterfaz();
-            botonEmpezar.interactable = true;
+            slotsVisuales[i].GetComponent<Image>().color = new Color(0.3f, 0.3f, 0.3f); // Gris
+            Transform objetoTexto = slotsVisuales[i].transform.Find("STAR");
+            if (objetoTexto != null)
+            {
+                TMP_Text texto = objetoTexto.GetComponent<TMP_Text>();
+                if (texto != null) texto.text = "VACÍO";
+            }
+        }
+
+        // 2. Pintamos los paneles donde haya un jugador
+        foreach (ControladorLobby jug in jugadoresConectados)
+        {
+            GameObject panelActual = slotsVisuales[jug.indicePersonajeActual];
+
+            // Amarillo = Eligiendo, Verde = Listo
+            panelActual.GetComponent<Image>().color = jug.estaListo ? Color.green : Color.yellow;
+
+            Transform objetoTexto = panelActual.transform.Find("STAR");
+            if (objetoTexto != null)
+            {
+                TMP_Text texto = objetoTexto.GetComponent<TMP_Text>();
+                if (texto != null)
+                {
+                    string nombreJugador = "P" + (jug.miIDJugador + 1);
+                    texto.text = jug.estaListo ? nombreJugador + " LISTO" : nombreJugador + " ELIGIENDO...";
+                }
+            }
         }
     }
 
-    private void ActualizarInterfaz()
+    public void ComprobarTodosListos()
     {
-        for (int i = 0; i < slotsVisuales.Length; i++)
+        bool todosListos = true;
+        foreach (ControladorLobby jug in jugadoresConectados)
         {
-            // 1. Cambiamos el color del panel de fondo
-            slotsVisuales[i].GetComponent<Image>().color = (i < jugadoresUnidos) ? Color.white : new Color(0.3f, 0.3f, 0.3f);
+            if (!jug.estaListo) todosListos = false;
+        }
 
-            // 2. Buscamos al hijo por su nombre EXACTO, sin importar su orden
-            Transform objetoTexto = slotsVisuales[i].transform.Find("STAR");
-
-            if (objetoTexto != null)
-            {
-                string mensaje = (i < jugadoresUnidos) ? "LISTO" : "BOT";
-
-                // Intenta cambiarlo si es un Texto Clásico
-                Text textoClasico = objetoTexto.GetComponent<Text>();
-                if (textoClasico != null) textoClasico.text = mensaje;
-
-                // Intenta cambiarlo si es un TextMeshPro
-                TMP_Text textoModerno = objetoTexto.GetComponent<TMP_Text>();
-                if (textoModerno != null) textoModerno.text = mensaje;
-            }
-            else
-            {
-                Debug.LogWarning("¡Cuidado! El panel " + slotsVisuales[i].name + " no tiene un hijo llamado 'STAR'.");
-            }
+        if (jugadoresConectados.Count > 0 && todosListos)
+        {
+            botonEmpezar.interactable = true;
         }
     }
 
     public void ConfirmarYJugar()
     {
-        DatosGlobales.cantidadJugadoresHumanos = jugadoresUnidos;
         SceneManager.LoadScene("Escena_3_Juego");
     }
 }

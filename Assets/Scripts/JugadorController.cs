@@ -107,24 +107,22 @@ public class JugadorController : Entidad
 
     public override void Morir()
     {
-        // 1. Marcar como muerto internamente
         base.Morir();
-
         Debug.Log(gameObject.name + " ha muerto.");
 
-        // 2. Avisamos al GameManager para ver si todos perdieron
         if (GameManager.Instancia != null)
         {
             GameManager.Instancia.VerificarEstadoJugadores();
         }
 
-        // 3. Soltamos la cámara si nos estaba siguiendo
-        if (Camera.main != null && Camera.main.transform.parent == this.transform)
+        // --- CÓDIGO ACTUALIZADO DE LA CÁMARA ---
+        // Busca si tiene una cámara asignada como hija y la suelta en el mapa
+        Camera miCamara = GetComponentInChildren<Camera>();
+        if (miCamara != null)
         {
-            Camera.main.transform.SetParent(null);
+            miCamara.transform.SetParent(null);
         }
 
-        // 4. El personaje desaparece
         gameObject.SetActive(false);
     }
 }
