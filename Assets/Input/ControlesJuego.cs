@@ -127,6 +127,15 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Recargar"",
+                    ""type"": ""Button"",
+                    ""id"": ""ac2d95b9-035a-4839-80c2-58c7389cac6c"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -261,6 +270,28 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
                     ""action"": ""Disparar"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9bd20e0a-5ea7-4e89-89c0-6058ba18db09"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Recargar"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""6361fddd-9963-46e6-b288-b0e388730645"",
+                    ""path"": ""<DualShockGamepad>/buttonWest"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Recargar"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -301,6 +332,7 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
         m_Jugador_Apuntar = m_Jugador.FindAction("Apuntar", throwIfNotFound: true);
         m_Jugador_Unirse = m_Jugador.FindAction("Unirse", throwIfNotFound: true);
         m_Jugador_Disparar = m_Jugador.FindAction("Disparar", throwIfNotFound: true);
+        m_Jugador_Recargar = m_Jugador.FindAction("Recargar", throwIfNotFound: true);
     }
 
     ~@ControlesJuego()
@@ -385,6 +417,7 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
     private readonly InputAction m_Jugador_Apuntar;
     private readonly InputAction m_Jugador_Unirse;
     private readonly InputAction m_Jugador_Disparar;
+    private readonly InputAction m_Jugador_Recargar;
     /// <summary>
     /// Provides access to input actions defined in input action map "Jugador".
     /// </summary>
@@ -412,6 +445,10 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Jugador/Disparar".
         /// </summary>
         public InputAction @Disparar => m_Wrapper.m_Jugador_Disparar;
+        /// <summary>
+        /// Provides access to the underlying input action "Jugador/Recargar".
+        /// </summary>
+        public InputAction @Recargar => m_Wrapper.m_Jugador_Recargar;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -450,6 +487,9 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
             @Disparar.started += instance.OnDisparar;
             @Disparar.performed += instance.OnDisparar;
             @Disparar.canceled += instance.OnDisparar;
+            @Recargar.started += instance.OnRecargar;
+            @Recargar.performed += instance.OnRecargar;
+            @Recargar.canceled += instance.OnRecargar;
         }
 
         /// <summary>
@@ -473,6 +513,9 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
             @Disparar.started -= instance.OnDisparar;
             @Disparar.performed -= instance.OnDisparar;
             @Disparar.canceled -= instance.OnDisparar;
+            @Recargar.started -= instance.OnRecargar;
+            @Recargar.performed -= instance.OnRecargar;
+            @Recargar.canceled -= instance.OnRecargar;
         }
 
         /// <summary>
@@ -567,5 +610,12 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnDisparar(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Recargar" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnRecargar(InputAction.CallbackContext context);
     }
 }

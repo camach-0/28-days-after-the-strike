@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d3415ea22f9ce9498053ca2b863b94e, type: 3}
+  m_Name: Escopeta_Datos
+  m_EditorClassIdentifier: 
+  nombreArma: Escoptea
+  iconoArma: {fileID: 0}
+  danoBase: 40
+  cadenciaAtaque: 3
+  sonidoAtaque: {fileID: 0}
+  municionMaxima: 120
+  tamanoCargador: 12
+  tiempoRecarga: 3
+  alcance: 10
+  dispersionBalas: 35
+  perdigonesPorDisparo: 8

@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 
-public class Entidad : MonoBehaviour
+public class Entidad : MonoBehaviour, IReceptorDano
 {
     [Header("Estadísticas Base")]
     public float vidaMaxima = 100f;
@@ -85,5 +85,12 @@ public class Entidad : MonoBehaviour
     {
         if (estaMuerto) return;
         estaMuerto = true;
+    }
+    public void RecibirDano(float cantidad, Vector2 direccion, float empuje)
+    {
+        // Por ahora lo conectamos a nuestra función de daño existente
+        RecibirDano(cantidad);
+
+        // El empuje (Knockback) lo programaremos después para los zombis
     }
 }

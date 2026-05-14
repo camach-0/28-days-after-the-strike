@@ -119,6 +119,56 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &5959719057417400371
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1478039245125816595}
+  - component: {fileID: 4008101675350459329}
+  m_Layer: 0
+  m_Name: arma
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1478039245125816595
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5959719057417400371}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 529070942574236138}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4008101675350459329
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5959719057417400371}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3ecfc7b8eff1cc14ba3d1305f1a88092, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  datosFuego: {fileID: 11400000, guid: 086224398b56b40449cf2c6aa1a1ffa5, type: 2}
+  puntoDisparo: {fileID: 2963283873271413508}
+  balaPrefab: {fileID: 6233821941795280886, guid: 49c8ae99b5a71634b80191319a0d04f8, type: 3}
+  municionActualCargador: 0
+  municionActualReserva: 0
+  estaRecargando: 0
 --- !u!1 &6620876996589692441
 GameObject:
   m_ObjectHideFlags: 0
@@ -149,6 +199,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 464230095445022442}
+  - {fileID: 1478039245125816595}
   m_Father: {fileID: 7519346433570874510}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &7676652514911888881
@@ -292,8 +343,7 @@ MonoBehaviour:
   tiempoInvulnerabilidad: 0.4
   duracionFlashRojo: 0.15
   pivoteArma: {fileID: 529070942574236138}
-  balaPrefab: {fileID: 6233821941795280886, guid: 49c8ae99b5a71634b80191319a0d04f8, type: 3}
-  puntoDisparo: {fileID: 2963283873271413508}
+  armaEquipada: {fileID: 4008101675350459329}
 --- !u!114 &5420802958281585418
 MonoBehaviour:
   m_ObjectHideFlags: 0

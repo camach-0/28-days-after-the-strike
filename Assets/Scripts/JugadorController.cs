@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.UI; // ¡NUEVO! Necesario para controlar las barras de vida
+using UnityEngine.UI;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class JugadorController : Entidad
@@ -11,11 +11,10 @@ public class JugadorController : Entidad
 
     [Header("Referencias Visuales")]
     public Transform pivoteArma;
-    
 
-    [Header("Armas y Disparo")]
-    public GameObject balaPrefab;
-    public Transform puntoDisparo;
+    // --- NUEVO: Conexión con el sistema de armas de tu compañero ---
+    [Header("Conexión con el Arma")]
+    public ControladorArmaFuego armaEquipada;
 
     [Header("Filtros Anti-Bugs")]
     private Vector2 direccionPendiente;
@@ -45,8 +44,6 @@ public class JugadorController : Entidad
         }
     }
 
-    
-
     public void OnMover(InputValue valor)
     {
         Vector2 inputBruto = valor.Get<Vector2>();
@@ -67,12 +64,25 @@ public class JugadorController : Entidad
         }
     }
 
+    // --- ACTUALIZADO: Ahora le pedimos al arma que dispare ---
     public void OnDisparar(InputValue valor)
     {
-        if (valor.isPressed && !estaMuerto && balaPrefab != null && puntoDisparo != null)
+        if (estaMuerto) return;
+
+        if (valor.isPressed && armaEquipada != null)
         {
-            GameObject nuevaBala = Instantiate(balaPrefab, puntoDisparo.position, Quaternion.identity);
-            nuevaBala.GetComponent<Bala>().ConfigurarDireccion(direccionMirando);
+            armaEquipada.ApretarGatillo();
+        }
+    }
+
+    // --- NUEVO: Acción para recargar ---
+    public void OnRecargar(InputValue valor)
+    {
+        if (estaMuerto) return;
+
+        if (valor.isPressed && armaEquipada != null)
+        {
+            armaEquipada.IniciarRecarga();
         }
     }
 

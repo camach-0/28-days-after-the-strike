@@ -1829,6 +1829,14 @@ PrefabInstance:
       propertyPath: barraDeVidaUI
       value: 
       objectReference: {fileID: 590896335}
+    - target: {fileID: 4008101675350459329, guid: 08a7d2134f2927f4185ea9f0c945b4c2, type: 3}
+      propertyPath: balaPrefab
+      value: 
+      objectReference: {fileID: 6233821941795280886, guid: 49c8ae99b5a71634b80191319a0d04f8, type: 3}
+    - target: {fileID: 4008101675350459329, guid: 08a7d2134f2927f4185ea9f0c945b4c2, type: 3}
+      propertyPath: puntoDisparo
+      value: 
+      objectReference: {fileID: 1320262598}
     - target: {fileID: 5420802958281585418, guid: 08a7d2134f2927f4185ea9f0c945b4c2, type: 3}
       propertyPath: m_Enabled
       value: 0

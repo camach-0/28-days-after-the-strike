@@ -104,7 +104,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   velocidad: 15
   tiempoVida: 2
-  dano: 25
+  dano: 50
 --- !u!58 &9141678653976549335
 CircleCollider2D:
   m_ObjectHideFlags: 0
