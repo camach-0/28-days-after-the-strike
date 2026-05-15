@@ -23,6 +23,7 @@ public class JugadorController : Entidad
     // NUEVO: Para saber si mantiene apretado el gatillo
     private bool estaDisparando = false;
 
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -58,8 +59,27 @@ public class JugadorController : Entidad
     public void OnDisparar(InputValue valor)
     {
         if (estaMuerto) return;
-        // isPressed es true cuando aprietas, y false cuando sueltas el botón
+
+        // isPressed es true cuando el dedo aprieta, false cuando suelta
         estaDisparando = valor.isPressed;
+
+        // LÓGICA SEMIAUTOMÁTICA O RÁFAGA (Al hacer un solo clic)
+        if (valor.isPressed && armaEquipada != null)
+        {
+            if (armaEquipada is ControladorArmaFuego armaFuego)
+            {
+                // Si el arma NO es automática (Escopeta, Pistola, SCAR), dispara aquí
+                if (!armaFuego.datosFuego.esAutomatica || armaFuego.datosFuego.esRafaga)
+                {
+                    armaEquipada.IntentarAtaque(direccionMirando);
+                }
+            }
+            else
+            {
+                // Armas Melee o Arrojadizas atacan con clic por defecto
+                armaEquipada.IntentarAtaque(direccionMirando);
+            }
+        }
     }
 
     public void OnRecargar(InputValue valor)
@@ -111,7 +131,14 @@ public class JugadorController : Entidad
         // AQUI EJECUTAMOS EL DISPARO CONTINUO
         if (estaDisparando && armaEquipada != null)
         {
-            armaEquipada.IntentarAtaque(direccionMirando);
+            if (armaEquipada is ControladorArmaFuego armaFuego)
+            {
+                // Si el arma ES automática y NO es ráfaga (Uzi, M16)
+                if (armaFuego.datosFuego.esAutomatica && !armaFuego.datosFuego.esRafaga)
+                {
+                    armaEquipada.IntentarAtaque(direccionMirando);
+                }
+            }
         }
     }
 

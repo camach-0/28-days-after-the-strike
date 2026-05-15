@@ -1,7 +1,6 @@
 using UnityEngine;
 using System.Collections;
 
-// AHORA HEREDA DE ControladorArma (como en tu diagrama)
 public class ControladorArmaFuego : ControladorArma
 {
     [Header("Configuración del Arma")]
@@ -13,6 +12,9 @@ public class ControladorArmaFuego : ControladorArma
     public int municionActualReserva;
     public bool estaRecargando = false;
 
+    // NUEVO: Bloquea el arma mientras dispara una ráfaga
+    private bool estaDisparandoRafaga = false;
+
     void Start()
     {
         if (datosFuego != null)
@@ -22,24 +24,61 @@ public class ControladorArmaFuego : ControladorArma
         }
     }
 
-    // Sobrescribimos el método del padre
     public override void IntentarAtaque(Vector2 direccionApuntado)
     {
-        if (datosFuego == null || estaRecargando) return;
+        // Si no hay datos, está recargando, o está a mitad de una ráfaga, no hacemos nada
+        if (datosFuego == null || estaRecargando || estaDisparandoRafaga) return;
 
-        // AQUÍ SE APLICA LA CADENCIA
+        // Comprobamos la cadencia normal
         if (Time.time >= tiempoProximoAtaque && municionActualCargador > 0)
         {
-            tiempoProximoAtaque = Time.time + datosFuego.cadenciaAtaque;
-            municionActualCargador--;
-
-            EjecutarDisparo(direccionApuntado);
-
-            if (municionActualCargador <= 0)
+            if (datosFuego.esRafaga)
             {
-                IniciarRecarga();
+                // DISPARO DE RÁFAGA (SCAR)
+                StartCoroutine(CorrutinaRafaga(direccionApuntado));
+            }
+            else
+            {
+                // DISPARO NORMAL (Auto / Semiauto / Escopeta)
+                tiempoProximoAtaque = Time.time + datosFuego.cadenciaAtaque;
+                GastarBalaYDisparar(direccionApuntado);
             }
         }
+    }
+
+    // Separo esta lógica para no repetir código
+    private void GastarBalaYDisparar(Vector2 direccionApuntado)
+    {
+        municionActualCargador--;
+        EjecutarDisparo(direccionApuntado);
+
+        if (municionActualCargador <= 0)
+        {
+            IniciarRecarga();
+        }
+    }
+
+    // LA MAGIA DE LA RÁFAGA
+    IEnumerator CorrutinaRafaga(Vector2 direccionApuntado)
+    {
+        estaDisparandoRafaga = true;
+
+        for (int i = 0; i < datosFuego.balasPorRafaga; i++)
+        {
+            if (municionActualCargador <= 0) break; // Corta la ráfaga si te quedas sin balas
+
+            GastarBalaYDisparar(direccionApuntado);
+
+            // Pausa minúscula entre las balas de la ráfaga
+            if (municionActualCargador > 0 && i < datosFuego.balasPorRafaga - 1)
+            {
+                yield return new WaitForSeconds(datosFuego.tiempoEntreBalasRafaga);
+            }
+        }
+
+        // Aplicamos el cooldown general DESPUÉS de que termina la ráfaga
+        tiempoProximoAtaque = Time.time + datosFuego.cadenciaAtaque;
+        estaDisparandoRafaga = false;
     }
 
     void EjecutarDisparo(Vector2 direccionApuntado)
@@ -49,25 +88,18 @@ public class ControladorArmaFuego : ControladorArma
             AudioSource.PlayClipAtPoint(datosFuego.sonidoAtaque, transform.position);
         }
 
-        // Bucle para escopetas (si es pistola, perdigonesPorDisparo será 1)
         for (int i = 0; i < datosFuego.perdigonesPorDisparo; i++)
         {
-            // Calculamos el ángulo hacia donde mira el jugador en grados
             float anguloBase = Mathf.Atan2(direccionApuntado.y, direccionApuntado.x) * Mathf.Rad2Deg;
-
-            // Le sumamos la dispersión aleatoria
             float anguloDispersion = Random.Range(-datosFuego.dispersionBalas, datosFuego.dispersionBalas);
-
-            // Creamos la rotación final
             Quaternion rotacionFinalBala = Quaternion.Euler(0, 0, anguloBase + anguloDispersion);
 
-            // Instanciamos
             GameObject nuevaBala = Instantiate(balaPrefab, puntoDisparo.position, rotacionFinalBala);
-
-            // Extraemos el vector de dirección pura a partir de la rotación
             Vector2 direccionFinal = rotacionFinalBala * Vector2.right;
 
             nuevaBala.GetComponent<Bala>().ConfigurarDireccion(direccionFinal);
+
+            // Asumo que danoBase viene de la clase base DatosArma
             nuevaBala.GetComponent<Bala>().dano = (int)datosFuego.danoBase;
         }
     }
@@ -85,7 +117,6 @@ public class ControladorArmaFuego : ControladorArma
         estaRecargando = true;
         Debug.Log("Recargando...");
 
-        // Simulamos el tiempo de recarga
         yield return new WaitForSeconds(datosFuego.tiempoRecarga);
 
         int balasFaltantes = datosFuego.tamanoCargador - municionActualCargador;

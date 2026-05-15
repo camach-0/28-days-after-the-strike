@@ -121,12 +121,12 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": ""Disparar"",
-                    ""type"": ""Button"",
+                    ""type"": ""Value"",
                     ""id"": ""11b4f99e-9ebe-4aa2-b091-70b724b63099"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
-                    ""initialStateCheck"": false
+                    ""initialStateCheck"": true
                 },
                 {
                     ""name"": ""Recargar"",
@@ -136,6 +136,60 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Slot1"",
+                    ""type"": ""Button"",
+                    ""id"": ""a20c4eb6-9377-4ae1-aae2-7c86c1fcfe9a"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Slot2"",
+                    ""type"": ""Button"",
+                    ""id"": ""4597208f-7b32-4ded-aa5f-82e1ae430253"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Slot3"",
+                    ""type"": ""Button"",
+                    ""id"": ""ae3c3a9a-3f35-496e-bdab-10257c82de37"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Slot4"",
+                    ""type"": ""Button"",
+                    ""id"": ""9ae3c312-a5dc-4734-80b5-10dea78ce157"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Slot5"",
+                    ""type"": ""Button"",
+                    ""id"": ""2e20db38-6232-4a79-bf01-2f00bf6b41b0"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""RuedaRaton"",
+                    ""type"": ""Value"",
+                    ""id"": ""5c059436-bc55-4411-9931-9dc8d80ebd71"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -292,6 +346,72 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
                     ""action"": ""Recargar"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""fbd77b3f-8ca6-4a2a-a836-6e7f4612ff45"",
+                    ""path"": ""<Keyboard>/1"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Slot1"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""288f7c38-2a67-431d-be9c-ff0ff47d1096"",
+                    ""path"": ""<Keyboard>/2"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Slot2"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8c2ea3c5-ecf2-4aae-981d-636a6fbb3d91"",
+                    ""path"": ""<Keyboard>/3"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Slot3"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""13c92c5e-95eb-46cd-a5d0-6c4a642f4d89"",
+                    ""path"": ""<Keyboard>/4"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Slot4"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9a969f4b-cc07-4c0e-9bb0-55671abda10a"",
+                    ""path"": ""<Keyboard>/5"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Slot5"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8ee4c16e-d9f4-49e2-86bc-e7cd94d767a7"",
+                    ""path"": ""<Mouse>/scroll/y"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""RuedaRaton"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -333,6 +453,12 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
         m_Jugador_Unirse = m_Jugador.FindAction("Unirse", throwIfNotFound: true);
         m_Jugador_Disparar = m_Jugador.FindAction("Disparar", throwIfNotFound: true);
         m_Jugador_Recargar = m_Jugador.FindAction("Recargar", throwIfNotFound: true);
+        m_Jugador_Slot1 = m_Jugador.FindAction("Slot1", throwIfNotFound: true);
+        m_Jugador_Slot2 = m_Jugador.FindAction("Slot2", throwIfNotFound: true);
+        m_Jugador_Slot3 = m_Jugador.FindAction("Slot3", throwIfNotFound: true);
+        m_Jugador_Slot4 = m_Jugador.FindAction("Slot4", throwIfNotFound: true);
+        m_Jugador_Slot5 = m_Jugador.FindAction("Slot5", throwIfNotFound: true);
+        m_Jugador_RuedaRaton = m_Jugador.FindAction("RuedaRaton", throwIfNotFound: true);
     }
 
     ~@ControlesJuego()
@@ -418,6 +544,12 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
     private readonly InputAction m_Jugador_Unirse;
     private readonly InputAction m_Jugador_Disparar;
     private readonly InputAction m_Jugador_Recargar;
+    private readonly InputAction m_Jugador_Slot1;
+    private readonly InputAction m_Jugador_Slot2;
+    private readonly InputAction m_Jugador_Slot3;
+    private readonly InputAction m_Jugador_Slot4;
+    private readonly InputAction m_Jugador_Slot5;
+    private readonly InputAction m_Jugador_RuedaRaton;
     /// <summary>
     /// Provides access to input actions defined in input action map "Jugador".
     /// </summary>
@@ -449,6 +581,30 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Jugador/Recargar".
         /// </summary>
         public InputAction @Recargar => m_Wrapper.m_Jugador_Recargar;
+        /// <summary>
+        /// Provides access to the underlying input action "Jugador/Slot1".
+        /// </summary>
+        public InputAction @Slot1 => m_Wrapper.m_Jugador_Slot1;
+        /// <summary>
+        /// Provides access to the underlying input action "Jugador/Slot2".
+        /// </summary>
+        public InputAction @Slot2 => m_Wrapper.m_Jugador_Slot2;
+        /// <summary>
+        /// Provides access to the underlying input action "Jugador/Slot3".
+        /// </summary>
+        public InputAction @Slot3 => m_Wrapper.m_Jugador_Slot3;
+        /// <summary>
+        /// Provides access to the underlying input action "Jugador/Slot4".
+        /// </summary>
+        public InputAction @Slot4 => m_Wrapper.m_Jugador_Slot4;
+        /// <summary>
+        /// Provides access to the underlying input action "Jugador/Slot5".
+        /// </summary>
+        public InputAction @Slot5 => m_Wrapper.m_Jugador_Slot5;
+        /// <summary>
+        /// Provides access to the underlying input action "Jugador/RuedaRaton".
+        /// </summary>
+        public InputAction @RuedaRaton => m_Wrapper.m_Jugador_RuedaRaton;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -490,6 +646,24 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
             @Recargar.started += instance.OnRecargar;
             @Recargar.performed += instance.OnRecargar;
             @Recargar.canceled += instance.OnRecargar;
+            @Slot1.started += instance.OnSlot1;
+            @Slot1.performed += instance.OnSlot1;
+            @Slot1.canceled += instance.OnSlot1;
+            @Slot2.started += instance.OnSlot2;
+            @Slot2.performed += instance.OnSlot2;
+            @Slot2.canceled += instance.OnSlot2;
+            @Slot3.started += instance.OnSlot3;
+            @Slot3.performed += instance.OnSlot3;
+            @Slot3.canceled += instance.OnSlot3;
+            @Slot4.started += instance.OnSlot4;
+            @Slot4.performed += instance.OnSlot4;
+            @Slot4.canceled += instance.OnSlot4;
+            @Slot5.started += instance.OnSlot5;
+            @Slot5.performed += instance.OnSlot5;
+            @Slot5.canceled += instance.OnSlot5;
+            @RuedaRaton.started += instance.OnRuedaRaton;
+            @RuedaRaton.performed += instance.OnRuedaRaton;
+            @RuedaRaton.canceled += instance.OnRuedaRaton;
         }
 
         /// <summary>
@@ -516,6 +690,24 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
             @Recargar.started -= instance.OnRecargar;
             @Recargar.performed -= instance.OnRecargar;
             @Recargar.canceled -= instance.OnRecargar;
+            @Slot1.started -= instance.OnSlot1;
+            @Slot1.performed -= instance.OnSlot1;
+            @Slot1.canceled -= instance.OnSlot1;
+            @Slot2.started -= instance.OnSlot2;
+            @Slot2.performed -= instance.OnSlot2;
+            @Slot2.canceled -= instance.OnSlot2;
+            @Slot3.started -= instance.OnSlot3;
+            @Slot3.performed -= instance.OnSlot3;
+            @Slot3.canceled -= instance.OnSlot3;
+            @Slot4.started -= instance.OnSlot4;
+            @Slot4.performed -= instance.OnSlot4;
+            @Slot4.canceled -= instance.OnSlot4;
+            @Slot5.started -= instance.OnSlot5;
+            @Slot5.performed -= instance.OnSlot5;
+            @Slot5.canceled -= instance.OnSlot5;
+            @RuedaRaton.started -= instance.OnRuedaRaton;
+            @RuedaRaton.performed -= instance.OnRuedaRaton;
+            @RuedaRaton.canceled -= instance.OnRuedaRaton;
         }
 
         /// <summary>
@@ -617,5 +809,47 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnRecargar(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Slot1" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSlot1(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Slot2" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSlot2(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Slot3" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSlot3(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Slot4" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSlot4(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Slot5" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSlot5(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "RuedaRaton" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnRuedaRaton(InputAction.CallbackContext context);
     }
 }

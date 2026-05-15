@@ -1,5 +1,7 @@
 using UnityEngine;
 
+// Esto obliga a Unity a asegurarse de que el objeto tenga un Rigidbody2D
+[RequireComponent(typeof(Rigidbody2D))]
 public class Bala : MonoBehaviour
 {
     [Header("Configuración")]
@@ -14,6 +16,12 @@ public class Bala : MonoBehaviour
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+
+        // CONFIGURACIÓN DE SEGURIDAD ANTIBUGS DESDE EL CÓDIGO
+        // Forzamos que sea dinámico, sin gravedad y con detección continua de choques
+        rb.bodyType = RigidbodyType2D.Dynamic;
+        rb.gravityScale = 0f;
+        rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
     }
 
     void Start()
@@ -25,15 +33,21 @@ public class Bala : MonoBehaviour
     {
         if (rb != null)
         {
-            // Usamos velocity, es más estándar y menos propenso a bugs
-            rb.linearVelocity = direccion.normalized * velocidad;
+            Vector2 velocidadFinal = direccion.normalized * velocidad;
+            rb.linearVelocity = velocidadFinal;
+
+            // EL CHIVATO: Esto aparecerá en la consola de Unity
+            Debug.Log($"Bala creada | Dir: {direccion.normalized} | Velocidad en Inspector: {velocidad} | Fuerza Final: {velocidadFinal}");
         }
     }
 
     private void OnTriggerEnter2D(Collider2D colision)
     {
-        // 1. Evitar chocar con el propio jugador que dispara
+        // 1. Ignoramos al jugador
         if (colision.CompareTag("Player")) return;
+
+        // 2. NUEVO: Ignoramos otras balas para que la escopeta funcione
+        if (colision.CompareTag("Bala")) return;
 
         IReceptorDano objetivo = colision.GetComponent<IReceptorDano>();
 

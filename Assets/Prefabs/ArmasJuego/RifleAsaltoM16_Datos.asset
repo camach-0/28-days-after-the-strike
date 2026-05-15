@@ -10,16 +10,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4d3415ea22f9ce9498053ca2b863b94e, type: 3}
-  m_Name: Escopeta_Datos
+  m_Name: RifleAsaltoM16_Datos
   m_EditorClassIdentifier: 
-  nombreArma: Escoptea
+  nombreArma: RifleM16
   iconoArma: {fileID: 0}
-  danoBase: 150
-  cadenciaAtaque: 0.2
+  danoBase: 33
+  cadenciaAtaque: 0.15
   sonidoAtaque: {fileID: 0}
-  municionMaxima: 120
-  tamanoCargador: 12
-  tiempoRecarga: 3
-  alcance: 50
-  dispersionBalas: 35
-  perdigonesPorDisparo: 8
+  esAutomatica: 1
+  esRafaga: 0
+  balasPorRafaga: 3
+  tiempoEntreBalasRafaga: 0.05
+  municionMaxima: 360
+  tamanoCargador: 50
+  tiempoRecarga: 1
+  dispersionBalas: 0
+  perdigonesPorDisparo: 1
+  alcance: 35
