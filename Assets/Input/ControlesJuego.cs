@@ -190,6 +190,24 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""CambioRapido"",
+                    ""type"": ""Button"",
+                    ""id"": ""49206a0b-3dad-4364-b37a-b6fed9c368d8"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Interactuar"",
+                    ""type"": ""Button"",
+                    ""id"": ""ed96642e-2d67-4a0f-a1e2-777a6385df21"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -382,8 +400,52 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
+                    ""id"": ""902ff44f-617d-40cf-b3b6-e81b41bedfba"",
+                    ""path"": ""<Gamepad>/dpad/left"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Slot3"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d9f4e897-3f29-4ed2-ad69-27937e0a1de3"",
+                    ""path"": ""<DualShockGamepad>/dpad/left"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Slot3"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
                     ""id"": ""13c92c5e-95eb-46cd-a5d0-6c4a642f4d89"",
                     ""path"": ""<Keyboard>/4"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Slot4"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""0eb1b3e6-15c3-43bf-97ac-73c4364ab03f"",
+                    ""path"": ""<Gamepad>/dpad/right"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Slot4"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""65aa6a29-b5a1-4de9-bcd5-08db71c87d61"",
+                    ""path"": ""<DualShockGamepad>/dpad/right"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -404,12 +466,100 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
+                    ""id"": ""606980ee-4c68-412a-847c-03aba8a4b837"",
+                    ""path"": ""<Gamepad>/dpad/down"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Slot5"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""96acfe21-9a0e-4a8c-acb0-857376eccbd2"",
+                    ""path"": ""<DualShockGamepad>/dpad/down"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Slot5"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""2d158370-3ed4-446b-9781-fcb70fb8c1c4"",
+                    ""path"": """",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Slot5"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
                     ""id"": ""8ee4c16e-d9f4-49e2-86bc-e7cd94d767a7"",
                     ""path"": ""<Mouse>/scroll/y"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""RuedaRaton"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""dcf8b559-99f8-468e-a0d7-e8ee7e2b4ff0"",
+                    ""path"": ""<DualShockGamepad>/buttonNorth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""CambioRapido"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""730e5094-0522-4de3-869f-acafe4905059"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""CambioRapido"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""48bdf943-aee7-43d5-8bbe-525b8d3c7ca5"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Interactuar"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""256741be-814f-4c37-9261-260024dcaf12"",
+                    ""path"": ""<DualShockGamepad>/buttonWest"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Interactuar"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""901cb124-8608-464d-b63b-a2f72d2a2f12"",
+                    ""path"": ""<Gamepad>/buttonWest"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Interactuar"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -459,6 +609,8 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
         m_Jugador_Slot4 = m_Jugador.FindAction("Slot4", throwIfNotFound: true);
         m_Jugador_Slot5 = m_Jugador.FindAction("Slot5", throwIfNotFound: true);
         m_Jugador_RuedaRaton = m_Jugador.FindAction("RuedaRaton", throwIfNotFound: true);
+        m_Jugador_CambioRapido = m_Jugador.FindAction("CambioRapido", throwIfNotFound: true);
+        m_Jugador_Interactuar = m_Jugador.FindAction("Interactuar", throwIfNotFound: true);
     }
 
     ~@ControlesJuego()
@@ -550,6 +702,8 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
     private readonly InputAction m_Jugador_Slot4;
     private readonly InputAction m_Jugador_Slot5;
     private readonly InputAction m_Jugador_RuedaRaton;
+    private readonly InputAction m_Jugador_CambioRapido;
+    private readonly InputAction m_Jugador_Interactuar;
     /// <summary>
     /// Provides access to input actions defined in input action map "Jugador".
     /// </summary>
@@ -605,6 +759,14 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Jugador/RuedaRaton".
         /// </summary>
         public InputAction @RuedaRaton => m_Wrapper.m_Jugador_RuedaRaton;
+        /// <summary>
+        /// Provides access to the underlying input action "Jugador/CambioRapido".
+        /// </summary>
+        public InputAction @CambioRapido => m_Wrapper.m_Jugador_CambioRapido;
+        /// <summary>
+        /// Provides access to the underlying input action "Jugador/Interactuar".
+        /// </summary>
+        public InputAction @Interactuar => m_Wrapper.m_Jugador_Interactuar;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -664,6 +826,12 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
             @RuedaRaton.started += instance.OnRuedaRaton;
             @RuedaRaton.performed += instance.OnRuedaRaton;
             @RuedaRaton.canceled += instance.OnRuedaRaton;
+            @CambioRapido.started += instance.OnCambioRapido;
+            @CambioRapido.performed += instance.OnCambioRapido;
+            @CambioRapido.canceled += instance.OnCambioRapido;
+            @Interactuar.started += instance.OnInteractuar;
+            @Interactuar.performed += instance.OnInteractuar;
+            @Interactuar.canceled += instance.OnInteractuar;
         }
 
         /// <summary>
@@ -708,6 +876,12 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
             @RuedaRaton.started -= instance.OnRuedaRaton;
             @RuedaRaton.performed -= instance.OnRuedaRaton;
             @RuedaRaton.canceled -= instance.OnRuedaRaton;
+            @CambioRapido.started -= instance.OnCambioRapido;
+            @CambioRapido.performed -= instance.OnCambioRapido;
+            @CambioRapido.canceled -= instance.OnCambioRapido;
+            @Interactuar.started -= instance.OnInteractuar;
+            @Interactuar.performed -= instance.OnInteractuar;
+            @Interactuar.canceled -= instance.OnInteractuar;
         }
 
         /// <summary>
@@ -851,5 +1025,19 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnRuedaRaton(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "CambioRapido" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnCambioRapido(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Interactuar" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnInteractuar(InputAction.CallbackContext context);
     }
 }

@@ -473,6 +473,7 @@ GameObject:
   - component: {fileID: 2940224374213443736}
   - component: {fileID: 417290587364373004}
   - component: {fileID: 1646079377948078242}
+  - component: {fileID: 1136862405953723566}
   m_Layer: 0
   m_Name: JugadorPrueba
   m_TagString: Player
@@ -725,6 +726,19 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+--- !u!114 &1136862405953723566
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7676652514911888881}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 63659da532d963844b2242778ce4cbf6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pivoteArma: {fileID: 529070942574236138}
 --- !u!1 &8904184888033860037
 GameObject:
   m_ObjectHideFlags: 0
