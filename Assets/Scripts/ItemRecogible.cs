@@ -26,8 +26,8 @@ public class ItemRecogible : MonoBehaviour
         ControladorArma nuevoControlador = nuevaArmaObj.GetComponent<ControladorArma>();
         inventario.ranuras[indiceSlot] = nuevoControlador;
 
-        // 4. Forzamos al jugador a equiparse esta nueva arma automáticamente
-        inventario.CambiarSlot(indiceSlot);
+        // 4. Forzamos al jugador a equiparse esta nueva arma (le pasamos 'true')
+        inventario.CambiarSlot(indiceSlot, true);
 
         // 5. Destruimos el objeto brillante del suelo porque ya lo recogimos
         Destroy(gameObject);

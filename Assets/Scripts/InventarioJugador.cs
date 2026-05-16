@@ -37,12 +37,14 @@ public class InventarioJugador : MonoBehaviour
     }
 
     // Método para cambiar a un slot específico (0 al 4)
-    public void CambiarSlot(int nuevoIndice)
+    public void CambiarSlot(int nuevoIndice, bool forzar = false)
     {
-        // Filtros de seguridad
-        if (nuevoIndice < 0 || nuevoIndice > 4) return; // Fuera de rango
-        if (nuevoIndice == indiceSlotActual) return;    // Ya tenemos esta arma en la mano
-        if (ranuras[nuevoIndice] == null) return;       // El slot está vacío, no hacemos nada
+        if (nuevoIndice < 0 || nuevoIndice > 4) return;
+
+        // Si no estamos forzando, y ya tenemos esta arma, ignoramos
+        if (!forzar && nuevoIndice == indiceSlotActual) return;
+
+        if (ranuras[nuevoIndice] == null) return;
 
         ActualizarArmaActiva(nuevoIndice);
     }

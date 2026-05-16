@@ -23,6 +23,14 @@ public class ControladorArmaFuego : ControladorArma
             municionActualReserva = datosFuego.municionMaxima;
         }
     }
+    // Unity ejecuta esto automáticamente justo cuando el arma se guarda o se apaga
+    private void OnDisable()
+    {
+        // Destrabamos el arma al guardarla en el inventario
+        estaRecargando = false;
+        // Nota: Si tienes alguna otra variable de tiempo (como 'puedeDisparar' o algo similar), 
+        // ponla también en su estado normal aquí.
+    }
 
     public override void IntentarAtaque(Vector2 direccionApuntado)
     {
