@@ -13,6 +13,9 @@ public class JugadorController : Entidad
     public Camera camaraPrincipal;
     private bool usandoRaton = true;
 
+    [Header("Linterna")]
+    public GameObject objetoLinterna;
+
     [Header("Referencias Visuales")]
     public Transform pivoteArma;
 
@@ -149,4 +152,11 @@ public class JugadorController : Entidad
     }
 
     public override void Morir() { /* Tu lógica de muerte intacta */ }
+    public void OnLinterna(InputValue valor)
+    {
+        if (valor.isPressed && objetoLinterna != null)
+        {
+            objetoLinterna.SetActive(!objetoLinterna.activeSelf);
+        }
+    }
 }
