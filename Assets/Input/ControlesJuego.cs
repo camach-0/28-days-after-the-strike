@@ -138,7 +138,7 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Slot1"",
+                    ""name"": ""ArmaPrincipal"",
                     ""type"": ""Button"",
                     ""id"": ""a20c4eb6-9377-4ae1-aae2-7c86c1fcfe9a"",
                     ""expectedControlType"": """",
@@ -147,7 +147,7 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Slot2"",
+                    ""name"": ""ArmaSecundaria"",
                     ""type"": ""Button"",
                     ""id"": ""4597208f-7b32-4ded-aa5f-82e1ae430253"",
                     ""expectedControlType"": """",
@@ -156,7 +156,7 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Slot3"",
+                    ""name"": ""Arojadizos"",
                     ""type"": ""Button"",
                     ""id"": ""ae3c3a9a-3f35-496e-bdab-10257c82de37"",
                     ""expectedControlType"": """",
@@ -165,7 +165,7 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Slot4"",
+                    ""name"": ""Botiquin"",
                     ""type"": ""Button"",
                     ""id"": ""9ae3c312-a5dc-4734-80b5-10dea78ce157"",
                     ""expectedControlType"": """",
@@ -174,7 +174,7 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Slot5"",
+                    ""name"": ""Pildoras"",
                     ""type"": ""Button"",
                     ""id"": ""2e20db38-6232-4a79-bf01-2f00bf6b41b0"",
                     ""expectedControlType"": """",
@@ -204,6 +204,24 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
                     ""name"": ""Interactuar"",
                     ""type"": ""Button"",
                     ""id"": ""ed96642e-2d67-4a0f-a1e2-777a6385df21"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Linterna"",
+                    ""type"": ""Button"",
+                    ""id"": ""0236ec38-30ad-4a7d-9cec-eef3cb77bf6f"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Saltar/Dash"",
+                    ""type"": ""Button"",
+                    ""id"": ""85ba7d62-02d6-42ae-9533-1cd5f88df513"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
@@ -357,7 +375,7 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""6361fddd-9963-46e6-b288-b0e388730645"",
-                    ""path"": ""<DualShockGamepad>/buttonWest"",
+                    ""path"": ""<Gamepad>/buttonEast"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -372,7 +390,18 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Slot1"",
+                    ""action"": ""ArmaPrincipal"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""40d06487-1fa3-4839-ac92-2e002db54667"",
+                    ""path"": """",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ArmaPrincipal"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -383,7 +412,7 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Slot2"",
+                    ""action"": ""ArmaSecundaria"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -394,7 +423,7 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Slot3"",
+                    ""action"": ""Arojadizos"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -405,18 +434,7 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Slot3"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""d9f4e897-3f29-4ed2-ad69-27937e0a1de3"",
-                    ""path"": ""<DualShockGamepad>/dpad/left"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Slot3"",
+                    ""action"": ""Arojadizos"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -427,29 +445,18 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Slot4"",
+                    ""action"": ""Botiquin"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
                 {
                     ""name"": """",
-                    ""id"": ""0eb1b3e6-15c3-43bf-97ac-73c4364ab03f"",
-                    ""path"": ""<Gamepad>/dpad/right"",
+                    ""id"": ""6baeef90-2fa3-49d0-b094-1c36f600df19"",
+                    ""path"": ""<Gamepad>/dpad/down"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Slot4"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""65aa6a29-b5a1-4de9-bcd5-08db71c87d61"",
-                    ""path"": ""<DualShockGamepad>/dpad/right"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Slot4"",
+                    ""action"": ""Botiquin"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -460,40 +467,18 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Slot5"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""606980ee-4c68-412a-847c-03aba8a4b837"",
-                    ""path"": ""<Gamepad>/dpad/down"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Slot5"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""96acfe21-9a0e-4a8c-acb0-857376eccbd2"",
-                    ""path"": ""<DualShockGamepad>/dpad/down"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Slot5"",
+                    ""action"": ""Pildoras"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
                 {
                     ""name"": """",
                     ""id"": ""2d158370-3ed4-446b-9781-fcb70fb8c1c4"",
-                    ""path"": """",
+                    ""path"": ""<Gamepad>/dpad/right"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Slot5"",
+                    ""action"": ""Pildoras"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -511,7 +496,7 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""dcf8b559-99f8-468e-a0d7-e8ee7e2b4ff0"",
-                    ""path"": ""<DualShockGamepad>/buttonNorth"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -522,7 +507,7 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""730e5094-0522-4de3-869f-acafe4905059"",
-                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""path"": ""<Keyboard>/q"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -543,8 +528,8 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""256741be-814f-4c37-9261-260024dcaf12"",
-                    ""path"": ""<DualShockGamepad>/buttonWest"",
+                    ""id"": ""901cb124-8608-464d-b63b-a2f72d2a2f12"",
+                    ""path"": ""<Gamepad>/buttonWest"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -554,12 +539,45 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""901cb124-8608-464d-b63b-a2f72d2a2f12"",
-                    ""path"": ""<Gamepad>/buttonWest"",
+                    ""id"": ""bf8468db-f302-4556-ac0d-4d4604c7356f"",
+                    ""path"": ""<Keyboard>/f"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Interactuar"",
+                    ""action"": ""Linterna"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""acefc423-384d-4cd0-90ae-b1afcb9c528d"",
+                    ""path"": ""<Gamepad>/dpad/up"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Linterna"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c1be3e32-582b-4510-ad45-2ff8a4c5cd85"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Saltar/Dash"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f06e1c5b-545b-4abb-a4b3-f40f02c498cf"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Saltar/Dash"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -603,14 +621,16 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
         m_Jugador_Unirse = m_Jugador.FindAction("Unirse", throwIfNotFound: true);
         m_Jugador_Disparar = m_Jugador.FindAction("Disparar", throwIfNotFound: true);
         m_Jugador_Recargar = m_Jugador.FindAction("Recargar", throwIfNotFound: true);
-        m_Jugador_Slot1 = m_Jugador.FindAction("Slot1", throwIfNotFound: true);
-        m_Jugador_Slot2 = m_Jugador.FindAction("Slot2", throwIfNotFound: true);
-        m_Jugador_Slot3 = m_Jugador.FindAction("Slot3", throwIfNotFound: true);
-        m_Jugador_Slot4 = m_Jugador.FindAction("Slot4", throwIfNotFound: true);
-        m_Jugador_Slot5 = m_Jugador.FindAction("Slot5", throwIfNotFound: true);
+        m_Jugador_ArmaPrincipal = m_Jugador.FindAction("ArmaPrincipal", throwIfNotFound: true);
+        m_Jugador_ArmaSecundaria = m_Jugador.FindAction("ArmaSecundaria", throwIfNotFound: true);
+        m_Jugador_Arojadizos = m_Jugador.FindAction("Arojadizos", throwIfNotFound: true);
+        m_Jugador_Botiquin = m_Jugador.FindAction("Botiquin", throwIfNotFound: true);
+        m_Jugador_Pildoras = m_Jugador.FindAction("Pildoras", throwIfNotFound: true);
         m_Jugador_RuedaRaton = m_Jugador.FindAction("RuedaRaton", throwIfNotFound: true);
         m_Jugador_CambioRapido = m_Jugador.FindAction("CambioRapido", throwIfNotFound: true);
         m_Jugador_Interactuar = m_Jugador.FindAction("Interactuar", throwIfNotFound: true);
+        m_Jugador_Linterna = m_Jugador.FindAction("Linterna", throwIfNotFound: true);
+        m_Jugador_SaltarDash = m_Jugador.FindAction("Saltar/Dash", throwIfNotFound: true);
     }
 
     ~@ControlesJuego()
@@ -696,14 +716,16 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
     private readonly InputAction m_Jugador_Unirse;
     private readonly InputAction m_Jugador_Disparar;
     private readonly InputAction m_Jugador_Recargar;
-    private readonly InputAction m_Jugador_Slot1;
-    private readonly InputAction m_Jugador_Slot2;
-    private readonly InputAction m_Jugador_Slot3;
-    private readonly InputAction m_Jugador_Slot4;
-    private readonly InputAction m_Jugador_Slot5;
+    private readonly InputAction m_Jugador_ArmaPrincipal;
+    private readonly InputAction m_Jugador_ArmaSecundaria;
+    private readonly InputAction m_Jugador_Arojadizos;
+    private readonly InputAction m_Jugador_Botiquin;
+    private readonly InputAction m_Jugador_Pildoras;
     private readonly InputAction m_Jugador_RuedaRaton;
     private readonly InputAction m_Jugador_CambioRapido;
     private readonly InputAction m_Jugador_Interactuar;
+    private readonly InputAction m_Jugador_Linterna;
+    private readonly InputAction m_Jugador_SaltarDash;
     /// <summary>
     /// Provides access to input actions defined in input action map "Jugador".
     /// </summary>
@@ -736,25 +758,25 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @Recargar => m_Wrapper.m_Jugador_Recargar;
         /// <summary>
-        /// Provides access to the underlying input action "Jugador/Slot1".
+        /// Provides access to the underlying input action "Jugador/ArmaPrincipal".
         /// </summary>
-        public InputAction @Slot1 => m_Wrapper.m_Jugador_Slot1;
+        public InputAction @ArmaPrincipal => m_Wrapper.m_Jugador_ArmaPrincipal;
         /// <summary>
-        /// Provides access to the underlying input action "Jugador/Slot2".
+        /// Provides access to the underlying input action "Jugador/ArmaSecundaria".
         /// </summary>
-        public InputAction @Slot2 => m_Wrapper.m_Jugador_Slot2;
+        public InputAction @ArmaSecundaria => m_Wrapper.m_Jugador_ArmaSecundaria;
         /// <summary>
-        /// Provides access to the underlying input action "Jugador/Slot3".
+        /// Provides access to the underlying input action "Jugador/Arojadizos".
         /// </summary>
-        public InputAction @Slot3 => m_Wrapper.m_Jugador_Slot3;
+        public InputAction @Arojadizos => m_Wrapper.m_Jugador_Arojadizos;
         /// <summary>
-        /// Provides access to the underlying input action "Jugador/Slot4".
+        /// Provides access to the underlying input action "Jugador/Botiquin".
         /// </summary>
-        public InputAction @Slot4 => m_Wrapper.m_Jugador_Slot4;
+        public InputAction @Botiquin => m_Wrapper.m_Jugador_Botiquin;
         /// <summary>
-        /// Provides access to the underlying input action "Jugador/Slot5".
+        /// Provides access to the underlying input action "Jugador/Pildoras".
         /// </summary>
-        public InputAction @Slot5 => m_Wrapper.m_Jugador_Slot5;
+        public InputAction @Pildoras => m_Wrapper.m_Jugador_Pildoras;
         /// <summary>
         /// Provides access to the underlying input action "Jugador/RuedaRaton".
         /// </summary>
@@ -767,6 +789,14 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Jugador/Interactuar".
         /// </summary>
         public InputAction @Interactuar => m_Wrapper.m_Jugador_Interactuar;
+        /// <summary>
+        /// Provides access to the underlying input action "Jugador/Linterna".
+        /// </summary>
+        public InputAction @Linterna => m_Wrapper.m_Jugador_Linterna;
+        /// <summary>
+        /// Provides access to the underlying input action "Jugador/SaltarDash".
+        /// </summary>
+        public InputAction @SaltarDash => m_Wrapper.m_Jugador_SaltarDash;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -808,21 +838,21 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
             @Recargar.started += instance.OnRecargar;
             @Recargar.performed += instance.OnRecargar;
             @Recargar.canceled += instance.OnRecargar;
-            @Slot1.started += instance.OnSlot1;
-            @Slot1.performed += instance.OnSlot1;
-            @Slot1.canceled += instance.OnSlot1;
-            @Slot2.started += instance.OnSlot2;
-            @Slot2.performed += instance.OnSlot2;
-            @Slot2.canceled += instance.OnSlot2;
-            @Slot3.started += instance.OnSlot3;
-            @Slot3.performed += instance.OnSlot3;
-            @Slot3.canceled += instance.OnSlot3;
-            @Slot4.started += instance.OnSlot4;
-            @Slot4.performed += instance.OnSlot4;
-            @Slot4.canceled += instance.OnSlot4;
-            @Slot5.started += instance.OnSlot5;
-            @Slot5.performed += instance.OnSlot5;
-            @Slot5.canceled += instance.OnSlot5;
+            @ArmaPrincipal.started += instance.OnArmaPrincipal;
+            @ArmaPrincipal.performed += instance.OnArmaPrincipal;
+            @ArmaPrincipal.canceled += instance.OnArmaPrincipal;
+            @ArmaSecundaria.started += instance.OnArmaSecundaria;
+            @ArmaSecundaria.performed += instance.OnArmaSecundaria;
+            @ArmaSecundaria.canceled += instance.OnArmaSecundaria;
+            @Arojadizos.started += instance.OnArojadizos;
+            @Arojadizos.performed += instance.OnArojadizos;
+            @Arojadizos.canceled += instance.OnArojadizos;
+            @Botiquin.started += instance.OnBotiquin;
+            @Botiquin.performed += instance.OnBotiquin;
+            @Botiquin.canceled += instance.OnBotiquin;
+            @Pildoras.started += instance.OnPildoras;
+            @Pildoras.performed += instance.OnPildoras;
+            @Pildoras.canceled += instance.OnPildoras;
             @RuedaRaton.started += instance.OnRuedaRaton;
             @RuedaRaton.performed += instance.OnRuedaRaton;
             @RuedaRaton.canceled += instance.OnRuedaRaton;
@@ -832,6 +862,12 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
             @Interactuar.started += instance.OnInteractuar;
             @Interactuar.performed += instance.OnInteractuar;
             @Interactuar.canceled += instance.OnInteractuar;
+            @Linterna.started += instance.OnLinterna;
+            @Linterna.performed += instance.OnLinterna;
+            @Linterna.canceled += instance.OnLinterna;
+            @SaltarDash.started += instance.OnSaltarDash;
+            @SaltarDash.performed += instance.OnSaltarDash;
+            @SaltarDash.canceled += instance.OnSaltarDash;
         }
 
         /// <summary>
@@ -858,21 +894,21 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
             @Recargar.started -= instance.OnRecargar;
             @Recargar.performed -= instance.OnRecargar;
             @Recargar.canceled -= instance.OnRecargar;
-            @Slot1.started -= instance.OnSlot1;
-            @Slot1.performed -= instance.OnSlot1;
-            @Slot1.canceled -= instance.OnSlot1;
-            @Slot2.started -= instance.OnSlot2;
-            @Slot2.performed -= instance.OnSlot2;
-            @Slot2.canceled -= instance.OnSlot2;
-            @Slot3.started -= instance.OnSlot3;
-            @Slot3.performed -= instance.OnSlot3;
-            @Slot3.canceled -= instance.OnSlot3;
-            @Slot4.started -= instance.OnSlot4;
-            @Slot4.performed -= instance.OnSlot4;
-            @Slot4.canceled -= instance.OnSlot4;
-            @Slot5.started -= instance.OnSlot5;
-            @Slot5.performed -= instance.OnSlot5;
-            @Slot5.canceled -= instance.OnSlot5;
+            @ArmaPrincipal.started -= instance.OnArmaPrincipal;
+            @ArmaPrincipal.performed -= instance.OnArmaPrincipal;
+            @ArmaPrincipal.canceled -= instance.OnArmaPrincipal;
+            @ArmaSecundaria.started -= instance.OnArmaSecundaria;
+            @ArmaSecundaria.performed -= instance.OnArmaSecundaria;
+            @ArmaSecundaria.canceled -= instance.OnArmaSecundaria;
+            @Arojadizos.started -= instance.OnArojadizos;
+            @Arojadizos.performed -= instance.OnArojadizos;
+            @Arojadizos.canceled -= instance.OnArojadizos;
+            @Botiquin.started -= instance.OnBotiquin;
+            @Botiquin.performed -= instance.OnBotiquin;
+            @Botiquin.canceled -= instance.OnBotiquin;
+            @Pildoras.started -= instance.OnPildoras;
+            @Pildoras.performed -= instance.OnPildoras;
+            @Pildoras.canceled -= instance.OnPildoras;
             @RuedaRaton.started -= instance.OnRuedaRaton;
             @RuedaRaton.performed -= instance.OnRuedaRaton;
             @RuedaRaton.canceled -= instance.OnRuedaRaton;
@@ -882,6 +918,12 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
             @Interactuar.started -= instance.OnInteractuar;
             @Interactuar.performed -= instance.OnInteractuar;
             @Interactuar.canceled -= instance.OnInteractuar;
+            @Linterna.started -= instance.OnLinterna;
+            @Linterna.performed -= instance.OnLinterna;
+            @Linterna.canceled -= instance.OnLinterna;
+            @SaltarDash.started -= instance.OnSaltarDash;
+            @SaltarDash.performed -= instance.OnSaltarDash;
+            @SaltarDash.canceled -= instance.OnSaltarDash;
         }
 
         /// <summary>
@@ -984,40 +1026,40 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnRecargar(InputAction.CallbackContext context);
         /// <summary>
-        /// Method invoked when associated input action "Slot1" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "ArmaPrincipal" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnSlot1(InputAction.CallbackContext context);
+        void OnArmaPrincipal(InputAction.CallbackContext context);
         /// <summary>
-        /// Method invoked when associated input action "Slot2" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "ArmaSecundaria" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnSlot2(InputAction.CallbackContext context);
+        void OnArmaSecundaria(InputAction.CallbackContext context);
         /// <summary>
-        /// Method invoked when associated input action "Slot3" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "Arojadizos" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnSlot3(InputAction.CallbackContext context);
+        void OnArojadizos(InputAction.CallbackContext context);
         /// <summary>
-        /// Method invoked when associated input action "Slot4" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "Botiquin" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnSlot4(InputAction.CallbackContext context);
+        void OnBotiquin(InputAction.CallbackContext context);
         /// <summary>
-        /// Method invoked when associated input action "Slot5" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "Pildoras" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnSlot5(InputAction.CallbackContext context);
+        void OnPildoras(InputAction.CallbackContext context);
         /// <summary>
         /// Method invoked when associated input action "RuedaRaton" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
@@ -1039,5 +1081,19 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnInteractuar(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Linterna" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnLinterna(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Saltar/Dash" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSaltarDash(InputAction.CallbackContext context);
     }
 }
