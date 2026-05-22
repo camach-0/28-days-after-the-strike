@@ -613,6 +613,11 @@ GameObject:
   - component: {fileID: 8901367109664290921}
   - component: {fileID: 7537492870507657927}
   - component: {fileID: 8179790333145192139}
+  - component: {fileID: 8901367109664290926}
+  - component: {fileID: 8901367109664290925}
+  - component: {fileID: 8901367109664290924}
+  - component: {fileID: 8901367109664290923}
+  - component: {fileID: 8901367109664290922}
   m_Layer: 0
   m_Name: JugadorPrueba
   m_TagString: Player
@@ -1285,6 +1290,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  miUI: {fileID: 0}
 --- !u!4 &7692585156218624886
 Transform:
   m_ObjectHideFlags: 0
@@ -1397,17 +1403,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d6f5356922414046ac181a3f7800e63, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  vidaMaxima: 100
-  vidaActual: 0
+  moduloSalud: {fileID: 0}
   velocidadMovimiento: 5
-  barraDeVidaUI: {fileID: 0}
-  estaMuerto: 0
-  tiempoInvulnerabilidad: 0.4
-  duracionFlashRojo: 0.15
   camaraPrincipal: {fileID: 478160630}
   objetoLinterna: {fileID: 1949559199}
-  pivoteArma: {fileID: 8724917878996556687}
-  armaEquipada: {fileID: 5322448342532000164}
 --- !u!4 &8522848022974337753
 Transform:
   m_ObjectHideFlags: 0
@@ -1493,6 +1492,74 @@ MonoBehaviour:
   tiempoEntreDisparos: 0.8
   balaPrefab: {fileID: 6233821941795280886, guid: 49c8ae99b5a71634b80191319a0d04f8, type: 3}
   puntoDisparo: {fileID: 6295244298793873761}
+  pivoteArma: {fileID: 8724917878996556687}
+--- !u!114 &8901367109664290922
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1498136715066060692}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a18ad1a2dfaed4744bffaf319a16d1a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  barraDeVidaUI: {fileID: 0}
+--- !u!114 &8901367109664290923
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1498136715066060692}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46dae816676b1574f92013b183deaa2c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  esSuperviviente: 0
+  vidaMaxima: 100
+  tiempoInmunidad: 0.2
+--- !u!114 &8901367109664290924
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1498136715066060692}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06ae0fbffa53f9041b1394ef4d1bf24f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  camaraPrincipal: {fileID: 0}
+  pivoteArma: {fileID: 0}
+--- !u!114 &8901367109664290925
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1498136715066060692}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf8432a0073110840a699a96d6b39b72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  armaEquipada: {fileID: 0}
+--- !u!114 &8901367109664290926
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1498136715066060692}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53bb056fdc0829248bd04325b38fe382, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   pivoteArma: {fileID: 8724917878996556687}
 --- !u!1 &9145484828328547511
 GameObject:

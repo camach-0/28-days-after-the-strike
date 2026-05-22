@@ -7,16 +7,16 @@ public class GameDirector : MonoBehaviour
 {
     [Header("Configuración de la Horda")]
     public GameObject zombiPrefab;
-    public float distanciaDeAparicion = 20f; // Distancia desde el centro del equipo
+    public float distanciaDeAparicion = 20f;
 
     [Header("Límites y Memoria")]
-    public int limiteZombisEnMapa = 60; // Subimos el límite para soportar hordas masivas
+    public int limiteZombisEnMapa = 60;
 
     [Header("Tamaño de la Horda")]
     public int minZombisPorHorda = 20;
     public int maxZombisPorHorda = 35;
-    public int minGrupos = 2; // Desde cuántos frentes atacan (ej. frente y espalda)
-    public int maxGrupos = 4; // Rodearlos por 4 lados
+    public int minGrupos = 2;
+    public int maxGrupos = 4;
 
     [Header("Sistema de Estrés (Tiempos de Paz)")]
     public float tiempoPaz_SaludAlta = 20f;
@@ -30,14 +30,14 @@ public class GameDirector : MonoBehaviour
 
     private IEnumerator GenerarHordasDinamicas()
     {
-        yield return new WaitForSeconds(10f); // Tiempo inicial
+        yield return new WaitForSeconds(10f);
 
         while (true)
         {
+            // NOTA: Asegúrate de que tus Zombis tengan la etiqueta (Tag) "Enemy" en Unity.
             int zombisActuales = GameObject.FindGameObjectsWithTag("Enemy").Length;
             Vector2 centroEquipo = ObtenerCentroDelEquipo();
 
-            // Si hay jugadores vivos y la memoria lo permite...
             if (centroEquipo != Vector2.zero && zombiPrefab != null && zombisActuales < limiteZombisEnMapa)
             {
                 int tamanoHorda = Random.Range(minZombisPorHorda, maxZombisPorHorda);
@@ -48,17 +48,14 @@ public class GameDirector : MonoBehaviour
 
                 for (int i = 0; i < cantidadGrupos; i++)
                 {
-                    // Elegimos una dirección al azar para este grupo (ej. Norte, Sur, Este...)
                     Vector2 direccionAtaque = Random.insideUnitCircle.normalized;
                     Vector2 puntoGeneracion = centroEquipo + (direccionAtaque * distanciaDeAparicion);
 
                     NavMeshHit hit;
                     if (NavMesh.SamplePosition(puntoGeneracion, out hit, 10f, NavMesh.AllAreas))
                     {
-                        // Generamos el sub-grupo en este punto
                         for (int j = 0; j < zombisPorGrupo; j++)
                         {
-                            // Les damos un poco de separación para que no nazcan uno encima del otro
                             Vector3 posicionDesfasada = hit.position + (Vector3)(Random.insideUnitCircle * 2f);
 
                             GameObject nuevoZombi = Instantiate(zombiPrefab, posicionDesfasada, Quaternion.identity);
@@ -73,43 +70,42 @@ public class GameDirector : MonoBehaviour
                 }
             }
 
-            // Calculamos el tiempo de paz para la siguiente oleada basándonos en la vida
             float tiempoDeCalma = CalcularTiempoDePaz();
             yield return new WaitForSeconds(tiempoDeCalma);
         }
     }
 
-    // --- NUEVO: Calcula el punto medio entre todos los jugadores vivos ---
+    // --- NUEVO: Calcula el punto medio consultando la lista ultra-rápida del GameManager ---
     private Vector2 ObtenerCentroDelEquipo()
     {
-        GameObject[] jugadores = GameObject.FindGameObjectsWithTag("Player");
+        if (GameManager.Instancia == null || GameManager.Instancia.supervivientesActivos.Count == 0) return Vector2.zero;
+
         Vector2 sumaPosiciones = Vector2.zero;
         int vivos = 0;
 
-        foreach (GameObject jug in jugadores)
+        foreach (SistemaSalud vida in GameManager.Instancia.supervivientesActivos)
         {
-            Entidad vida = jug.GetComponent<Entidad>();
-            if (vida != null && !vida.estaMuerto)
+            if (vida != null && vida.vidaActual > 0)
             {
-                sumaPosiciones += (Vector2)jug.transform.position;
+                sumaPosiciones += (Vector2)vida.transform.position;
                 vivos++;
             }
         }
 
         if (vivos == 0) return Vector2.zero;
-        return sumaPosiciones / vivos; // Retorna el centro geométrico del equipo
+        return sumaPosiciones / vivos;
     }
 
     private float CalcularTiempoDePaz()
     {
-        GameObject[] todosLosJugadores = GameObject.FindGameObjectsWithTag("Player");
+        if (GameManager.Instancia == null || GameManager.Instancia.supervivientesActivos.Count == 0) return 10f;
+
         float vidaActualTotal = 0f, vidaMaximaTotal = 0f;
         int jugadoresVivos = 0;
 
-        foreach (GameObject jugador in todosLosJugadores)
+        foreach (SistemaSalud vidaJugador in GameManager.Instancia.supervivientesActivos)
         {
-            Entidad vidaJugador = jugador.GetComponent<Entidad>();
-            if (vidaJugador != null && !vidaJugador.estaMuerto)
+            if (vidaJugador != null && vidaJugador.vidaActual > 0)
             {
                 vidaActualTotal += vidaJugador.vidaActual;
                 vidaMaximaTotal += vidaJugador.vidaMaxima;

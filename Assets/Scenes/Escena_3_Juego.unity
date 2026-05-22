@@ -220,17 +220,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 7676652514911888881, guid: 08a7d2134f2927f4185ea9f0c945b4c2, type: 3}
   m_PrefabInstance: {fileID: 10908518}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &10908520 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 820988346735499244, guid: 08a7d2134f2927f4185ea9f0c945b4c2, type: 3}
-  m_PrefabInstance: {fileID: 10908518}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 10908519}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d6f5356922414046ac181a3f7800e63, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &10908521 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7519346433570874510, guid: 08a7d2134f2927f4185ea9f0c945b4c2, type: 3}
@@ -765,11 +754,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5303775d8a8e3444397e9e2abc2f361c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jugadoresEnEscena:
-  - {fileID: 820776320}
-  - {fileID: 998569250}
-  - {fileID: 10908520}
-  - {fileID: 755827211}
+  supervivientesActivos: []
   juegoTerminado: 0
   panelGameOver: {fileID: 1898312520}
 --- !u!1 &376929539
@@ -2333,17 +2318,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 7676652514911888881, guid: 08a7d2134f2927f4185ea9f0c945b4c2, type: 3}
   m_PrefabInstance: {fileID: 755827209}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &755827211 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 820988346735499244, guid: 08a7d2134f2927f4185ea9f0c945b4c2, type: 3}
-  m_PrefabInstance: {fileID: 755827209}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 755827210}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d6f5356922414046ac181a3f7800e63, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &755827212 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7519346433570874510, guid: 08a7d2134f2927f4185ea9f0c945b4c2, type: 3}
@@ -2563,6 +2537,10 @@ PrefabInstance:
       propertyPath: m_Color.r
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 6649988690904353947, guid: 08a7d2134f2927f4185ea9f0c945b4c2, type: 3}
+      propertyPath: barraDeVidaUI
+      value: 
+      objectReference: {fileID: 1486904534}
     - target: {fileID: 7519346433570874510, guid: 08a7d2134f2927f4185ea9f0c945b4c2, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2.68
@@ -2620,17 +2598,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 7676652514911888881, guid: 08a7d2134f2927f4185ea9f0c945b4c2, type: 3}
   m_PrefabInstance: {fileID: 820776318}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &820776320 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 820988346735499244, guid: 08a7d2134f2927f4185ea9f0c945b4c2, type: 3}
-  m_PrefabInstance: {fileID: 820776318}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 820776319}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d6f5356922414046ac181a3f7800e63, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &820776321 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2309939867845970670, guid: 08a7d2134f2927f4185ea9f0c945b4c2, type: 3}
@@ -3331,17 +3298,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 7676652514911888881, guid: 08a7d2134f2927f4185ea9f0c945b4c2, type: 3}
   m_PrefabInstance: {fileID: 998569248}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &998569250 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 820988346735499244, guid: 08a7d2134f2927f4185ea9f0c945b4c2, type: 3}
-  m_PrefabInstance: {fileID: 998569248}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 998569249}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d6f5356922414046ac181a3f7800e63, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &998569251 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6694271321719982724, guid: 08a7d2134f2927f4185ea9f0c945b4c2, type: 3}

@@ -7,11 +7,12 @@ public class GameManager : MonoBehaviour
     public static GameManager Instancia;
 
     [Header("Estado de la Partida")]
-    public List<Entidad> jugadoresEnEscena = new List<Entidad>();
+    // Ahora guardamos el SistemaSalud de todos los supervivientes en escena
+    public List<SistemaSalud> supervivientesActivos = new List<SistemaSalud>();
     public bool juegoTerminado = false;
 
     [Header("Interfaz Visual")]
-    public GameObject panelGameOver; // ¡NUEVO! Conexión directa a la pantalla negra
+    public GameObject panelGameOver;
 
     private void Awake()
     {
@@ -19,11 +20,19 @@ public class GameManager : MonoBehaviour
         else Destroy(gameObject);
     }
 
-    public void RegistrarJugador(Entidad nuevoJugador)
+    public void RegistrarSuperviviente(SistemaSalud nuevoSuperviviente)
     {
-        if (!jugadoresEnEscena.Contains(nuevoJugador))
+        if (!supervivientesActivos.Contains(nuevoSuperviviente))
         {
-            jugadoresEnEscena.Add(nuevoJugador);
+            supervivientesActivos.Add(nuevoSuperviviente);
+        }
+    }
+
+    public void DesregistrarSuperviviente(SistemaSalud superviviente)
+    {
+        if (supervivientesActivos.Contains(superviviente))
+        {
+            supervivientesActivos.Remove(superviviente);
         }
     }
 
@@ -32,10 +41,10 @@ public class GameManager : MonoBehaviour
         if (juegoTerminado) return;
 
         bool alguienVivo = false;
-        foreach (Entidad jugador in jugadoresEnEscena)
+
+        foreach (SistemaSalud superviviente in supervivientesActivos)
         {
-            // Verificamos que el jugador exista y siga vivo
-            if (jugador != null && !jugador.estaMuerto)
+            if (superviviente != null && superviviente.vidaActual > 0)
             {
                 alguienVivo = true;
                 break;
@@ -53,14 +62,9 @@ public class GameManager : MonoBehaviour
         juegoTerminado = true;
         Debug.Log("<color=red>¡GAME OVER! Todos los jugadores han caído.</color>");
 
-        // Encendemos la pantalla negra directamente, sin depender de otros scripts
         if (panelGameOver != null)
         {
             panelGameOver.SetActive(true);
-        }
-        else
-        {
-            Debug.LogError("ERROR: ¡Falta arrastrar el Panel de Game Over al GameManager en el Inspector!");
         }
     }
 

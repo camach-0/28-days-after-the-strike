@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.AI;
 
+[RequireComponent(typeof(NavMeshAgent), typeof(SistemaSalud))]
 public class AliadoBotController : MonoBehaviour
 {
     [Header("Configuración de IA (Movimiento)")]
@@ -8,8 +9,8 @@ public class AliadoBotController : MonoBehaviour
     public float velocidadMovimiento = 4.5f;
 
     [Header("Configuración de IA (Combate)")]
-    public float radioDeteccionZombis = 8f; // Qué tan lejos pueden "ver" a los zombis
-    public float tiempoEntreDisparos = 0.8f; // Cadencia de tiro (disparan casi cada segundo)
+    public float radioDeteccionZombis = 8f;
+    public float tiempoEntreDisparos = 0.8f;
     private float temporizadorDisparo = 0f;
 
     [Header("Armas y Referencias")]
@@ -19,12 +20,12 @@ public class AliadoBotController : MonoBehaviour
 
     private NavMeshAgent agente;
     private Transform liderActual;
-    private Entidad miEntidad;
+    public SistemaSalud moduloSalud { get; private set; }
 
     private void Awake()
     {
         agente = GetComponent<NavMeshAgent>();
-        miEntidad = GetComponent<Entidad>();
+        moduloSalud = GetComponent<SistemaSalud>();
 
         if (agente != null)
         {
@@ -34,18 +35,29 @@ public class AliadoBotController : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        if (moduloSalud != null) moduloSalud.OnMuerte += ApagarCerebro;
+    }
+
+    private void OnDestroy()
+    {
+        if (moduloSalud != null) moduloSalud.OnMuerte -= ApagarCerebro;
+    }
+
+    private void ApagarCerebro()
+    {
+        agente.isStopped = true;
+        this.enabled = false;
+    }
+
     private void Update()
     {
-        if (miEntidad != null && miEntidad.estaMuerto) return;
+        if (moduloSalud.vidaActual <= 0) return;
 
-        // 1. Movimiento: Seguir al líder
         BuscarLiderMasCercano();
-        if (liderActual != null)
-        {
-            ComportamientoSeguirLider();
-        }
+        if (liderActual != null) ComportamientoSeguirLider();
 
-        // 2. Combate: Buscar enemigos y disparar
         temporizadorDisparo -= Time.deltaTime;
         AtacarZombiMasCercano();
     }
@@ -67,42 +79,43 @@ public class AliadoBotController : MonoBehaviour
 
     private void BuscarLiderMasCercano()
     {
-        GameObject[] posiblesLideres = GameObject.FindGameObjectsWithTag("Player");
+        if (GameManager.Instancia == null) return;
+
         float distanciaMasCorta = Mathf.Infinity;
         Transform liderMasCercano = null;
 
-        foreach (GameObject jugador in posiblesLideres)
+        // Recorremos todos los supervivientes activos registrados de forma directa
+        foreach (SistemaSalud superviviente in GameManager.Instancia.supervivientesActivos)
         {
-            JugadorController controlHumano = jugador.GetComponent<JugadorController>();
-            Entidad vidaJugador = jugador.GetComponent<Entidad>();
-
-            // Solo seguimos a los humanos que estén vivos
-            if (controlHumano != null && controlHumano.enabled && !vidaJugador.estaMuerto)
+            if (superviviente != null && superviviente.vidaActual > 0)
             {
-                float distancia = Vector2.Distance(transform.position, jugador.transform.position);
-                if (distancia < distanciaMasCorta)
+                JugadorController humano = superviviente.GetComponent<JugadorController>();
+                // Si tiene el script humano activo, es un jugador real al que debemos proteger
+                if (humano != null && humano.enabled)
                 {
-                    distanciaMasCorta = distancia;
-                    liderMasCercano = jugador.transform;
+                    float distancia = Vector2.Distance(transform.position, superviviente.transform.position);
+                    if (distancia < distanciaMasCorta)
+                    {
+                        distanciaMasCorta = distancia;
+                        liderMasCercano = superviviente.transform;
+                    }
                 }
             }
         }
         liderActual = liderMasCercano;
     }
 
-    // --- NUEVA LÓGICA DE COMBATE ---
     private void AtacarZombiMasCercano()
     {
-        // El "Radar": Trazamos un círculo invisible para detectar colisiones cercanas
         Collider2D[] objetosEnRango = Physics2D.OverlapCircleAll(transform.position, radioDeteccionZombis);
         Transform zombiMasCercano = null;
         float distanciaMinima = Mathf.Infinity;
 
         foreach (Collider2D obj in objetosEnRango)
         {
-            // Verificamos si lo que tocó el radar es un zombi y si está vivo
             ZombiController zombi = obj.GetComponent<ZombiController>();
-            if (zombi != null && !zombi.estaMuerto)
+
+            if (zombi != null && zombi.moduloSalud != null && zombi.moduloSalud.vidaActual > 0)
             {
                 float distancia = Vector2.Distance(transform.position, zombi.transform.position);
                 if (distancia < distanciaMinima)
@@ -113,20 +126,15 @@ public class AliadoBotController : MonoBehaviour
             }
         }
 
-        // Si encontramos un zombi en el radar, le disparamos
         if (zombiMasCercano != null)
         {
             ApuntarYDisparar(zombiMasCercano);
         }
-        else
+        else if (pivoteArma != null && agente.velocity.sqrMagnitude > 0.1f)
         {
-            // Si no hay zombis, que el arma mire hacia donde estamos caminando
-            if (pivoteArma != null && agente.velocity.sqrMagnitude > 0.1f)
-            {
-                Vector2 direccionViaje = agente.velocity.normalized;
-                float angulo = Mathf.Atan2(direccionViaje.y, direccionViaje.x) * Mathf.Rad2Deg;
-                pivoteArma.rotation = Quaternion.Euler(0, 0, angulo);
-            }
+            Vector2 direccionViaje = agente.velocity.normalized;
+            float angulo = Mathf.Atan2(direccionViaje.y, direccionViaje.x) * Mathf.Rad2Deg;
+            pivoteArma.rotation = Quaternion.Euler(0, 0, angulo);
         }
     }
 
@@ -134,28 +142,15 @@ public class AliadoBotController : MonoBehaviour
     {
         if (pivoteArma == null) return;
 
-        // 1. Apuntar directo al zombi
         Vector2 direccionAlObjetivo = (objetivo.position - pivoteArma.position).normalized;
         float angulo = Mathf.Atan2(direccionAlObjetivo.y, direccionAlObjetivo.x) * Mathf.Rad2Deg;
         pivoteArma.rotation = Quaternion.Euler(0, 0, angulo);
 
-        // 2. Apretar el gatillo si el arma está recargada
         if (temporizadorDisparo <= 0f && balaPrefab != null && puntoDisparo != null)
         {
             GameObject nuevaBala = Instantiate(balaPrefab, puntoDisparo.position, Quaternion.identity);
-
-            // Le decimos a la bala hacia dónde ir usando el script que ya tienes creado
             nuevaBala.GetComponent<Bala>().ConfigurarDireccion(direccionAlObjetivo);
-
-            // Reiniciamos el temporizador para no ametrallar
             temporizadorDisparo = tiempoEntreDisparos;
         }
-    }
-
-    // Dibujamos el "Radar" en la escena para que tú (el programador) puedas verlo
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, radioDeteccionZombis);
     }
 }

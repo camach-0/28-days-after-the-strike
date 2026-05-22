@@ -191,8 +191,10 @@ MonoBehaviour:
   vidaMaxima: 100
   vidaActual: 0
   velocidadMovimiento: 5
-  estaMuerto: 0
   barraDeVidaUI: {fileID: 0}
+  estaMuerto: 0
+  tiempoInvulnerabilidad: 0.4
+  duracionFlashRojo: 0.15
   estadoActual: 0
   esDeHorda: 0
   esEstatico: 0

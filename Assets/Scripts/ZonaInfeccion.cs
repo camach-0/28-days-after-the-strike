@@ -7,6 +7,7 @@ public class ZonaInfeccion : MonoBehaviour
 {
     [Range(0, 100)]
     public float probabilidadEstatico = 30f; // Por defecto, el 30% se quedará quieto
+
     [Header("Configuración de la Zona")]
     public GameObject zombiPrefab;
     public int cantidadZombis = 5;
@@ -48,7 +49,6 @@ public class ZonaInfeccion : MonoBehaviour
 
         Debug.Log("Jugador entró a la zona: Generando " + cantidadZombis + " zombis. Zona agotada.");
 
-       
         for (int i = 0; i < cantidadZombis; i++)
         {
             Vector2 puntoAleatorio = new Vector2(
@@ -67,7 +67,6 @@ public class ZonaInfeccion : MonoBehaviour
                     cerebro.esDeHorda = false;
 
                     // EL TRUCO DE VARIEDAD:
-                    // Si el número aleatorio es menor a nuestra probabilidad, se queda quieto.
                     float suerte = Random.Range(0f, 100f);
                     if (suerte <= probabilidadEstatico)
                     {
@@ -89,32 +88,28 @@ public class ZonaInfeccion : MonoBehaviour
         Debug.Log("Jugador salió de la zona: Limpiando zombis NO alertados.");
 
         // IMPORTANTE: Leemos la lista de atrás hacia adelante (en reversa).
-        // En programación, si vas a borrar cosas de una lista, siempre se hace en reversa 
-        // para que los números de orden no se recorran y causen errores.
         for (int i = zombisVivos.Count - 1; i >= 0; i--)
         {
             GameObject zombi = zombisVivos[i];
 
-            if (zombi != null) // Si el zombi sigue vivo (no le has disparado)
+            if (zombi != null)
             {
                 ZombiController cerebro = zombi.GetComponent<ZombiController>();
 
-                // Si tiene cerebro y NO te está persiguiendo...
-                if (cerebro != null && cerebro.estadoActual != ZombiController.EstadoZombi.Persiguiendo)
+                // CORRECCIÓN AQUÍ: Si el zombi NO tiene un objetivo en la mira (es decir, deambula)
+                if (cerebro != null && cerebro.objetivoJugador == null)
                 {
                     Destroy(zombi); // Lo borramos para liberar memoria
                     zombisVivos.RemoveAt(i); // Lo quitamos de la lista
                 }
                 else
                 {
-                    // Si el zombi SÍ te está persiguiendo, lo quitamos de la lista de esta zona
-                    // para "liberarlo". Ahora es independiente y no será borrado.
+                    // Si el zombi SÍ tiene un objetivo (te está persiguiendo), lo liberamos de la zona.
                     zombisVivos.RemoveAt(i);
                 }
             }
             else
             {
-                // Si el zombi ya estaba muerto (nulo), solo limpiamos la lista
                 zombisVivos.RemoveAt(i);
             }
         }

@@ -1,185 +1,117 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
-[RequireComponent(typeof(Rigidbody2D))]
-public class JugadorController : Entidad
+[RequireComponent(typeof(JugadorMovimiento), typeof(JugadorCombate), typeof(JugadorInput))]
+[RequireComponent(typeof(SistemaSalud), typeof(JugadorUI))] // <-- ¡NUEVO! Ahora Unity pondrá la UI a la fuerza
+public class JugadorController : MonoBehaviour
 {
-    private Vector2 direccionMovimiento;
-    private Vector2 direccionMirando = Vector2.right;
-    private Rigidbody2D rb;
-    private Vector2 posicionRatonPantalla;
+    [Header("Módulos (Músculos y Sentidos)")]
+    private JugadorMovimiento moduloMovimiento;
+    private JugadorCombate moduloCombate;
+    private JugadorInput moduloInput;
+
+    // AQUÍ ESTÁ LA VARIABLE QUE SOLUCIONA EL ERROR:
+    public SistemaSalud moduloSalud;
+
+    [Header("Estadísticas Base")]
+    public float velocidadMovimiento = 5f; // Lo trajimos de la vieja Entidad
 
     [Header("¡OBLIGATORIO: Configuración de Cámara!")]
     public Camera camaraPrincipal;
-    private bool usandoRaton = true;
 
     [Header("Linterna")]
     public GameObject objetoLinterna;
 
-    [Header("Referencias Visuales")]
-    public Transform pivoteArma;
+    private bool estaMuerto = false; // Variable local para bloquear el input
 
-    // AHORA USAMOS LA CLASE PADRE (Sirve para cualquier arma)
-    [Header("Conexión con el Arma")]
-    public ControladorArma armaEquipada;
-
-    // NUEVO: Para saber si mantiene apretado el gatillo
-    private bool estaDisparando = false;
-
+    // El puente del Inventario
+    public ControladorArma armaEquipada
+    {
+        get { return moduloCombate.armaEquipada; }
+        set { moduloCombate.armaEquipada = value; }
+    }
 
     private void Awake()
     {
-        rb = GetComponent<Rigidbody2D>();
-        rb.gravityScale = 0f;
+        moduloMovimiento = GetComponent<JugadorMovimiento>();
+        moduloCombate = GetComponent<JugadorCombate>();
+        moduloInput = GetComponent<JugadorInput>();
+        moduloSalud = GetComponent<SistemaSalud>(); // Conectamos la salud
+
         if (camaraPrincipal == null) camaraPrincipal = Camera.main;
-    }
 
-    public override void Start()
-    {
-        base.Start();
-        if (GameManager.Instancia != null) GameManager.Instancia.RegistrarJugador(this);
-        if (barraDeVidaUI != null) barraDeVidaUI.fillAmount = 1f;
-    }
-
-    public void OnMover(InputValue valor)
-    {
-        Vector2 inputBruto = valor.Get<Vector2>();
-        direccionMovimiento = (inputBruto.magnitude > 0.15f) ? inputBruto : Vector2.zero;
-    }
-
-    public void OnApuntar(InputValue valor)
-    {
-        if (estaMuerto) return;
-        Vector2 inputApunte = valor.Get<Vector2>();
-
-        // Si el valor es altísimo, son coordenadas de pantalla (Es el Ratón)
-        if (inputApunte.sqrMagnitude > 2f)
+        // PATRÓN OBSERVER: El Cerebro se suscribe al evento de muerte
+        if (moduloSalud != null)
         {
-            usandoRaton = true;
-            posicionRatonPantalla = inputApunte; // Guardamos su posición
-        }
-        // Si el valor es pequeñito, es la palanca del Mando (-1 a 1)
-        else if (inputApunte.sqrMagnitude > 0.01f)
-        {
-            usandoRaton = false;
-            direccionMirando = inputApunte.normalized;
+            moduloSalud.OnMuerte += ProcesarMuerte;
         }
     }
 
-    // NUEVO SISTEMA DE DISPARO CONTINUO
-    public void OnDisparar(InputValue valor)
+    private void OnDestroy()
     {
-        if (estaMuerto) return;
-
-        // isPressed es true cuando el dedo aprieta, false cuando suelta
-        estaDisparando = valor.isPressed;
-
-        // LÓGICA SEMIAUTOMÁTICA O RÁFAGA (Al hacer un solo clic)
-        if (valor.isPressed && armaEquipada != null)
+        // Nos desuscribimos para evitar errores de memoria si cambiamos de escena
+        if (moduloSalud != null)
         {
-            if (armaEquipada is ControladorArmaFuego armaFuego)
-            {
-                // Si el arma NO es automática (Escopeta, Pistola, SCAR), dispara aquí
-                if (!armaFuego.datosFuego.esAutomatica || armaFuego.datosFuego.esRafaga)
-                {
-                    armaEquipada.IntentarAtaque(direccionMirando);
-                }
-            }
-            else
-            {
-                // Armas Melee o Arrojadizas atacan con clic por defecto
-                armaEquipada.IntentarAtaque(direccionMirando);
-            }
+            moduloSalud.OnMuerte -= ProcesarMuerte;
         }
     }
 
-    public void OnRecargar(InputValue valor)
+    public void Start() // Ya no es 'override', es un Start normal
     {
-        if (estaMuerto) return;
-        // Solo recarga si el arma es de fuego
-        if (valor.isPressed && armaEquipada != null && armaEquipada is ControladorArmaFuego)
-        {
-            ((ControladorArmaFuego)armaEquipada).IniciarRecarga();
-        }
+
+        moduloInput.camaraPrincipal = this.camaraPrincipal;
+        moduloInput.pivoteArma = moduloMovimiento.pivoteArma;
     }
 
+    // ==========================================
+    // EL CEREBRO EN ACCIÓN (Delegación pura)
+    // ==========================================
     private void Update()
     {
-        if (estaMuerto) return;
-
-        // YA NO USAMOS Mouse.current. ¡Usamos los datos aislados de OnApuntar!
-        if (usandoRaton && camaraPrincipal != null)
+        if (estaMuerto)
         {
-            float distanciaZ = Mathf.Abs(camaraPrincipal.transform.position.z - transform.position.z);
-            Vector3 screenPoint = new Vector3(posicionRatonPantalla.x, posicionRatonPantalla.y, distanciaZ);
-            Vector3 mouseWorldPosition = camaraPrincipal.ScreenToWorldPoint(screenPoint);
-
-            if (pivoteArma != null)
-            {
-                Vector2 direccionHaciaRaton = new Vector2(
-                    mouseWorldPosition.x - pivoteArma.position.x,
-                    mouseWorldPosition.y - pivoteArma.position.y
-                );
-
-                if (direccionHaciaRaton.sqrMagnitude > 0.01f)
-                {
-                    direccionMirando = direccionHaciaRaton.normalized;
-                }
-            }
+            moduloMovimiento.Mover(Vector2.zero, 0f);
+            moduloCombate.ProcesarInputDisparo(false, moduloInput.DireccionMirando);
+            return;
         }
 
-        if (pivoteArma != null)
+        moduloInput.ProcesarApuntadoRaton();
+
+        moduloMovimiento.Mover(moduloInput.InputMovimiento, velocidadMovimiento);
+        moduloMovimiento.Apuntar(moduloInput.DireccionMirando);
+
+        moduloCombate.ProcesarInputDisparo(moduloInput.EstaDisparando, moduloInput.DireccionMirando);
+        moduloCombate.ProcesarDisparoContinuo(moduloInput.DireccionMirando);
+
+        if (moduloInput.IntentoRecargar)
         {
-            float angulo = Mathf.Atan2(direccionMirando.y, direccionMirando.x) * Mathf.Rad2Deg;
-            pivoteArma.rotation = Quaternion.Euler(0, 0, angulo);
+            moduloCombate.IntentarRecarga();
+            moduloInput.IntentoRecargar = false;
         }
 
-        // AQUI EJECUTAMOS EL DISPARO CONTINUO
-        if (estaDisparando && armaEquipada != null)
+        if (moduloInput.IntentoLinterna)
         {
-            if (armaEquipada is ControladorArmaFuego armaFuego)
-            {
-                // Si el arma ES automática y NO es ráfaga (Uzi, M16)
-                if (armaFuego.datosFuego.esAutomatica && !armaFuego.datosFuego.esRafaga)
-                {
-                    armaEquipada.IntentarAtaque(direccionMirando);
-                }
-            }
+            if (objetoLinterna != null) objetoLinterna.SetActive(!objetoLinterna.activeSelf);
+            moduloInput.IntentoLinterna = false;
         }
     }
 
-    private void FixedUpdate()
+    // ==========================================
+    // REACCIÓN A LA MUERTE (Llamada por Evento)
+    // ==========================================
+    private void ProcesarMuerte()
     {
-        if (estaMuerto) return;
-        rb.MovePosition(rb.position + direccionMovimiento * velocidadMovimiento * Time.fixedDeltaTime);
-    }
-
-    public override void Morir()
-    {
-        base.Morir();
+        estaMuerto = true;
         Debug.Log(gameObject.name + " ha muerto.");
 
-        if (GameManager.Instancia != null)
-        {
-            GameManager.Instancia.VerificarEstadoJugadores();
-        }
+        moduloMovimiento.Mover(Vector2.zero, 0f);
+        moduloCombate.ProcesarInputDisparo(false, moduloInput.DireccionMirando);
 
-        // --- CÓDIGO ACTUALIZADO DE LA CÁMARA ---
-        // Busca si tiene una cámara asignada como hija y la suelta en el mapa
+        if (GameManager.Instancia != null) GameManager.Instancia.VerificarEstadoJugadores();
+
         Camera miCamara = GetComponentInChildren<Camera>();
-        if (miCamara != null)
-        {
-            miCamara.transform.SetParent(null);
-        }
+        if (miCamara != null) miCamara.transform.SetParent(null);
 
         gameObject.SetActive(false);
-    }
-    public void OnLinterna(InputValue valor)
-    {
-        if (valor.isPressed && objetoLinterna != null)
-        {
-            objetoLinterna.SetActive(!objetoLinterna.activeSelf);
-        }
     }
 }
