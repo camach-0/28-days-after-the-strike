@@ -15,6 +15,10 @@ public class JugadorInput : MonoBehaviour
     public bool IntentoRecargar { get; set; }
     public bool IntentoLinterna { get; set; }
 
+    public int IntentoCambioSlot { get; set; } = -1; // -1 significa que no se apretó nada
+    public int IntentoScrollArma { get; set; } = 0;
+    public bool IntentoCambioRapido { get; set; }
+
     private bool usandoRaton = true;
     private Vector2 posicionRatonPantalla;
 
@@ -54,8 +58,24 @@ public class JugadorInput : MonoBehaviour
     {
         if (valor.isPressed) IntentoLinterna = true;
     }
-
+    public void OnArmaPrincipal(InputValue valor) { if (valor.isPressed) IntentoCambioSlot = 0; }
+    public void OnArmaSecundaria(InputValue valor) { if (valor.isPressed) IntentoCambioSlot = 1; }
+    public void OnArojadizos(InputValue valor) { if (valor.isPressed) IntentoCambioSlot = 2; }
+    public void OnBotiquin(InputValue valor) { if (valor.isPressed) IntentoCambioSlot = 3; }
+    public void OnPildoras(InputValue valor) { if (valor.isPressed) IntentoCambioSlot = 4; }
     // Traduce la posición de la pantalla a coordenadas del mundo real
+
+    public void OnRuedaRaton(InputValue valor)
+    {
+        float scroll = valor.Get<float>();
+        if (scroll > 0) IntentoScrollArma = -1;
+        else if (scroll < 0) IntentoScrollArma = 1;
+    }
+
+    public void OnCambioRapido(InputValue valor)
+    {
+        if (valor.isPressed) IntentoCambioRapido = true;
+    }
     public void ProcesarApuntadoRaton()
     {
         if (usandoRaton && camaraPrincipal != null && pivoteArma != null)

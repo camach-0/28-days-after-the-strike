@@ -2,19 +2,21 @@ using UnityEngine;
 using UnityEngine.UI;
 
 [RequireComponent(typeof(JugadorMovimiento), typeof(JugadorCombate), typeof(JugadorInput))]
-[RequireComponent(typeof(SistemaSalud), typeof(JugadorUI))] // <-- ¡NUEVO! Ahora Unity pondrá la UI a la fuerza
+[RequireComponent(typeof(SistemaSalud), typeof(JugadorUI))]
+[RequireComponent(typeof(InventarioJugador))] // <-- ¡NUEVO! Forzamos a que el personaje tenga inventario
 public class JugadorController : MonoBehaviour
 {
     [Header("Módulos (Músculos y Sentidos)")]
     private JugadorMovimiento moduloMovimiento;
     private JugadorCombate moduloCombate;
     private JugadorInput moduloInput;
+    private InventarioJugador moduloInventario; // <-- ¡NUEVO! Conexión con el inventario
 
     // AQUÍ ESTÁ LA VARIABLE QUE SOLUCIONA EL ERROR:
     public SistemaSalud moduloSalud;
 
     [Header("Estadísticas Base")]
-    public float velocidadMovimiento = 5f; // Lo trajimos de la vieja Entidad
+    public float velocidadMovimiento = 5f;
 
     [Header("¡OBLIGATORIO: Configuración de Cámara!")]
     public Camera camaraPrincipal;
@@ -22,7 +24,7 @@ public class JugadorController : MonoBehaviour
     [Header("Linterna")]
     public GameObject objetoLinterna;
 
-    private bool estaMuerto = false; // Variable local para bloquear el input
+    private bool estaMuerto = false;
 
     // El puente del Inventario
     public ControladorArma armaEquipada
@@ -36,11 +38,11 @@ public class JugadorController : MonoBehaviour
         moduloMovimiento = GetComponent<JugadorMovimiento>();
         moduloCombate = GetComponent<JugadorCombate>();
         moduloInput = GetComponent<JugadorInput>();
-        moduloSalud = GetComponent<SistemaSalud>(); // Conectamos la salud
+        moduloSalud = GetComponent<SistemaSalud>();
+        moduloInventario = GetComponent<InventarioJugador>(); // <-- ¡NUEVO! Enlazamos el inventario
 
         if (camaraPrincipal == null) camaraPrincipal = Camera.main;
 
-        // PATRÓN OBSERVER: El Cerebro se suscribe al evento de muerte
         if (moduloSalud != null)
         {
             moduloSalud.OnMuerte += ProcesarMuerte;
@@ -49,16 +51,14 @@ public class JugadorController : MonoBehaviour
 
     private void OnDestroy()
     {
-        // Nos desuscribimos para evitar errores de memoria si cambiamos de escena
         if (moduloSalud != null)
         {
             moduloSalud.OnMuerte -= ProcesarMuerte;
         }
     }
 
-    public void Start() // Ya no es 'override', es un Start normal
+    public void Start()
     {
-
         moduloInput.camaraPrincipal = this.camaraPrincipal;
         moduloInput.pivoteArma = moduloMovimiento.pivoteArma;
     }
@@ -83,6 +83,7 @@ public class JugadorController : MonoBehaviour
         moduloCombate.ProcesarInputDisparo(moduloInput.EstaDisparando, moduloInput.DireccionMirando);
         moduloCombate.ProcesarDisparoContinuo(moduloInput.DireccionMirando);
 
+        // --- ACCIONES DE UN SOLO TOQUE (Delegación) ---
         if (moduloInput.IntentoRecargar)
         {
             moduloCombate.IntentarRecarga();
@@ -94,11 +95,33 @@ public class JugadorController : MonoBehaviour
             if (objetoLinterna != null) objetoLinterna.SetActive(!objetoLinterna.activeSelf);
             moduloInput.IntentoLinterna = false;
         }
+
+        // ====================================================================
+        // --- ¡NUEVO! GESTIÓN CENTRALIZADA DEL INVENTARIO (Fase 2) ---
+        // ====================================================================
+
+        // 1. Cambio de ranura directo (Teclas 1 a 5)
+        if (moduloInput.IntentoCambioSlot != -1)
+        {
+            moduloInventario.CambiarSlot(moduloInput.IntentoCambioSlot);
+            moduloInput.IntentoCambioSlot = -1; // Consumimos la orden
+        }
+
+        // 2. Cambio por rueda de ratón (Scroll)
+        if (moduloInput.IntentoScrollArma != 0)
+        {
+            moduloInventario.CiclarArma(moduloInput.IntentoScrollArma);
+            moduloInput.IntentoScrollArma = 0; // Consumimos la orden
+        }
+
+        // 3. Botón de cambio rápido (Mando / Triángulo)
+        if (moduloInput.IntentoCambioRapido)
+        {
+            moduloInventario.EjecutarCambioRapido();
+            moduloInput.IntentoCambioRapido = false; // Consumimos la orden
+        }
     }
 
-    // ==========================================
-    // REACCIÓN A LA MUERTE (Llamada por Evento)
-    // ==========================================
     private void ProcesarMuerte()
     {
         estaMuerto = true;

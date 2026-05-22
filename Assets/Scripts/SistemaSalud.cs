@@ -59,4 +59,17 @@ public class SistemaSalud : MonoBehaviour, IReceptorDano
             OnMuerte?.Invoke();
         }
     }
+    // ¡NUEVO MÉTODO! Para que funcionen los botiquines
+    public void Curar(float cantidad)
+    {
+        if (vidaActual <= 0) return; // Los muertos no se curan
+
+        vidaActual += cantidad;
+
+        // Evitamos que la vida pase del límite máximo
+        if (vidaActual > vidaMaxima) vidaActual = vidaMaxima;
+
+        // Gritamos a la UI que la vida subió
+        OnVidaCambiada?.Invoke(vidaActual / vidaMaxima);
+    }
 }

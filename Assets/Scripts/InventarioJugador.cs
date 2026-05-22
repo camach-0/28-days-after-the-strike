@@ -1,17 +1,16 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
+using System; // Necesario para los Eventos
 
 [RequireComponent(typeof(JugadorController))]
 public class InventarioJugador : MonoBehaviour
 {
     [Header("Ranuras estilo L4D2")]
-    [Tooltip("0: Principal, 1: Secundaria, 2: Arrojadiza, 3: Botiquín, 4: Pastillas")]
     public ControladorArma[] ranuras = new ControladorArma[5];
-    public UIInventario miUI; // Enlace a la interfaz
 
-    // En L4D siempre empiezas con la pistola en la mano (Slot 1)
+    // PATRÓN OBSERVER: Evento que avisa a quien quiera escuchar que cambiamos de arma
+    public event Action<int> OnArmaCambiada;
+
     private int indiceSlotActual = 1;
-
     private JugadorController jugador;
 
     private void Awake()
@@ -21,7 +20,6 @@ public class InventarioJugador : MonoBehaviour
 
     private void Start()
     {
-        // Al iniciar el juego, apagamos todas las armas excepto la que tenemos en la mano
         for (int i = 0; i < ranuras.Length; i++)
         {
             if (ranuras[i] != null)
@@ -30,22 +28,19 @@ public class InventarioJugador : MonoBehaviour
             }
         }
 
-        // Si tenemos un arma en el slot inicial, se la equipamos al jugador
         if (ranuras[indiceSlotActual] != null)
         {
             jugador.armaEquipada = ranuras[indiceSlotActual];
         }
-        if (miUI != null) miUI.IluminarSlot(indiceSlotActual);
+
+        // Lanzamos el evento al iniciar para que la UI se ilumine correctamente
+        OnArmaCambiada?.Invoke(indiceSlotActual);
     }
 
-    // Método para cambiar a un slot específico (0 al 4)
     public void CambiarSlot(int nuevoIndice, bool forzar = false)
     {
         if (nuevoIndice < 0 || nuevoIndice > 4) return;
-
-        // Si no estamos forzando, y ya tenemos esta arma, ignoramos
         if (!forzar && nuevoIndice == indiceSlotActual) return;
-
         if (ranuras[nuevoIndice] == null) return;
 
         ActualizarArmaActiva(nuevoIndice);
@@ -53,78 +48,48 @@ public class InventarioJugador : MonoBehaviour
 
     private void ActualizarArmaActiva(int nuevoIndice)
     {
-        // 1. Apagar el arma vieja
-        if (ranuras[indiceSlotActual] != null)
-        {
-            ranuras[indiceSlotActual].gameObject.SetActive(false);
-        }
+        if (ranuras[indiceSlotActual] != null) ranuras[indiceSlotActual].gameObject.SetActive(false);
 
-        // 2. Actualizar el índice al nuevo
         indiceSlotActual = nuevoIndice;
 
-        // 3. Encender la nueva arma
         if (ranuras[indiceSlotActual] != null)
         {
             ranuras[indiceSlotActual].gameObject.SetActive(true);
-
-            // 4. ¡CRUCIAL! Le pasamos la nueva arma al controlador del jugador
             jugador.armaEquipada = ranuras[indiceSlotActual];
         }
-        if (miUI != null) miUI.IluminarSlot(indiceSlotActual);
+
+        // ¡Gritamos al vacío el nuevo número de arma!
+        OnArmaCambiada?.Invoke(indiceSlotActual);
     }
 
-    // --- ENTRADAS DE TECLADO ACTUALIZADAS A TUS NOMBRES ---
-    public void OnArmaPrincipal(InputValue valor) { if (valor.isPressed) CambiarSlot(0); }
-    public void OnArmaSecundaria(InputValue valor) { if (valor.isPressed) CambiarSlot(1); }
-    public void OnArojadizos(InputValue valor) { if (valor.isPressed) CambiarSlot(2); }
-    public void OnBotiquin(InputValue valor) { if (valor.isPressed) CambiarSlot(3); }
-    public void OnPildoras(InputValue valor) { if (valor.isPressed) CambiarSlot(4); }
+    // ====================================================================
+    // --- MÉTODOS PÚBLICOS PARA SER INVOCADOS POR EL CEREBRO (Fase 2) ---
+    // ====================================================================
 
-    // --- RUEDA DEL RATÓN (SCROLL) ---
-    public void OnRuedaRaton(InputValue valor)
-    {
-        // Unity lee la rueda del ratón como un número: positivo (arriba) o negativo (abajo)
-        float scroll = valor.Get<float>();
-
-        if (scroll > 0) CiclarArma(-1); // Rueda hacia arriba -> Arma anterior
-        else if (scroll < 0) CiclarArma(1);  // Rueda hacia abajo -> Arma siguiente
-    }
-
-    private void CiclarArma(int direccion)
+    // El Controlador llamará a esto pasándole directamente la dirección (-1 o 1)
+    public void CiclarArma(int direccion)
     {
         int nuevoIndice = indiceSlotActual;
-        int intentos = 0; // Para evitar que el juego se congele si solo tienes 1 arma
-
+        int intentos = 0;
         do
         {
             nuevoIndice += direccion;
-
-            // Si pasamos del slot 4, volvemos al 0. Si bajamos del 0, vamos al 4.
             if (nuevoIndice > 4) nuevoIndice = 0;
             if (nuevoIndice < 0) nuevoIndice = 4;
-
             intentos++;
 
-            // Si el slot que tocaba TIENE un arma, la equipamos y rompemos el bucle
             if (ranuras[nuevoIndice] != null)
             {
                 CambiarSlot(nuevoIndice);
                 break;
             }
-        } while (intentos < 5); // Máximo 5 intentos porque hay 5 slots
+        } while (intentos < 5);
     }
 
-    // --- MANDO PS4 / XBOX (CAMBIO RÁPIDO) ---
-    public void OnCambioRapido(InputValue valor)
+    // El Controlador llamará a esto cuando se presione el botón de cambio rápido
+    public void EjecutarCambioRapido()
     {
-        // Esto imita el botón Triángulo (Y en Xbox) del Left 4 Dead
-        if (valor.isPressed)
-        {
-            // Si tenemos la principal, cambia a secundaria. Si tenemos cualquier otra, cambia a principal.
-            if (indiceSlotActual == 0 && ranuras[1] != null)
-                CambiarSlot(1);
-            else if (ranuras[0] != null)
-                CambiarSlot(0);
-        }
+        if (indiceSlotActual == 0 && ranuras[1] != null) CambiarSlot(1);
+        else if (ranuras[0] != null) CambiarSlot(0);
     }
 }

@@ -47,7 +47,11 @@ public class AliadoBotController : MonoBehaviour
 
     private void ApagarCerebro()
     {
-        agente.isStopped = true;
+        if (agente != null && agente.isActiveAndEnabled && agente.isOnNavMesh)
+        {
+            agente.isStopped = true;
+        }
+
         this.enabled = false;
     }
 

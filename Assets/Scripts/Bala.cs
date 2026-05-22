@@ -1,61 +1,71 @@
 using UnityEngine;
+using System.Collections;
 
-// Esto obliga a Unity a asegurarse de que el objeto tenga un Rigidbody2D
 [RequireComponent(typeof(Rigidbody2D))]
 public class Bala : MonoBehaviour
 {
-    [Header("Configuración")]
+    [Header("Configuración del Pool")]
+    [Tooltip("Debe ser el mismo nombre que pusiste en el PoolManager")]
+    public string etiquetaPool = "BalaBase";
+
+    [Header("Atributos Físicos")]
     public float velocidad = 20f;
     public float tiempoDeVida = 3f;
 
-    [HideInInspector]
-    public int dano;
-
+    [HideInInspector] public int dano;
     private Rigidbody2D rb;
 
     void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-
-        // CONFIGURACIÓN DE SEGURIDAD ANTIBUGS DESDE EL CÓDIGO
-        // Forzamos que sea dinámico, sin gravedad y con detección continua de choques
         rb.bodyType = RigidbodyType2D.Dynamic;
         rb.gravityScale = 0f;
         rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
     }
 
-    void Start()
+    // ========================================================
+    // NUEVO CICLO DE VIDA (Mecánica clave para objetos en Pool)
+    // ========================================================
+    private void OnEnable()
     {
-        Destroy(gameObject, tiempoDeVida);
+        // Al encenderse, activamos una cuenta regresiva para "morir" si no choca con nada
+        StartCoroutine(DesactivarTrasTiempo());
+    }
+
+    private void OnDisable()
+    {
+        // Al apagarse, limpiamos su inercia para que no nazca moviéndose en su próxima vida
+        StopAllCoroutines();
+        if (rb != null) rb.linearVelocity = Vector2.zero;
+    }
+
+    IEnumerator DesactivarTrasTiempo()
+    {
+        yield return new WaitForSeconds(tiempoDeVida);
+
+        // Si pasaron 3 segundos en el aire, la devolvemos al Pool
+        PoolManager.Instancia.DevolverObjeto(etiquetaPool, gameObject);
     }
 
     public void ConfigurarDireccion(Vector2 direccion)
     {
         if (rb != null)
         {
-            Vector2 velocidadFinal = direccion.normalized * velocidad;
-            rb.linearVelocity = velocidadFinal;
-
-            // EL CHIVATO: Esto aparecerá en la consola de Unity
-            Debug.Log($"Bala creada | Dir: {direccion.normalized} | Velocidad en Inspector: {velocidad} | Fuerza Final: {velocidadFinal}");
+            rb.linearVelocity = direccion.normalized * velocidad;
         }
     }
 
     private void OnTriggerEnter2D(Collider2D colision)
     {
-        // 1. Ignoramos al jugador
-        if (colision.CompareTag("Player")) return;
-
-        // 2. NUEVO: Ignoramos otras balas para que la escopeta funcione
-        if (colision.CompareTag("Bala")) return;
+        if (colision.CompareTag("Player") || colision.CompareTag("Bala")) return;
 
         IReceptorDano objetivo = colision.GetComponent<IReceptorDano>();
-
         if (objetivo != null)
         {
             objetivo.RecibirDano(dano, rb.linearVelocity.normalized, 0f);
         }
 
-        Destroy(gameObject);
+        // ¡ADIÓS DESTROY! La bala simplemente se devuelve a la piscina
+        PoolManager.Instancia.DevolverObjeto(etiquetaPool, gameObject);
     }
 }
