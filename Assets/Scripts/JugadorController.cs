@@ -151,7 +151,26 @@ public class JugadorController : Entidad
         rb.MovePosition(rb.position + direccionMovimiento * velocidadMovimiento * Time.fixedDeltaTime);
     }
 
-    public override void Morir() { /* Tu lógica de muerte intacta */ }
+    public override void Morir()
+    {
+        base.Morir();
+        Debug.Log(gameObject.name + " ha muerto.");
+
+        if (GameManager.Instancia != null)
+        {
+            GameManager.Instancia.VerificarEstadoJugadores();
+        }
+
+        // --- CÓDIGO ACTUALIZADO DE LA CÁMARA ---
+        // Busca si tiene una cámara asignada como hija y la suelta en el mapa
+        Camera miCamara = GetComponentInChildren<Camera>();
+        if (miCamara != null)
+        {
+            miCamara.transform.SetParent(null);
+        }
+
+        gameObject.SetActive(false);
+    }
     public void OnLinterna(InputValue valor)
     {
         if (valor.isPressed && objetoLinterna != null)

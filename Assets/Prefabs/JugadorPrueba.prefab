@@ -591,7 +591,7 @@ GameObject:
   - component: {fileID: 417290587364373004}
   - component: {fileID: 1646079377948078242}
   - component: {fileID: 1136862405953723566}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: JugadorPrueba
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -844,6 +844,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  miUI: {fileID: 0}
 --- !u!114 &1136862405953723566
 MonoBehaviour:
   m_ObjectHideFlags: 0
