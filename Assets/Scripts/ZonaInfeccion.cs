@@ -9,7 +9,7 @@ public class ZonaInfeccion : MonoBehaviour
     public float probabilidadEstatico = 30f; // Por defecto, el 30% se quedará quieto
 
     [Header("Configuración de la Zona")]
-    public GameObject zombiPrefab;
+    public string etiquetaZombi = "ZombiBase"; // <-- ¡NUEVO! Conectado a la piscina
     public int cantidadZombis = 5;
 
     // Aquí guardaremos la lista de los zombis que creamos para poder borrarlos después
@@ -59,25 +59,32 @@ public class ZonaInfeccion : MonoBehaviour
             NavMeshHit hit;
             if (NavMesh.SamplePosition(puntoAleatorio, out hit, 2f, NavMesh.AllAreas))
             {
-                GameObject nuevoZombi = Instantiate(zombiPrefab, hit.position, Quaternion.identity);
-                ZombiController cerebro = nuevoZombi.GetComponent<ZombiController>();
+                // =======================================================
+                // ¡LA MAGIA DE LA PISCINA! Pedimos zombis ya creados
+                // =======================================================
+                GameObject nuevoZombi = PoolManager.Instancia.SolicitarObjeto(etiquetaZombi, hit.position, Quaternion.identity);
 
-                if (cerebro != null)
+                if (nuevoZombi != null) // Validamos que la piscina nos haya dado uno
                 {
-                    cerebro.esDeHorda = false;
+                    ZombiController cerebro = nuevoZombi.GetComponent<ZombiController>();
 
-                    // EL TRUCO DE VARIEDAD:
-                    float suerte = Random.Range(0f, 100f);
-                    if (suerte <= probabilidadEstatico)
+                    if (cerebro != null)
                     {
-                        cerebro.esEstatico = true;
+                        cerebro.esDeHorda = false;
+
+                        // EL TRUCO DE VARIEDAD:
+                        float suerte = Random.Range(0f, 100f);
+                        if (suerte <= probabilidadEstatico)
+                        {
+                            cerebro.esEstatico = true;
+                        }
+                        else
+                        {
+                            cerebro.esEstatico = false;
+                        }
                     }
-                    else
-                    {
-                        cerebro.esEstatico = false;
-                    }
+                    zombisVivos.Add(nuevoZombi);
                 }
-                zombisVivos.Add(nuevoZombi);
             }
         }
     }
@@ -92,14 +99,16 @@ public class ZonaInfeccion : MonoBehaviour
         {
             GameObject zombi = zombisVivos[i];
 
-            if (zombi != null)
+            // Validamos que el zombi exista y siga ENCENDIDO (por si el jugador lo mató dentro de la zona)
+            if (zombi != null && zombi.activeInHierarchy)
             {
                 ZombiController cerebro = zombi.GetComponent<ZombiController>();
 
-                // CORRECCIÓN AQUÍ: Si el zombi NO tiene un objetivo en la mira (es decir, deambula)
+                // Si el zombi NO tiene un objetivo en la mira (es decir, deambula)
                 if (cerebro != null && cerebro.objetivoJugador == null)
                 {
-                    Destroy(zombi); // Lo borramos para liberar memoria
+                    // ¡NUEVO! Lo devolvemos a la piscina para que duerma
+                    PoolManager.Instancia.DevolverObjeto(etiquetaZombi, zombi);
                     zombisVivos.RemoveAt(i); // Lo quitamos de la lista
                 }
                 else
@@ -110,6 +119,7 @@ public class ZonaInfeccion : MonoBehaviour
             }
             else
             {
+                // Si el zombi es nulo o ya estaba apagado (muerto), solo limpiamos la lista
                 zombisVivos.RemoveAt(i);
             }
         }

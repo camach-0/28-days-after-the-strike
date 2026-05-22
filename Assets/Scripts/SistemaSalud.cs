@@ -72,4 +72,11 @@ public class SistemaSalud : MonoBehaviour, IReceptorDano
         // Gritamos a la UI que la vida subió
         OnVidaCambiada?.Invoke(vidaActual / vidaMaxima);
     }
+    // ¡NUEVO! Para reciclar objetos en el Pool
+    public void Revivir()
+    {
+        vidaActual = vidaMaxima;
+        // Opcional: Gritamos a la UI que la vida se llenó, por si el zombi tiene barra de vida
+        OnVidaCambiada?.Invoke(1f);
+    }
 }

@@ -6,7 +6,7 @@ using UnityEngine.AI;
 public class GameDirector : MonoBehaviour
 {
     [Header("Configuración de la Horda")]
-    public GameObject zombiPrefab;
+    public string etiquetaZombi = "ZombiBase";
     public float distanciaDeAparicion = 20f;
 
     [Header("Límites y Memoria")]
@@ -38,7 +38,8 @@ public class GameDirector : MonoBehaviour
             int zombisActuales = GameObject.FindGameObjectsWithTag("Enemy").Length;
             Vector2 centroEquipo = ObtenerCentroDelEquipo();
 
-            if (centroEquipo != Vector2.zero && zombiPrefab != null && zombisActuales < limiteZombisEnMapa)
+            // ¡CORREGIDO! Ya no verificamos el viejo zombiPrefab, el PoolManager se encarga
+            if (centroEquipo != Vector2.zero && zombisActuales < limiteZombisEnMapa)
             {
                 int tamanoHorda = Random.Range(minZombisPorHorda, maxZombisPorHorda);
                 int cantidadGrupos = Random.Range(minGrupos, maxGrupos + 1);
@@ -58,12 +59,19 @@ public class GameDirector : MonoBehaviour
                         {
                             Vector3 posicionDesfasada = hit.position + (Vector3)(Random.insideUnitCircle * 2f);
 
-                            GameObject nuevoZombi = Instantiate(zombiPrefab, posicionDesfasada, Quaternion.identity);
-                            ZombiController cerebro = nuevoZombi.GetComponent<ZombiController>();
+                            // =======================================================
+                            // ¡LA MAGIA DE LA PISCINA! Pedimos zombis ya creados
+                            // =======================================================
+                            GameObject nuevoZombi = PoolManager.Instancia.SolicitarObjeto(etiquetaZombi, posicionDesfasada, Quaternion.identity);
 
-                            if (cerebro != null)
+                            if (nuevoZombi != null) // Validamos que la piscina nos haya dado uno
                             {
-                                cerebro.esDeHorda = true;
+                                ZombiController cerebro = nuevoZombi.GetComponent<ZombiController>();
+
+                                if (cerebro != null)
+                                {
+                                    cerebro.esDeHorda = true;
+                                }
                             }
                         }
                     }

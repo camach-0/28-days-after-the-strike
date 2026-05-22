@@ -4,6 +4,9 @@ using UnityEngine.AI;
 [RequireComponent(typeof(NavMeshAgent), typeof(SistemaSalud))]
 public class ZombiController : MonoBehaviour
 {
+    [Header("Configuración del Pool")]
+    public string etiquetaPool = "ZombiBase"; // <-- Variable necesaria para saber a qué piscina volver
+
     [Header("Cerebro de IA")]
     public bool esDeHorda = false;
     public bool esEstatico = false;
@@ -37,13 +40,32 @@ public class ZombiController : MonoBehaviour
         agente.updateUpAxis = false;
     }
 
-    private void Start()
+    private void OnEnable()
     {
-        moduloSalud.OnMuerte += Morir;
+        // 1. Le devolvemos la salud máxima al nacer
+        if (moduloSalud != null)
+        {
+            moduloSalud.Revivir();
+            moduloSalud.OnMuerte += Morir; // Nos suscribimos a nuestra propia muerte
+        }
 
-        if (esDeHorda) esEstatico = false;
+        // 2. Borramos la memoria de presas anteriores
+        objetivoJugador = null;
 
+        // 3. Arrancamos el cerebro desde cero
         CambiarEstado(estadoDeambular);
+    }
+
+    private void OnDisable()
+    {
+        if (moduloSalud != null) moduloSalud.OnMuerte -= Morir;
+
+        // Frenamos en seco para que no nazca corriendo en la siguiente vida
+        if (agente != null && agente.isActiveAndEnabled && agente.isOnNavMesh)
+        {
+            agente.isStopped = true;
+            agente.ResetPath();
+        }
     }
 
     private void Update()
@@ -67,7 +89,7 @@ public class ZombiController : MonoBehaviour
         float distanciaCorta = Mathf.Infinity;
         Transform jugadorMasCercano = null;
 
-        // ¡LA CLAVE DE LAS HORDAS! Escanea la lista central de supervivientes vivos (tanto bots como humanos)
+        // ¡LA CLAVE DE LAS HORDAS! Escanea la lista central de supervivientes vivos
         foreach (SistemaSalud superviviente in GameManager.Instancia.supervivientesActivos)
         {
             if (superviviente != null && superviviente.vidaActual > 0)
@@ -89,7 +111,8 @@ public class ZombiController : MonoBehaviour
 
     private void Morir()
     {
-        Destroy(gameObject);
+        // Regresamos al gestor invisible en lugar de usar Destroy
+        PoolManager.Instancia.DevolverObjeto(etiquetaPool, gameObject);
     }
 
     private void OnDrawGizmosSelected()
@@ -100,6 +123,10 @@ public class ZombiController : MonoBehaviour
         Gizmos.DrawWireSphere(transform.position, radioPatrullaje);
     }
 }
+
+// ==========================================
+// PATRÓN STATE: LAS CLASES DE COMPORTAMIENTO
+// ==========================================
 
 public interface IEstadoZombi
 {

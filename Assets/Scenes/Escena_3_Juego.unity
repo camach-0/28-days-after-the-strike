@@ -572,7 +572,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   probabilidadEstatico: 30
-  zombiPrefab: {fileID: 715580906502479141, guid: 39ebec8c9286bcc438e75893fa228264, type: 3}
+  etiquetaZombi: ZombiBase
   cantidadZombis: 15
 --- !u!61 &338342005
 BoxCollider2D:
@@ -2192,7 +2192,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aebf89cf8e6e0a84fa0b7f11050338cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  zombiPrefab: {fileID: 715580906502479141, guid: 39ebec8c9286bcc438e75893fa228264, type: 3}
+  etiquetaZombi: ZombiBase
   distanciaDeAparicion: 15
   limiteZombisEnMapa: 40
   minZombisPorHorda: 20
@@ -5968,6 +5968,9 @@ MonoBehaviour:
   - etiqueta: BalaBase
     prefab: {fileID: 6233821941795280886, guid: 49c8ae99b5a71634b80191319a0d04f8, type: 3}
     cantidadInicial: 100
+  - etiqueta: ZombiBase
+    prefab: {fileID: 715580906502479141, guid: 39ebec8c9286bcc438e75893fa228264, type: 3}
+    cantidadInicial: 150
 --- !u!4 &1949434198
 Transform:
   m_ObjectHideFlags: 0
@@ -6329,6 +6332,7 @@ SceneRoots:
   - {fileID: 669620453}
   - {fileID: 338342006}
   - {fileID: 1775909903}
+  - {fileID: 1949434198}
   - {fileID: 820776318}
   - {fileID: 998569248}
   - {fileID: 10908518}
@@ -6347,4 +6351,3 @@ SceneRoots:
   - {fileID: 788169570769168152}
   - {fileID: 39334205}
   - {fileID: 6804837617348912731}
-  - {fileID: 1949434198}
