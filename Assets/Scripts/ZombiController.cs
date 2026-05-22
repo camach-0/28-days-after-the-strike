@@ -7,6 +7,9 @@ public class ZombiController : MonoBehaviour
     [Header("Configuración del Pool")]
     public string etiquetaPool = "ZombiBase"; // <-- Variable necesaria para saber a qué piscina volver
 
+    [Header("Memoria Global")]
+    public static int zombisActivosEnMapa = 0; // <-- NUEVO: Contador ultra rápido
+
     [Header("Cerebro de IA")]
     public bool esDeHorda = false;
     public bool esEstatico = false;
@@ -42,6 +45,7 @@ public class ZombiController : MonoBehaviour
 
     private void OnEnable()
     {
+        zombisActivosEnMapa++; // Sumamos al nacer
         // 1. Le devolvemos la salud máxima al nacer
         if (moduloSalud != null)
         {
@@ -58,6 +62,7 @@ public class ZombiController : MonoBehaviour
 
     private void OnDisable()
     {
+        zombisActivosEnMapa--; // Restamos al apagarse/morir
         if (moduloSalud != null) moduloSalud.OnMuerte -= Morir;
 
         // Frenamos en seco para que no nazca corriendo en la siguiente vida

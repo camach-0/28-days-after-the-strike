@@ -35,7 +35,7 @@ public class GameDirector : MonoBehaviour
         while (true)
         {
             // NOTA: Asegúrate de que tus Zombis tengan la etiqueta (Tag) "Enemy" en Unity.
-            int zombisActuales = GameObject.FindGameObjectsWithTag("Enemy").Length;
+            int zombisActuales = ZombiController.zombisActivosEnMapa;
             Vector2 centroEquipo = ObtenerCentroDelEquipo();
 
             // ¡CORREGIDO! Ya no verificamos el viejo zombiPrefab, el PoolManager se encarga
