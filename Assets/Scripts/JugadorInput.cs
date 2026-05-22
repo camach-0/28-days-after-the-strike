@@ -15,6 +15,8 @@ public class JugadorInput : MonoBehaviour
     public bool IntentoRecargar { get; set; }
     public bool IntentoLinterna { get; set; }
 
+    public bool IntentoInteractuar { get; set; }
+
     public int IntentoCambioSlot { get; set; } = -1; // -1 significa que no se apretó nada
     public int IntentoScrollArma { get; set; } = 0;
     public bool IntentoCambioRapido { get; set; }
@@ -94,5 +96,9 @@ public class JugadorInput : MonoBehaviour
                 DireccionMirando = direccionHaciaRaton.normalized;
             }
         }
+    }
+    public void OnInteractuar(InputValue valor)
+    {
+        if (valor.isPressed) IntentoInteractuar = true;
     }
 }

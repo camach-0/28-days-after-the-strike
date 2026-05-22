@@ -5971,6 +5971,12 @@ MonoBehaviour:
   - etiqueta: ZombiBase
     prefab: {fileID: 715580906502479141, guid: 39ebec8c9286bcc438e75893fa228264, type: 3}
     cantidadInicial: 150
+  - etiqueta: ItemBotiquin
+    prefab: {fileID: 5017271401101742472, guid: abc6ca255e85b7e458e4be315f4fd548, type: 3}
+    cantidadInicial: 10
+  - etiqueta: EfectoSonido
+    prefab: {fileID: 6517644523942789800, guid: 756c1f5cd33ca234fb59567bb99be354, type: 3}
+    cantidadInicial: 20
 --- !u!4 &1949434198
 Transform:
   m_ObjectHideFlags: 0

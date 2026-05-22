@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(InventarioJugador))]
 public class InteraccionJugador : MonoBehaviour
@@ -22,7 +21,7 @@ public class InteraccionJugador : MonoBehaviour
         if (collision.CompareTag("Recogible"))
         {
             itemCercano = collision.GetComponent<ItemRecogible>();
-            Debug.Log("¡Arma cerca! Presiona Interactuar para recogerla.");
+            Debug.Log("¡Objeto cerca! Presiona Interactuar para recogerlo.");
         }
     }
 
@@ -39,10 +38,13 @@ public class InteraccionJugador : MonoBehaviour
         }
     }
 
-    // Se ejecuta al apretar el botón de Interactuar
-    public void OnInteractuar(InputValue valor)
+    // ====================================================================
+    // --- ¡NUEVO! Método público para ser invocado por el Cerebro ---
+    // ====================================================================
+    public void IntentarRecoger()
     {
-        if (valor.isPressed && itemCercano != null)
+        // Si el Cerebro da la orden y tenemos algo bajo los pies...
+        if (itemCercano != null)
         {
             itemCercano.SerRecogido(inventario, pivoteArma);
             itemCercano = null; // Vaciamos la referencia tras recogerlo

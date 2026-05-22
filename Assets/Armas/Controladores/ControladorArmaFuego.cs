@@ -79,7 +79,14 @@ public class ControladorArmaFuego : ControladorArma
 
     void EjecutarDisparo(Vector2 direccionApuntado)
     {
-        if (datosFuego.sonidoAtaque != null) AudioSource.PlayClipAtPoint(datosFuego.sonidoAtaque, transform.position);
+        if (datosFuego.sonidoAtaque != null)
+        {
+            GameObject objSonido = PoolManager.Instancia.SolicitarObjeto("EfectoSonido", transform.position, Quaternion.identity);
+            if (objSonido != null)
+            {
+                objSonido.GetComponent<AudioReciclable>().Reproducir(datosFuego.sonidoAtaque);
+            }
+        }
 
         for (int i = 0; i < datosFuego.perdigonesPorDisparo; i++)
         {
@@ -87,9 +94,6 @@ public class ControladorArmaFuego : ControladorArma
             float anguloDispersion = Random.Range(-datosFuego.dispersionBalas, datosFuego.dispersionBalas);
             Quaternion rotacionFinalBala = Quaternion.Euler(0, 0, anguloBase + anguloDispersion);
 
-            // ==========================================
-            // ¡LA MAGIA DE LA PISCINA! Adiós Instantiate.
-            // ==========================================
             GameObject nuevaBala = PoolManager.Instancia.SolicitarObjeto(etiquetaBala, puntoDisparo.position, rotacionFinalBala);
 
             if (nuevaBala != null)

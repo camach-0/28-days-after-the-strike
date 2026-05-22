@@ -3,14 +3,15 @@ using UnityEngine.UI;
 
 [RequireComponent(typeof(JugadorMovimiento), typeof(JugadorCombate), typeof(JugadorInput))]
 [RequireComponent(typeof(SistemaSalud), typeof(JugadorUI))]
-[RequireComponent(typeof(InventarioJugador))] // <-- ¡NUEVO! Forzamos a que el personaje tenga inventario
+[RequireComponent(typeof(InventarioJugador), typeof(InteraccionJugador))] // <-- ¡NUEVO! Unity también forzará este componente
 public class JugadorController : MonoBehaviour
 {
     [Header("Módulos (Músculos y Sentidos)")]
     private JugadorMovimiento moduloMovimiento;
     private JugadorCombate moduloCombate;
     private JugadorInput moduloInput;
-    private InventarioJugador moduloInventario; // <-- ¡NUEVO! Conexión con el inventario
+    private InventarioJugador moduloInventario;
+    private InteraccionJugador moduloInteraccion; // <-- ¡NUEVO! Conexión con el sistema de interacción
 
     // AQUÍ ESTÁ LA VARIABLE QUE SOLUCIONA EL ERROR:
     public SistemaSalud moduloSalud;
@@ -39,7 +40,8 @@ public class JugadorController : MonoBehaviour
         moduloCombate = GetComponent<JugadorCombate>();
         moduloInput = GetComponent<JugadorInput>();
         moduloSalud = GetComponent<SistemaSalud>();
-        moduloInventario = GetComponent<InventarioJugador>(); // <-- ¡NUEVO! Enlazamos el inventario
+        moduloInventario = GetComponent<InventarioJugador>();
+        moduloInteraccion = GetComponent<InteraccionJugador>(); // <-- ¡NUEVO! Enlazamos el módulo de interacción
 
         if (camaraPrincipal == null) camaraPrincipal = Camera.main;
 
@@ -97,7 +99,7 @@ public class JugadorController : MonoBehaviour
         }
 
         // ====================================================================
-        // --- ¡NUEVO! GESTIÓN CENTRALIZADA DEL INVENTARIO (Fase 2) ---
+        // --- GESTIÓN CENTRALIZADA DEL INVENTARIO (Fase 2) ---
         // ====================================================================
 
         // 1. Cambio de ranura directo (Teclas 1 a 5)
@@ -119,6 +121,15 @@ public class JugadorController : MonoBehaviour
         {
             moduloInventario.EjecutarCambioRapido();
             moduloInput.IntentoCambioRapido = false; // Consumimos la orden
+        }
+
+        // ====================================================================
+        // --- ¡NUEVO! GESTIÓN DE INTERACCIÓN Y BOTÍN (Punto 4) ---
+        // ====================================================================
+        if (moduloInput.IntentoInteractuar)
+        {
+            if (moduloInteraccion != null) moduloInteraccion.IntentarRecoger();
+            moduloInput.IntentoInteractuar = false; // Consumimos la orden para evitar bucles
         }
     }
 
