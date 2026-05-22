@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Linq;
 
 public class ControladorLobby : MonoBehaviour
 {
@@ -52,6 +53,15 @@ public class ControladorLobby : MonoBehaviour
         {
             estaListo = true;
             DatosGlobales.personajesSeleccionados[miIDJugador] = indicePersonajeActual;
+            // --- NUEVO: GUARDAMOS EL MANDO O TECLADO EXACTO AQUÍ ---
+            PlayerInput pi = GetComponent<PlayerInput>();
+            if (pi != null)
+            {
+                // Guardamos el control físico exacto y el nombre de su esquema (Teclado o Mando)
+                DatosGlobales.dispositivosPorJugador[miIDJugador] = pi.devices.ToArray();
+                DatosGlobales.esquemasControlPorJugador[miIDJugador] = pi.currentControlScheme;
+            }
+
             LobbyManager.Instancia.ComprobarTodosListos();
             LobbyManager.Instancia.ActualizarVisuales();
         }

@@ -53,7 +53,22 @@ public class GestorSupervivientes : MonoBehaviour
             if (esControladoPorHumano)
             {
                 // --- ES UN HUMANO ---
-                if (inputHumano != null) inputHumano.enabled = true;
+                if (inputHumano != null)
+                {
+                    inputHumano.enabled = true;
+
+                    // --- NUEVO: FORZAMOS AL PERSONAJE A USAR SU CONTROL DEL LOBBY ---
+                    var mandosGuardados = DatosGlobales.dispositivosPorJugador[idDelHumano];
+                    var esquemaGuardado = DatosGlobales.esquemasControlPorJugador[idDelHumano];
+
+                    if (mandosGuardados != null && !string.IsNullOrEmpty(esquemaGuardado))
+                    {
+                        // Vincula este personaje ÚNICAMENTE al control que lo eligió
+                        inputHumano.SwitchCurrentControlScheme(esquemaGuardado, mandosGuardados);
+                    }
+                    // -----------------------------------------------------------------
+                }
+
                 if (scriptHumano != null) scriptHumano.enabled = true;
                 if (cerebroBot != null) cerebroBot.enabled = false;
                 if (agente != null) agente.enabled = false;
@@ -67,6 +82,8 @@ public class GestorSupervivientes : MonoBehaviour
                     camaras[idDelHumano].transform.SetParent(personaje.transform);
                     camaras[idDelHumano].transform.localPosition = new Vector3(0, 0, -10);
 
+                    // --- NUEVO: Le decimos al jugador EXACTAMENTE cuál es su cámara ---
+                    scriptHumano.camaraPrincipal = camaras[idDelHumano];
                     // --- LA MAGIA DE LA INTERFAZ AQUÍ ---
                     Canvas canvasDelJugador = personaje.GetComponentInChildren<Canvas>();
                     if (canvasDelJugador != null)

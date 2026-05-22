@@ -8,6 +8,7 @@ public class JugadorController : Entidad
     private Vector2 direccionMovimiento;
     private Vector2 direccionMirando = Vector2.right;
     private Rigidbody2D rb;
+    private Vector2 posicionRatonPantalla;
 
     [Header("¡OBLIGATORIO: Configuración de Cámara!")]
     public Camera camaraPrincipal;
@@ -51,7 +52,15 @@ public class JugadorController : Entidad
     {
         if (estaMuerto) return;
         Vector2 inputApunte = valor.Get<Vector2>();
-        if (inputApunte.sqrMagnitude <= 2f && inputApunte.sqrMagnitude > 0.05f)
+
+        // Si el valor es altísimo, son coordenadas de pantalla (Es el Ratón)
+        if (inputApunte.sqrMagnitude > 2f)
+        {
+            usandoRaton = true;
+            posicionRatonPantalla = inputApunte; // Guardamos su posición
+        }
+        // Si el valor es pequeñito, es la palanca del Mando (-1 a 1)
+        else if (inputApunte.sqrMagnitude > 0.01f)
         {
             usandoRaton = false;
             direccionMirando = inputApunte.normalized;
@@ -99,16 +108,11 @@ public class JugadorController : Entidad
     {
         if (estaMuerto) return;
 
-        if (Mouse.current != null && Mouse.current.delta.ReadValue().sqrMagnitude > 0.1f)
+        // YA NO USAMOS Mouse.current. ¡Usamos los datos aislados de OnApuntar!
+        if (usandoRaton && camaraPrincipal != null)
         {
-            usandoRaton = true;
-        }
-
-        if (usandoRaton && camaraPrincipal != null && Mouse.current != null)
-        {
-            Vector2 posRatonPantalla = Mouse.current.position.ReadValue();
             float distanciaZ = Mathf.Abs(camaraPrincipal.transform.position.z - transform.position.z);
-            Vector3 screenPoint = new Vector3(posRatonPantalla.x, posRatonPantalla.y, distanciaZ);
+            Vector3 screenPoint = new Vector3(posicionRatonPantalla.x, posicionRatonPantalla.y, distanciaZ);
             Vector3 mouseWorldPosition = camaraPrincipal.ScreenToWorldPoint(screenPoint);
 
             if (pivoteArma != null)
