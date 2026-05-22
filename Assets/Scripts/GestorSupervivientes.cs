@@ -66,6 +66,15 @@ public class GestorSupervivientes : MonoBehaviour
                     camaras[idDelHumano].gameObject.SetActive(true); // La encendemos
                     camaras[idDelHumano].transform.SetParent(personaje.transform);
                     camaras[idDelHumano].transform.localPosition = new Vector3(0, 0, -10);
+
+                    // --- LA MAGIA DE LA INTERFAZ AQUÍ ---
+                    Canvas canvasDelJugador = personaje.GetComponentInChildren<Canvas>();
+                    if (canvasDelJugador != null)
+                    {
+                        canvasDelJugador.worldCamera = camaras[idDelHumano];
+                        canvasDelJugador.planeDistance = 1f; // Lo pone bien cerquita de la cámara
+                    }
+                    // ------------------------------------
                 }
             }
             else
@@ -77,6 +86,14 @@ public class GestorSupervivientes : MonoBehaviour
                 if (agente != null) agente.enabled = true;
 
                 personaje.name += " (Bot)";
+
+                // --- APAGAMOS LA INTERFAZ DEL BOT ---
+                Canvas canvasDelBot = personaje.GetComponentInChildren<Canvas>();
+                if (canvasDelBot != null)
+                {
+                    canvasDelBot.gameObject.SetActive(false); // Los bots no necesitan ver el inventario
+                }
+                // ------------------------------------
             }
         }
 

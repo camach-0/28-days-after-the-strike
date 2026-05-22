@@ -7,6 +7,7 @@ public class InventarioJugador : MonoBehaviour
     [Header("Ranuras estilo L4D2")]
     [Tooltip("0: Principal, 1: Secundaria, 2: Arrojadiza, 3: Botiquín, 4: Pastillas")]
     public ControladorArma[] ranuras = new ControladorArma[5];
+    public UIInventario miUI; // Enlace a la interfaz
 
     // En L4D siempre empiezas con la pistola en la mano (Slot 1)
     private int indiceSlotActual = 1;
@@ -34,6 +35,7 @@ public class InventarioJugador : MonoBehaviour
         {
             jugador.armaEquipada = ranuras[indiceSlotActual];
         }
+        if (miUI != null) miUI.IluminarSlot(indiceSlotActual);
     }
 
     // Método para cambiar a un slot específico (0 al 4)
@@ -68,14 +70,15 @@ public class InventarioJugador : MonoBehaviour
             // 4. ¡CRUCIAL! Le pasamos la nueva arma al controlador del jugador
             jugador.armaEquipada = ranuras[indiceSlotActual];
         }
+        if (miUI != null) miUI.IluminarSlot(indiceSlotActual);
     }
 
-    // --- ENTRADAS DE TECLADO (Botones 1, 2, 3, 4, 5) ---
-    public void OnSlot1(InputValue valor) { if (valor.isPressed) CambiarSlot(0); } // Principal (M16/Escopeta)
-    public void OnSlot2(InputValue valor) { if (valor.isPressed) CambiarSlot(1); } // Secundaria (Pistola/Melee)
-    public void OnSlot3(InputValue valor) { if (valor.isPressed) CambiarSlot(2); } // Arrojadiza (Molotov)
-    public void OnSlot4(InputValue valor) { if (valor.isPressed) CambiarSlot(3); } // Curación Mayor (Botiquín)
-    public void OnSlot5(InputValue valor) { if (valor.isPressed) CambiarSlot(4); } // Curación Menor (Pastillas)
+    // --- ENTRADAS DE TECLADO ACTUALIZADAS A TUS NOMBRES ---
+    public void OnArmaPrincipal(InputValue valor) { if (valor.isPressed) CambiarSlot(0); }
+    public void OnArmaSecundaria(InputValue valor) { if (valor.isPressed) CambiarSlot(1); }
+    public void OnArojadizos(InputValue valor) { if (valor.isPressed) CambiarSlot(2); }
+    public void OnBotiquin(InputValue valor) { if (valor.isPressed) CambiarSlot(3); }
+    public void OnPildoras(InputValue valor) { if (valor.isPressed) CambiarSlot(4); }
 
     // --- RUEDA DEL RATÓN (SCROLL) ---
     public void OnRuedaRaton(InputValue valor)

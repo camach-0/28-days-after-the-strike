@@ -12,8 +12,6 @@ public class ItemRecogible : MonoBehaviour
     // Esta función la llamará el jugador cuando apriete el botón de interactuar
     public void SerRecogido(InventarioJugador inventario, Transform pivoteArma)
     {
-        // 1. Si el jugador ya tiene un arma en ese slot, la destruimos para hacer espacio
-        // (En L4D el arma vieja cae al piso, pero para simplificar ahora, la destruiremos)
         if (inventario.ranuras[indiceSlot] != null)
         {
             Destroy(inventario.ranuras[indiceSlot].gameObject);
@@ -21,6 +19,12 @@ public class ItemRecogible : MonoBehaviour
 
         // 2. Creamos (Instanciamos) el nuevo arma directamente como hijo del PivoteArma
         GameObject nuevaArmaObj = Instantiate(armaPrefabParaMano, pivoteArma);
+
+        // --- EL PARCHE: Forzamos a que se pegue al centro del jugador ---
+        // Usa Vector3.zero para que esté en el centro exacto (invisible), 
+        // o usa new Vector3(0.6f, 0, 0) si quieres que se vea un poco hacia adelante.
+        nuevaArmaObj.transform.localPosition = new Vector3(0.6f, 0, 0);
+        nuevaArmaObj.transform.localRotation = Quaternion.identity; // Evita que nazca torcido
 
         // 3. Obtenemos su controlador y se lo damos al inventario
         ControladorArma nuevoControlador = nuevaArmaObj.GetComponent<ControladorArma>();
