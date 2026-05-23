@@ -17,6 +17,7 @@ MonoBehaviour:
   danoBase: 45
   cadenciaAtaque: 0.4
   sonidoAtaque: {fileID: 0}
+  etiquetaPoolSuelo: ItemMachete
   radioImpacto: 1.2
   fuerzaEmpuje: 5
   esMotosierra: 0

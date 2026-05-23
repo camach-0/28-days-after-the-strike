@@ -11,6 +11,8 @@ public abstract class ControladorArma : MonoBehaviour
     // ¡NUEVO! Propiedad que el jugador leerá para saber si debe caminar más lento
     public virtual float ModificadorVelocidad { get { return 1f; } }
 
+    public abstract string EtiquetaPoolSuelo { get; }
+
     // Obligamos a todos los hijos (armas de fuego, melee, etc) a tener este método
     public abstract void IntentarAtaque(Vector2 direccion);
 

@@ -3,43 +3,44 @@ using UnityEngine;
 public class ItemRecogible : MonoBehaviour
 {
     [Header("Configuración del Pool")]
-    [Tooltip("Debe ser el mismo nombre que pusiste en la Etiqueta del PoolManager")]
-    public string etiquetaPool = "ItemPistola"; // <-- ¡NUEVO! Conectado a la piscina
+    public string etiquetaPool = "ItemPistola";
 
     [Header("Configuración del Item")]
-    [Tooltip("El prefab del arma que se pondrá en la mano del jugador")]
     public GameObject armaPrefabParaMano;
-
-    [Tooltip("0 = Principal, 1 = Secundaria, 2 = Granada, 3 = Botiquín, 4 = Pastillas")]
     public int indiceSlot = 0;
 
-    // Esta función la llamará el Cerebro cuando apriete el botón de interactuar
     public void SerRecogido(InventarioJugador inventario, Transform pivoteArma)
     {
-        // 1. Borramos el arma vieja de la mano (Dejamos el Destroy temporalmente 
-        // hasta que implementemos una mecánica para "tirar el arma al piso")
+        // 1. Verificamos si el jugador ya tiene un arma en esta ranura
         if (inventario.ranuras[indiceSlot] != null)
         {
-            Destroy(inventario.ranuras[indiceSlot].gameObject);
+            ControladorArma armaVieja = inventario.ranuras[indiceSlot];
+
+            // 2. ¡EL DROP! Pedimos a la piscina que escupa la versión de SUELO de nuestra arma vieja
+            string etiquetaSueloVieja = armaVieja.EtiquetaPoolSuelo;
+            if (!string.IsNullOrEmpty(etiquetaSueloVieja))
+            {
+                // La instanciamos exactamente donde están los pies del jugador
+                PoolManager.Instancia.SolicitarObjeto(etiquetaSueloVieja, inventario.transform.position, Quaternion.identity);
+                Debug.Log($"Arma arrojada al piso: {etiquetaSueloVieja}");
+            }
+
+            // 3. Destruimos el arma visual vieja de la mano
+            Destroy(armaVieja.gameObject);
         }
 
-        // 2. Instanciamos el nuevo arma directamente como hijo del PivoteArma
+        // 4. Instanciamos el nuevo arma en la mano
         GameObject nuevaArmaObj = Instantiate(armaPrefabParaMano, pivoteArma);
-
-        // Forzamos a que se pegue al centro del jugador
         nuevaArmaObj.transform.localPosition = new Vector3(0.6f, 0, 0);
-        nuevaArmaObj.transform.localRotation = Quaternion.identity; // Evita que nazca torcido
+        nuevaArmaObj.transform.localRotation = Quaternion.identity;
 
-        // 3. Obtenemos su controlador y se lo damos al inventario
         ControladorArma nuevoControlador = nuevaArmaObj.GetComponent<ControladorArma>();
         inventario.ranuras[indiceSlot] = nuevoControlador;
 
-        // 4. Forzamos al jugador a equiparse esta nueva arma (le pasamos 'true')
+        // 5. Equipamos la nueva arma
         inventario.CambiarSlot(indiceSlot, true);
 
-        // ====================================================================
-        // --- 5. ¡ADIÓS DESTROY! Devolvemos el ítem del suelo a la piscina ---
-        // ====================================================================
+        // 6. Devolvemos ESTE ítem (el que acabamos de recoger) a la piscina
         PoolManager.Instancia.DevolverObjeto(etiquetaPool, gameObject);
     }
 }

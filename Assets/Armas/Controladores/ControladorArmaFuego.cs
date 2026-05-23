@@ -22,8 +22,12 @@ public class ControladorArmaFuego : ControladorArma
     private float tiempoProximoEmpujon = 0f;
     private Rigidbody2D rbJugador; // Para saber si se está moviendo
 
+   
     // Exponemos el peso del arma al Jugador
     public override float ModificadorVelocidad => datosFuego != null ? datosFuego.modificadorVelocidad : 1f;
+
+    // ¡NUEVO! Exponemos la etiqueta del suelo
+    public override string EtiquetaPoolSuelo => datosFuego != null ? datosFuego.etiquetaPoolSuelo : "";
 
     private void Awake()
     {

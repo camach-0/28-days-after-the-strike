@@ -17,6 +17,7 @@ MonoBehaviour:
   danoBase: 20
   cadenciaAtaque: 0.06
   sonidoAtaque: {fileID: 0}
+  etiquetaPoolSuelo: ItemUzi
   esAutomatica: 1
   esRafaga: 0
   balasPorRafaga: 3
