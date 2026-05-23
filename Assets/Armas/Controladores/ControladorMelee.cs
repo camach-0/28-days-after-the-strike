@@ -56,4 +56,5 @@ public class ControladorMelee : ControladorArma
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(puntoDisparo.position, datosMelee.radioImpacto);
     }
+    public override void IntentarEmpujon(Vector2 direccion) { }
 }

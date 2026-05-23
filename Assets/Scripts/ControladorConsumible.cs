@@ -54,4 +54,5 @@ public class ControladorConsumible : ControladorArma
 
         Destroy(gameObject);
     }
+    public override void IntentarEmpujon(Vector2 direccion) { }
 }

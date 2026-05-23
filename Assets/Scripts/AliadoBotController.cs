@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent), typeof(SistemaSalud))]
+[RequireComponent(typeof(JugadorCombate))]
 public class AliadoBotController : MonoBehaviour
 {
     [Header("Configuración de IA (Movimiento)")]
@@ -10,22 +11,20 @@ public class AliadoBotController : MonoBehaviour
 
     [Header("Configuración de IA (Combate)")]
     public float radioDeteccionZombis = 8f;
-    public float tiempoEntreDisparos = 0.8f;
-    private float temporizadorDisparo = 0f;
 
     [Header("Armas y Referencias")]
-    public GameObject balaPrefab;
-    public Transform puntoDisparo;
     public Transform pivoteArma;
 
     private NavMeshAgent agente;
     private Transform liderActual;
+    private JugadorCombate moduloCombate; // Lo mantenemos para saber qué arma tiene sujeta
     public SistemaSalud moduloSalud { get; private set; }
 
     private void Awake()
     {
         agente = GetComponent<NavMeshAgent>();
         moduloSalud = GetComponent<SistemaSalud>();
+        moduloCombate = GetComponent<JugadorCombate>();
 
         if (agente != null)
         {
@@ -62,7 +61,6 @@ public class AliadoBotController : MonoBehaviour
         BuscarLiderMasCercano();
         if (liderActual != null) ComportamientoSeguirLider();
 
-        temporizadorDisparo -= Time.deltaTime;
         AtacarZombiMasCercano();
     }
 
@@ -88,13 +86,11 @@ public class AliadoBotController : MonoBehaviour
         float distanciaMasCorta = Mathf.Infinity;
         Transform liderMasCercano = null;
 
-        // Recorremos todos los supervivientes activos registrados de forma directa
         foreach (SistemaSalud superviviente in GameManager.Instancia.supervivientesActivos)
         {
             if (superviviente != null && superviviente.vidaActual > 0)
             {
                 JugadorController humano = superviviente.GetComponent<JugadorController>();
-                // Si tiene el script humano activo, es un jugador real al que debemos proteger
                 if (humano != null && humano.enabled)
                 {
                     float distancia = Vector2.Distance(transform.position, superviviente.transform.position);
@@ -150,11 +146,14 @@ public class AliadoBotController : MonoBehaviour
         float angulo = Mathf.Atan2(direccionAlObjetivo.y, direccionAlObjetivo.x) * Mathf.Rad2Deg;
         pivoteArma.rotation = Quaternion.Euler(0, 0, angulo);
 
-        if (temporizadorDisparo <= 0f && balaPrefab != null && puntoDisparo != null)
+        // ====================================================================
+        // --- ¡LA SOLUCIÓN DE SOBERANÍA BALÍSTICA! ---
+        // ====================================================================
+        // En lugar de pasar por el filtro de clicks de humanos, atacamos directo.
+        // El arma misma decidirá si puede disparar o no según su cadencia interna.
+        if (moduloCombate != null && moduloCombate.armaEquipada != null)
         {
-            GameObject nuevaBala = Instantiate(balaPrefab, puntoDisparo.position, Quaternion.identity);
-            nuevaBala.GetComponent<Bala>().ConfigurarDireccion(direccionAlObjetivo);
-            temporizadorDisparo = tiempoEntreDisparos;
+            moduloCombate.armaEquipada.IntentarAtaque(direccionAlObjetivo);
         }
     }
 }

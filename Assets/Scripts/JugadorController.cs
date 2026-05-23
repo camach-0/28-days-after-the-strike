@@ -3,7 +3,7 @@ using UnityEngine.UI;
 
 [RequireComponent(typeof(JugadorMovimiento), typeof(JugadorCombate), typeof(JugadorInput))]
 [RequireComponent(typeof(SistemaSalud), typeof(JugadorUI))]
-[RequireComponent(typeof(InventarioJugador), typeof(InteraccionJugador))] // <-- ¡NUEVO! Unity también forzará este componente
+[RequireComponent(typeof(InventarioJugador), typeof(InteraccionJugador))]
 public class JugadorController : MonoBehaviour
 {
     [Header("Módulos (Músculos y Sentidos)")]
@@ -11,9 +11,8 @@ public class JugadorController : MonoBehaviour
     private JugadorCombate moduloCombate;
     private JugadorInput moduloInput;
     private InventarioJugador moduloInventario;
-    private InteraccionJugador moduloInteraccion; // <-- ¡NUEVO! Conexión con el sistema de interacción
+    private InteraccionJugador moduloInteraccion;
 
-    // AQUÍ ESTÁ LA VARIABLE QUE SOLUCIONA EL ERROR:
     public SistemaSalud moduloSalud;
 
     [Header("Estadísticas Base")]
@@ -27,7 +26,6 @@ public class JugadorController : MonoBehaviour
 
     private bool estaMuerto = false;
 
-    // El puente del Inventario
     public ControladorArma armaEquipada
     {
         get { return moduloCombate.armaEquipada; }
@@ -41,22 +39,16 @@ public class JugadorController : MonoBehaviour
         moduloInput = GetComponent<JugadorInput>();
         moduloSalud = GetComponent<SistemaSalud>();
         moduloInventario = GetComponent<InventarioJugador>();
-        moduloInteraccion = GetComponent<InteraccionJugador>(); // <-- ¡NUEVO! Enlazamos el módulo de interacción
+        moduloInteraccion = GetComponent<InteraccionJugador>();
 
         if (camaraPrincipal == null) camaraPrincipal = Camera.main;
 
-        if (moduloSalud != null)
-        {
-            moduloSalud.OnMuerte += ProcesarMuerte;
-        }
+        if (moduloSalud != null) moduloSalud.OnMuerte += ProcesarMuerte;
     }
 
     private void OnDestroy()
     {
-        if (moduloSalud != null)
-        {
-            moduloSalud.OnMuerte -= ProcesarMuerte;
-        }
+        if (moduloSalud != null) moduloSalud.OnMuerte -= ProcesarMuerte;
     }
 
     public void Start()
@@ -65,9 +57,6 @@ public class JugadorController : MonoBehaviour
         moduloInput.pivoteArma = moduloMovimiento.pivoteArma;
     }
 
-    // ==========================================
-    // EL CEREBRO EN ACCIÓN (Delegación pura)
-    // ==========================================
     private void Update()
     {
         if (estaMuerto)
@@ -79,13 +68,18 @@ public class JugadorController : MonoBehaviour
 
         moduloInput.ProcesarApuntadoRaton();
 
-        moduloMovimiento.Mover(moduloInput.InputMovimiento, velocidadMovimiento);
+        // ====================================================================
+        // --- ¡NUEVO! CÁLCULO DE PESO DEL ARMA EN LA VELOCIDAD ---
+        // ====================================================================
+        float velocidadFinal = velocidadMovimiento;
+        if (armaEquipada != null) velocidadFinal *= armaEquipada.ModificadorVelocidad;
+
+        moduloMovimiento.Mover(moduloInput.InputMovimiento, velocidadFinal);
         moduloMovimiento.Apuntar(moduloInput.DireccionMirando);
 
         moduloCombate.ProcesarInputDisparo(moduloInput.EstaDisparando, moduloInput.DireccionMirando);
         moduloCombate.ProcesarDisparoContinuo(moduloInput.DireccionMirando);
 
-        // --- ACCIONES DE UN SOLO TOQUE (Delegación) ---
         if (moduloInput.IntentoRecargar)
         {
             moduloCombate.IntentarRecarga();
@@ -98,38 +92,35 @@ public class JugadorController : MonoBehaviour
             moduloInput.IntentoLinterna = false;
         }
 
-        // ====================================================================
-        // --- GESTIÓN CENTRALIZADA DEL INVENTARIO (Fase 2) ---
-        // ====================================================================
+        // --- ¡NUEVO! DELEGACIÓN DEL CULATAZO ---
+        if (moduloInput.IntentoEmpujar)
+        {
+            moduloCombate.ProcesarInputEmpujon(moduloInput.DireccionMirando);
+            moduloInput.IntentoEmpujar = false;
+        }
 
-        // 1. Cambio de ranura directo (Teclas 1 a 5)
         if (moduloInput.IntentoCambioSlot != -1)
         {
             moduloInventario.CambiarSlot(moduloInput.IntentoCambioSlot);
-            moduloInput.IntentoCambioSlot = -1; // Consumimos la orden
+            moduloInput.IntentoCambioSlot = -1;
         }
 
-        // 2. Cambio por rueda de ratón (Scroll)
         if (moduloInput.IntentoScrollArma != 0)
         {
             moduloInventario.CiclarArma(moduloInput.IntentoScrollArma);
-            moduloInput.IntentoScrollArma = 0; // Consumimos la orden
+            moduloInput.IntentoScrollArma = 0;
         }
 
-        // 3. Botón de cambio rápido (Mando / Triángulo)
         if (moduloInput.IntentoCambioRapido)
         {
             moduloInventario.EjecutarCambioRapido();
-            moduloInput.IntentoCambioRapido = false; // Consumimos la orden
+            moduloInput.IntentoCambioRapido = false;
         }
 
-        // ====================================================================
-        // --- ¡NUEVO! GESTIÓN DE INTERACCIÓN Y BOTÍN (Punto 4) ---
-        // ====================================================================
         if (moduloInput.IntentoInteractuar)
         {
             if (moduloInteraccion != null) moduloInteraccion.IntentarRecoger();
-            moduloInput.IntentoInteractuar = false; // Consumimos la orden para evitar bucles
+            moduloInput.IntentoInteractuar = false;
         }
     }
 
@@ -137,15 +128,11 @@ public class JugadorController : MonoBehaviour
     {
         estaMuerto = true;
         Debug.Log(gameObject.name + " ha muerto.");
-
         moduloMovimiento.Mover(Vector2.zero, 0f);
         moduloCombate.ProcesarInputDisparo(false, moduloInput.DireccionMirando);
-
         if (GameManager.Instancia != null) GameManager.Instancia.VerificarEstadoJugadores();
-
         Camera miCamara = GetComponentInChildren<Camera>();
         if (miCamara != null) miCamara.transform.SetParent(null);
-
         gameObject.SetActive(false);
     }
 }
