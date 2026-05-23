@@ -80,7 +80,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.043874584, g: 0.4716981, b: 0, a: 1}
+  m_Color: {r: 0.47058824, g: 0.10234112, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -116,6 +116,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7816d63e6693f334e9c7c3772d4e215c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  etiquetaPool: ItemBotiquin
   armaPrefabParaMano: {fileID: 5017271401101742472}
   indiceSlot: 3
 --- !u!61 &1490990833323198406

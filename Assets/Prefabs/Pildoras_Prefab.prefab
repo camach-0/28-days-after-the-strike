@@ -116,6 +116,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7816d63e6693f334e9c7c3772d4e215c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  etiquetaPool: ItemPildoras
   armaPrefabParaMano: {fileID: 9088521424709666215}
   indiceSlot: 4
 --- !u!61 &5242230317236400391

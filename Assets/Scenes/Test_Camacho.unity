@@ -707,7 +707,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   puntoDisparo: {fileID: 6687972992538467492}
   datosFuego: {fileID: 11400000, guid: 086224398b56b40449cf2c6aa1a1ffa5, type: 2}
-  balaPrefab: {fileID: 6233821941795280886, guid: 49c8ae99b5a71634b80191319a0d04f8, type: 3}
+  etiquetaBala: BalaBase
   municionActualCargador: 120
   municionActualReserva: 12
   estaRecargando: 0
@@ -741,7 +741,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   puntoDisparo: {fileID: 8522848022974337753}
   datosFuego: {fileID: 11400000, guid: ab9bd30cefb3bf7409b27ef1ce7b69d7, type: 2}
-  balaPrefab: {fileID: 6233821941795280886, guid: 49c8ae99b5a71634b80191319a0d04f8, type: 3}
+  etiquetaBala: BalaBase
   municionActualCargador: 120
   municionActualReserva: 12
   estaRecargando: 0
@@ -1056,7 +1056,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   puntoDisparo: {fileID: 6295244298793873761}
   datosFuego: {fileID: 11400000, guid: 92334cc16dabce34d93d86aa6ecf0654, type: 2}
-  balaPrefab: {fileID: 6233821941795280886, guid: 49c8ae99b5a71634b80191319a0d04f8, type: 3}
+  etiquetaBala: BalaBase
   municionActualCargador: 120
   municionActualReserva: 12
   estaRecargando: 0
@@ -1290,7 +1290,6 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
-  miUI: {fileID: 0}
 --- !u!4 &7692585156218624886
 Transform:
   m_ObjectHideFlags: 0

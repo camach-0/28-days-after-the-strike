@@ -23,6 +23,13 @@ public class GameDirector : MonoBehaviour
     public float tiempoPaz_SaludMedia = 35f;
     public float tiempoPaz_SaludBaja = 50f;
 
+    public static GameDirector Instancia;
+    private void Awake()
+    {
+        if (Instancia == null) Instancia = this;
+        else Destroy(gameObject);
+    }
+
     private void Start()
     {
         StartCoroutine(GenerarHordasDinamicas());
@@ -127,5 +134,58 @@ public class GameDirector : MonoBehaviour
         if (porcentaje >= 0.7f) return tiempoPaz_SaludAlta;
         if (porcentaje >= 0.3f) return tiempoPaz_SaludMedia;
         return tiempoPaz_SaludBaja;
+    }
+    // --- NUEVO: 2. La función que se llama cuando alguien es vomitado ---
+    public void DesatarHordaPorVomito(Transform victima)
+    {
+        Debug.Log($"<color=red>¡EL DIRECTOR SE ENFADA! ¡Enviando horda masiva hacia {victima.name}!</color>");
+
+        // 1. Detenemos la tranquilidad y la cuenta regresiva normal
+        StopAllCoroutines();
+
+        // 2. Lanzamos una horda inmediata, más grande y centrada en la víctima
+        StartCoroutine(RutinaHordaDirigida(victima));
+
+        // 3. Reiniciamos el ciclo normal para que el juego continúe después del ataque
+        StartCoroutine(GenerarHordasDinamicas());
+    }
+
+    private IEnumerator RutinaHordaDirigida(Transform victima)
+    {
+        if (victima == null) yield break;
+
+        // Mandamos una cantidad brutal (más que una horda normal)
+        int tamanoHorda = Random.Range(maxZombisPorHorda, maxZombisPorHorda + 15);
+        int cantidadGrupos = 4; // Los rodeamos por los 4 lados
+        int zombisPorGrupo = tamanoHorda / cantidadGrupos;
+
+        for (int i = 0; i < cantidadGrupos; i++)
+        {
+            Vector2 direccionAtaque = Random.insideUnitCircle.normalized;
+            // Los hacemos aparecer cerca de la víctima, no del centro del equipo
+            Vector2 puntoGeneracion = (Vector2)victima.position + (direccionAtaque * distanciaDeAparicion);
+
+            NavMeshHit hit;
+            if (NavMesh.SamplePosition(puntoGeneracion, out hit, 10f, NavMesh.AllAreas))
+            {
+                for (int j = 0; j < zombisPorGrupo; j++)
+                {
+                    Vector3 posicionDesfasada = hit.position + (Vector3)(Random.insideUnitCircle * 2f);
+                    GameObject nuevoZombi = PoolManager.Instancia.SolicitarObjeto(etiquetaZombi, posicionDesfasada, Quaternion.identity);
+
+                    if (nuevoZombi != null)
+                    {
+                        ZombiController cerebro = nuevoZombi.GetComponent<ZombiController>();
+                        if (cerebro != null)
+                        {
+                            cerebro.esDeHorda = true;
+                            // Forzamos temporalmente al zombi a mirar a la víctima
+                            cerebro.objetivoJugador = victima;
+                        }
+                    }
+                }
+            }
+        }
+        yield return null; // Esperamos un frame para no congelar el juego
     }
 }
