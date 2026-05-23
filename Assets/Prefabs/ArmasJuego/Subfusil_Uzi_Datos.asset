@@ -10,32 +10,32 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4d3415ea22f9ce9498053ca2b863b94e, type: 3}
-  m_Name: EscopetaCorredera_Datos
+  m_Name: Subfusil_Uzi_Datos
   m_EditorClassIdentifier: 
-  nombreArma: EscopetaCorredera
+  nombreArma: Uzi
   iconoArma: {fileID: 0}
-  danoBase: 45
-  cadenciaAtaque: 0.8
+  danoBase: 20
+  cadenciaAtaque: 0.06
   sonidoAtaque: {fileID: 0}
-  esAutomatica: 0
+  esAutomatica: 1
   esRafaga: 0
-  balasPorRafaga: 4
+  balasPorRafaga: 3
   tiempoEntreBalasRafaga: 0.05
-  municionMaxima: 80
-  tamanoCargador: 12
-  tiempoRecarga: 0.8
+  municionMaxima: 650
+  tamanoCargador: 50
+  tiempoRecarga: 2.2
   reservaInfinita: 0
   penetracionZombis: 1
   fuerzaEmpuje: 2
   causaTambaleo: 0
-  alcance: 20
-  dispersionMinima: 2
-  dispersionMaxima: 8
-  incrementoRecoil: 2
-  velocidadRecuperacion: 10
-  tiempoDespliegue: 0.5
+  alcance: 35
+  dispersionMinima: 1.5
+  dispersionMaxima: 6
+  incrementoRecoil: 1.5
+  velocidadRecuperacion: 12
+  tiempoDespliegue: 0.4
   modificadorVelocidad: 1
   alcanceEmpujon: 1.5
   cadenciaEmpujon: 1
   fuerzaDelCulatazo: 10
-  perdigonesPorDisparo: 8
+  perdigonesPorDisparo: 1
