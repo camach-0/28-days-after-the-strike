@@ -222,7 +222,7 @@ MonoBehaviour:
   vidaMaxima: 100
   vidaIncapacidadMax: 300
   desangradoPorSegundo: 2
-  tiempoInmunidad: 0.2
+  tiempoInmunidad: 0
 --- !u!114 &2136503505227698631
 MonoBehaviour:
   m_ObjectHideFlags: 0

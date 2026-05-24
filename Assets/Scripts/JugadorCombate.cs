@@ -6,7 +6,7 @@ public class JugadorCombate : MonoBehaviour
     public ControladorArma armaEquipada;
 
     private bool estaDisparando = false;
-    private bool disparoAnterior = false; // El filtro para el clic
+    private bool disparoAnterior = false;
 
     public void ProcesarInputDisparo(bool presionado, Vector2 direccionMirando)
     {
@@ -24,6 +24,7 @@ public class JugadorCombate : MonoBehaviour
             }
             else
             {
+                // Aquí entran el Machete, Botiquín y el primer toque de la Motosierra
                 armaEquipada.IntentarAtaque(direccionMirando);
             }
         }
@@ -35,6 +36,7 @@ public class JugadorCombate : MonoBehaviour
     {
         if (estaDisparando && armaEquipada != null)
         {
+            // 1. Armas Automáticas (Uzi, M16)
             if (armaEquipada is ControladorArmaFuego armaFuego)
             {
                 if (armaFuego.datosFuego.esAutomatica && !armaFuego.datosFuego.esRafaga)
@@ -42,10 +44,17 @@ public class JugadorCombate : MonoBehaviour
                     armaEquipada.IntentarAtaque(direccionMirando);
                 }
             }
+            // ========================================================
+            // ¡EL PARCHE AQUÍ! 
+            // 2. Si es una Motosierra, le pasamos la señal continua
+            // ========================================================
+            else if (armaEquipada is ControladorMotosierra)
+            {
+                armaEquipada.IntentarAtaque(direccionMirando);
+            }
         }
     }
 
-    // --- ¡NUEVO! Conexión del Cerebro con el Culatazo ---
     public void ProcesarInputEmpujon(Vector2 direccionMirando)
     {
         if (armaEquipada != null)
