@@ -2,6 +2,10 @@ using UnityEngine;
 
 public class ControladorAdrenalina : ControladorArma
 {
+    [Header("Configuración del Sistema")]
+    // 1. ¡OBLIGATORIO! La etiqueta para que el nuevo sistema lo reconozca en el suelo
+    public override string EtiquetaPoolSuelo => "Adrenalina";
+
     [Header("Efecto de Adrenalina")]
     public float multiplicadorVelocidad = 1.5f; // Te hace 50% más rápido (1.5x)
     public float tiempoEfecto = 10f; // Dura 10 segundos
@@ -12,6 +16,12 @@ public class ControladorAdrenalina : ControladorArma
     {
         if (seEstaUsando) return;
         Inyectar();
+    }
+
+    // 2. ¡OBLIGATORIO! El método de empujón aunque la jeringa no empuje
+    public override void IntentarEmpujon(Vector2 direccion)
+    {
+        // Se deja vacío porque no vamos a empujar zombis con una jeringa
     }
 
     private void Inyectar()

@@ -3,6 +3,10 @@ using UnityEngine;
 // Heredamos de ControladorArma para que el inventario de Jorge lo reconozca
 public class ControladorArrojadizo : ControladorArma
 {
+    [Header("Configuración del Sistema")]
+    // 1. ¡OBLIGATORIO! La etiqueta para que el nuevo sistema lo reconozca
+    public override string EtiquetaPoolSuelo => "BombaCasera";
+
     [Header("Configuración de Lanzamiento")]
     [Tooltip("La etiqueta del Pool de la bomba que saldrá volando")]
     public string etiquetaBombaVuelo = "BombaCasera";
@@ -15,6 +19,13 @@ public class ControladorArrojadizo : ControladorArma
     {
         if (seEstaUsando) return;
         LanzarBomba();
+    }
+
+    // 2. ¡OBLIGATORIO! El método de empujón aunque las bombas no se usen para empujar
+    public override void IntentarEmpujon(Vector2 direccion)
+    {
+        // Se deja vacío porque una bomba en la mano no empuja zombis, 
+        // pero el script base exige que esta función exista.
     }
 
     private void LanzarBomba()
