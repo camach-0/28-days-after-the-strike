@@ -15,6 +15,7 @@ public class JugadorCombate : MonoBehaviour
 
         if (esPrimerToque && armaEquipada != null)
         {
+            // 1. Armas de Fuego estándar
             if (armaEquipada is ControladorArmaFuego armaFuego)
             {
                 if (!armaFuego.datosFuego.esAutomatica || armaFuego.datosFuego.esRafaga)
@@ -22,9 +23,14 @@ public class JugadorCombate : MonoBehaviour
                     armaEquipada.IntentarAtaque(direccionMirando);
                 }
             }
+            // 2. M60 (Le permitimos el tiro inicial rápido)
+            else if (armaEquipada is ControladorM60)
+            {
+                armaEquipada.IntentarAtaque(direccionMirando);
+            }
+            // 3. Resto de armas (Machete, Motosierra, etc.)
             else
             {
-                // Aquí entran el Machete, Botiquín y el primer toque de la Motosierra
                 armaEquipada.IntentarAtaque(direccionMirando);
             }
         }
@@ -36,7 +42,7 @@ public class JugadorCombate : MonoBehaviour
     {
         if (estaDisparando && armaEquipada != null)
         {
-            // 1. Armas Automáticas (Uzi, M16)
+            // 1. Armas Automáticas estándar (Uzi, M16)
             if (armaEquipada is ControladorArmaFuego armaFuego)
             {
                 if (armaFuego.datosFuego.esAutomatica && !armaFuego.datosFuego.esRafaga)
@@ -44,11 +50,13 @@ public class JugadorCombate : MonoBehaviour
                     armaEquipada.IntentarAtaque(direccionMirando);
                 }
             }
-            // ========================================================
-            // ¡EL PARCHE AQUÍ! 
-            // 2. Si es una Motosierra, le pasamos la señal continua
-            // ========================================================
+            // 2. Motosierra (Daño continuo por área)
             else if (armaEquipada is ControladorMotosierra)
+            {
+                armaEquipada.IntentarAtaque(direccionMirando);
+            }
+            // 3. ¡NUEVO! Ametralladora Pesada M60 (Fuego automático unificado)
+            else if (armaEquipada is ControladorM60)
             {
                 armaEquipada.IntentarAtaque(direccionMirando);
             }

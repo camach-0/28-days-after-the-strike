@@ -105,3 +105,6 @@ MonoBehaviour:
   - etiqueta: ItemMotosierra
     prefab: {fileID: 3303739457805541182, guid: 33da82ea4f3f5de42ba9bdd725b73564, type: 3}
     cantidadInicial: 5
+  - etiqueta: ItemM60
+    prefab: {fileID: 3303739457805541182, guid: b90e7f197d4e8974780736b6e74abc56, type: 3}
+    cantidadInicial: 5
