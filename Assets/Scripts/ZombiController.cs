@@ -5,10 +5,10 @@ using UnityEngine.AI;
 public class ZombiController : MonoBehaviour
 {
     [Header("Configuración del Pool")]
-    public string etiquetaPool = "ZombiBase"; // <-- Variable necesaria para saber a qué piscina volver
+    public string etiquetaPool = "ZombiBase";
 
     [Header("Memoria Global")]
-    public static int zombisActivosEnMapa = 0; // <-- NUEVO: Contador ultra rápido
+    public static int zombisActivosEnMapa = 0;
 
     [Header("Cerebro de IA")]
     public bool esDeHorda = false;
@@ -45,27 +45,22 @@ public class ZombiController : MonoBehaviour
 
     private void OnEnable()
     {
-        zombisActivosEnMapa++; // Sumamos al nacer
-        // 1. Le devolvemos la salud máxima al nacer
+        zombisActivosEnMapa++;
         if (moduloSalud != null)
         {
             moduloSalud.Revivir();
-            moduloSalud.OnMuerte += Morir; // Nos suscribimos a nuestra propia muerte
+            moduloSalud.OnMuerte += Morir;
         }
 
-        // 2. Borramos la memoria de presas anteriores
         objetivoJugador = null;
-
-        // 3. Arrancamos el cerebro desde cero
         CambiarEstado(estadoDeambular);
     }
 
     private void OnDisable()
     {
-        zombisActivosEnMapa--; // Restamos al apagarse/morir
+        zombisActivosEnMapa--;
         if (moduloSalud != null) moduloSalud.OnMuerte -= Morir;
 
-        // Frenamos en seco para que no nazca corriendo en la siguiente vida
         if (agente != null && agente.isActiveAndEnabled && agente.isOnNavMesh)
         {
             agente.isStopped = true;
@@ -94,10 +89,10 @@ public class ZombiController : MonoBehaviour
         float distanciaCorta = Mathf.Infinity;
         Transform jugadorMasCercano = null;
 
-        // ¡LA CLAVE DE LAS HORDAS! Escanea la lista central de supervivientes vivos
         foreach (SistemaSalud superviviente in GameManager.Instancia.supervivientesActivos)
         {
-            if (superviviente != null && superviviente.vidaActual > 0)
+            // ACTUALIZADO: Buscamos a cualquiera que NO esté muerto definitivamente (incluso si está en el piso)
+            if (superviviente != null && !superviviente.estaMuertoDefinitivo)
             {
                 float distancia = Vector2.Distance(transform.position, superviviente.transform.position);
 
@@ -116,7 +111,6 @@ public class ZombiController : MonoBehaviour
 
     private void Morir()
     {
-        // Regresamos al gestor invisible en lugar de usar Destroy
         PoolManager.Instancia.DevolverObjeto(etiquetaPool, gameObject);
     }
 
@@ -132,7 +126,6 @@ public class ZombiController : MonoBehaviour
 // ==========================================
 // PATRÓN STATE: LAS CLASES DE COMPORTAMIENTO
 // ==========================================
-
 public interface IEstadoZombi
 {
     void Entrar(ZombiController zombi);
@@ -191,11 +184,22 @@ public class EstadoPerseguirZombi : IEstadoZombi
 
     public void Actualizar(ZombiController zombi)
     {
-        if (zombi.objetivoJugador == null || zombi.objetivoJugador.GetComponent<SistemaSalud>().vidaActual <= 0)
+        if (zombi.objetivoJugador == null || !zombi.objetivoJugador.gameObject.activeInHierarchy)
         {
             zombi.objetivoJugador = null;
             zombi.CambiarEstado(zombi.estadoDeambular);
-            zombi.agente.ResetPath();
+            if (zombi.agente.isOnNavMesh) zombi.agente.ResetPath();
+            return;
+        }
+
+        SistemaSalud saludObjetivo = zombi.objetivoJugador.GetComponent<SistemaSalud>();
+
+        // ACTUALIZADO: Si es un jugador y ya murió DE VERDAD, lo dejamos en paz
+        if (saludObjetivo != null && saludObjetivo.estaMuertoDefinitivo)
+        {
+            zombi.objetivoJugador = null;
+            zombi.CambiarEstado(zombi.estadoDeambular);
+            if (zombi.agente.isOnNavMesh) zombi.agente.ResetPath();
             return;
         }
 
@@ -208,7 +212,12 @@ public class EstadoPerseguirZombi : IEstadoZombi
 
             if (Time.time >= zombi.tiempoSiguienteAtaque)
             {
-                zombi.objetivoJugador.GetComponent<SistemaSalud>().RecibirDano(zombi.danoAlJugador, Vector2.zero, 0f);
+                if (saludObjetivo != null)
+                {
+                    // Si le pegamos y está incapacitado, le bajaremos esa vida de desangrado
+                    saludObjetivo.RecibirDano(zombi.danoAlJugador, Vector2.zero, 0f);
+                }
+
                 zombi.tiempoSiguienteAtaque = Time.time + zombi.velocidadAtaque;
             }
         }

@@ -1148,6 +1148,7 @@ GameObject:
   - component: {fileID: 2329776442754732720}
   - component: {fileID: 6649988690904353947}
   - component: {fileID: 5616706745451312344}
+  - component: {fileID: 6293979307054921839}
   m_Layer: 3
   m_Name: JugadorPrueba
   m_TagString: Player
@@ -1462,6 +1463,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   esSuperviviente: 1
   vidaMaxima: 100
+  vidaIncapacidadMax: 300
+  desangradoPorSegundo: 2
   tiempoInmunidad: 0.2
 --- !u!114 &6649988690904353947
 MonoBehaviour:
@@ -1490,6 +1493,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   imagenBilisUI: {fileID: 864814643884965150}
   duracionEfecto: 5
+--- !u!114 &6293979307054921839
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7676652514911888881}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2713e6ce43dece4439843c381a87beb9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  accionInteractuar: {fileID: -5453413276246794134, guid: da13970ddef5c7944a74dd862cdbb1ba, type: 3}
+  radioInteraccion: 2
+  tiempoParaLevantar: 3
+  vidaAlLevantar: 30
+  capaJugadores:
+    serializedVersion: 2
+    m_Bits: 8
 --- !u!1 &7714049620278334165
 GameObject:
   m_ObjectHideFlags: 0

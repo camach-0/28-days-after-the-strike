@@ -8,14 +8,13 @@ public class InteraccionJugador : MonoBehaviour
     public Transform pivoteArma;
 
     private InventarioJugador inventario;
-    private ItemRecogible itemCercano; // Guarda el item que tenemos pisando
+    private ItemRecogible itemCercano;
 
     private void Awake()
     {
         inventario = GetComponent<InventarioJugador>();
     }
 
-    // Cuando el jugador (su Collider2D) toca el área de un item
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Recogible"))
@@ -25,7 +24,6 @@ public class InteraccionJugador : MonoBehaviour
         }
     }
 
-    // Cuando el jugador se aleja del item
     private void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.CompareTag("Recogible"))
@@ -33,21 +31,18 @@ public class InteraccionJugador : MonoBehaviour
             ItemRecogible itemSalida = collision.GetComponent<ItemRecogible>();
             if (itemCercano == itemSalida)
             {
-                itemCercano = null; // Ya no podemos recogerlo
+                itemCercano = null;
             }
         }
     }
 
-    // ====================================================================
-    // --- ¡NUEVO! Método público para ser invocado por el Cerebro ---
-    // ====================================================================
     public void IntentarRecoger()
     {
-        // Si el Cerebro da la orden y tenemos algo bajo los pies...
         if (itemCercano != null)
         {
+            // Sistema universal de Jorge sin interrupciones
             itemCercano.SerRecogido(inventario, pivoteArma);
-            itemCercano = null; // Vaciamos la referencia tras recogerlo
+            itemCercano = null;
         }
     }
 }

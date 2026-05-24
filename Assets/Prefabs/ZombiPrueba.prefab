@@ -14,7 +14,8 @@ GameObject:
   - component: {fileID: 4840139583836448315}
   - component: {fileID: -5195807299367350778}
   - component: {fileID: 1943248567774476257}
-  m_Layer: 0
+  - component: {fileID: 1708112719996731842}
+  m_Layer: 8
   m_Name: ZombiPrueba
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -188,18 +189,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dfbd8425aad919c4fb7d0b344156f667, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  vidaMaxima: 100
-  vidaActual: 0
-  velocidadMovimiento: 5
-  barraDeVidaUI: {fileID: 0}
-  estaMuerto: 0
-  tiempoInvulnerabilidad: 0.4
-  duracionFlashRojo: 0.15
-  estadoActual: 0
+  etiquetaPool: ZombiBase
   esDeHorda: 0
   esEstatico: 0
+  velocidadMovimiento: 5
   multiplicadorVelocidadPatrulla: 0.2
   radioVision: 5
   radioPatrullaje: 8
   danoAlJugador: 10
   velocidadAtaque: 1
+  agente: {fileID: 0}
+  moduloSalud: {fileID: 0}
+  objetivoJugador: {fileID: 0}
+  tiempoSiguienteAtaque: 0
+  tiempoEsperaPatrulla: 0
+--- !u!114 &1708112719996731842
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 715580906502479141}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46dae816676b1574f92013b183deaa2c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  esSuperviviente: 0
+  vidaMaxima: 100
+  tiempoInmunidad: 0.2

@@ -12,10 +12,12 @@ public class InventarioJugador : MonoBehaviour
 
     private int indiceSlotActual = 1;
     private JugadorController jugador;
+    private SistemaSalud miSalud;
 
     private void Awake()
     {
         jugador = GetComponent<JugadorController>();
+        miSalud = GetComponent<SistemaSalud>();
     }
 
     private void Start()
@@ -33,12 +35,15 @@ public class InventarioJugador : MonoBehaviour
             jugador.armaEquipada = ranuras[indiceSlotActual];
         }
 
-        // Lanzamos el evento al iniciar para que la UI se ilumine correctamente
         OnArmaCambiada?.Invoke(indiceSlotActual);
     }
 
     public void CambiarSlot(int nuevoIndice, bool forzar = false)
     {
+        // --- CANDADO 1: BOTONES NUMÉRICOS ---
+        // Si estamos incapacitados y NO es un cambio forzado por el sistema, bloqueamos la acción.
+        if (miSalud != null && miSalud.estaIncapacitado && !forzar) return;
+
         if (nuevoIndice < 0 || nuevoIndice > 4) return;
         if (!forzar && nuevoIndice == indiceSlotActual) return;
         if (ranuras[nuevoIndice] == null) return;
@@ -58,7 +63,6 @@ public class InventarioJugador : MonoBehaviour
             jugador.armaEquipada = ranuras[indiceSlotActual];
         }
 
-        // ¡Gritamos al vacío el nuevo número de arma!
         OnArmaCambiada?.Invoke(indiceSlotActual);
     }
 
@@ -66,9 +70,11 @@ public class InventarioJugador : MonoBehaviour
     // --- MÉTODOS PÚBLICOS PARA SER INVOCADOS POR EL CEREBRO (Fase 2) ---
     // ====================================================================
 
-    // El Controlador llamará a esto pasándole directamente la dirección (-1 o 1)
     public void CiclarArma(int direccion)
     {
+        // --- CANDADO 2: RUEDA DEL RATÓN ---
+        if (miSalud != null && miSalud.estaIncapacitado) return;
+
         int nuevoIndice = indiceSlotActual;
         int intentos = 0;
         do
@@ -86,9 +92,11 @@ public class InventarioJugador : MonoBehaviour
         } while (intentos < 5);
     }
 
-    // El Controlador llamará a esto cuando se presione el botón de cambio rápido
     public void EjecutarCambioRapido()
     {
+        // --- CANDADO 3: BOTÓN DE CAMBIO RÁPIDO (Q) ---
+        if (miSalud != null && miSalud.estaIncapacitado) return;
+
         if (indiceSlotActual == 0 && ranuras[1] != null) CambiarSlot(1);
         else if (ranuras[0] != null) CambiarSlot(0);
     }

@@ -144,7 +144,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d1a69e6e40f970242a05bc5c505ec691, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  etiquetaPool: EfectoSonido
+  etiquetaPool: ExplosionBoomer
 --- !u!198 &1532819563375399137
 ParticleSystem:
   m_ObjectHideFlags: 0

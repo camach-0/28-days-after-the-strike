@@ -7,7 +7,6 @@ public class GameManager : MonoBehaviour
     public static GameManager Instancia;
 
     [Header("Estado de la Partida")]
-    // Ahora guardamos el SistemaSalud de todos los supervivientes en escena
     public List<SistemaSalud> supervivientesActivos = new List<SistemaSalud>();
     public bool juegoTerminado = false;
 
@@ -18,6 +17,15 @@ public class GameManager : MonoBehaviour
     {
         if (Instancia == null) Instancia = this;
         else Destroy(gameObject);
+    }
+
+    private void Update()
+    {
+        // Monitorizamos constantemente el estado de la partida mientras no sea Game Over
+        if (!juegoTerminado)
+        {
+            VerificarEstadoJugadores();
+        }
     }
 
     public void RegistrarSuperviviente(SistemaSalud nuevoSuperviviente)
@@ -40,18 +48,32 @@ public class GameManager : MonoBehaviour
     {
         if (juegoTerminado) return;
 
-        bool alguienVivo = false;
+        int humanosTotales = 0;
+        int humanosCaidos = 0;
 
+        // Evaluamos a todos los supervivientes en la lista
         foreach (SistemaSalud superviviente in supervivientesActivos)
         {
-            if (superviviente != null && superviviente.vidaActual > 0)
+            if (superviviente != null)
             {
-                alguienVivo = true;
-                break;
+                // Un superviviente es un humano real si tiene el componente JugadorController activo
+                JugadorController humano = superviviente.GetComponent<JugadorController>();
+
+                if (humano != null && humano.enabled)
+                {
+                    humanosTotales++;
+
+                    // Contamos al humano como caído si está incapacitado en el suelo o muerto definitivamente
+                    if (superviviente.estaIncapacitado || superviviente.vidaActual <= 0)
+                    {
+                        humanosCaidos++;
+                    }
+                }
             }
         }
 
-        if (!alguienVivo)
+        // REGLA L4D: Si hay jugadores humanos en la partida y TODOS están en el suelo o muertos, la partida termina
+        if (humanosTotales > 0 && humanosCaidos == humanosTotales)
         {
             EjecutarGameOver();
         }
@@ -60,16 +82,22 @@ public class GameManager : MonoBehaviour
     private void EjecutarGameOver()
     {
         juegoTerminado = true;
-        Debug.Log("<color=red>¡GAME OVER! Todos los jugadores han caído.</color>");
+        Debug.Log("<color=red>¡GAME OVER! Los jugadores reales han sido abatidos.</color>");
 
         if (panelGameOver != null)
         {
             panelGameOver.SetActive(true);
         }
+
+        // Nota: En L4D la acción física no se congela de inmediato para dar dramatismo,
+        // pero si prefieres congelar el juego por completo al perder, descomenta la siguiente línea:
+        // Time.timeScale = 0f;
     }
 
     public void ReiniciarNivel()
     {
+        // Si congelaste el tiempo en EjecutarGameOver, asegúrate de restaurarlo al reiniciar:
+        Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }

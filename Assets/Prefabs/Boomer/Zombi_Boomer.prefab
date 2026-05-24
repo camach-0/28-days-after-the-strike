@@ -16,7 +16,9 @@ GameObject:
   - component: {fileID: 1943248567774476257}
   - component: {fileID: 1708112719996731842}
   - component: {fileID: 2136503505227698631}
-  m_Layer: 0
+  - component: {fileID: -1961818376980793844}
+  - component: {fileID: 8951122773960534036}
+  m_Layer: 9
   m_Name: Zombi_Boomer
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -218,6 +220,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   esSuperviviente: 0
   vidaMaxima: 100
+  vidaIncapacidadMax: 300
+  desangradoPorSegundo: 2
   tiempoInmunidad: 0.2
 --- !u!114 &2136503505227698631
 MonoBehaviour:
@@ -247,3 +251,39 @@ MonoBehaviour:
   miCerebro: {fileID: 0}
   ultimoVomito: -10
   enModoEspecial: 0
+--- !u!114 &-1961818376980793844
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 715580906502479141}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 718864f84b15dc94e9c51c4a924ec949, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  danoPorSegundo: 5
+  esPermanente: 1
+--- !u!114 &8951122773960534036
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 715580906502479141}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e9a6518e908aaf47aff0a81c2a594eb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  etiquetaExplosion: ExplosionBoomer
+  radioExplosion: 4
+  fuerzaEmpuje: 20
+  danoJugadores: 5
+  capaJugadores:
+    serializedVersion: 2
+    m_Bits: 8
+  capaZombis:
+    serializedVersion: 2
+    m_Bits: 256
