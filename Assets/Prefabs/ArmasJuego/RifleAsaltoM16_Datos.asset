@@ -17,6 +17,7 @@ MonoBehaviour:
   danoBase: 33
   cadenciaAtaque: 0.15
   sonidoAtaque: {fileID: 0}
+  etiquetaPoolSuelo: ItemM16
   esAutomatica: 1
   esRafaga: 0
   balasPorRafaga: 3
@@ -24,6 +25,18 @@ MonoBehaviour:
   municionMaxima: 360
   tamanoCargador: 50
   tiempoRecarga: 1
-  dispersionBalas: 0
-  perdigonesPorDisparo: 1
+  reservaInfinita: 0
+  penetracionZombis: 1
+  fuerzaEmpuje: 2
+  causaTambaleo: 0
   alcance: 35
+  dispersionMinima: 1
+  dispersionMaxima: 8
+  incrementoRecoil: 2
+  velocidadRecuperacion: 10
+  tiempoDespliegue: 0.5
+  modificadorVelocidad: 1
+  alcanceEmpujon: 1.5
+  cadenciaEmpujon: 1
+  fuerzaDelCulatazo: 10
+  perdigonesPorDisparo: 1

@@ -66,55 +66,43 @@ public class AliadoBotController : MonoBehaviour
 
     private void Update()
     {
-        // 1. Si el bot está muerto o él mismo está incapacitado, no hace nada
         if (moduloSalud.vidaActual <= 0 || moduloSalud.estaIncapacitado) return;
 
         temporizadorDisparo -= Time.deltaTime;
 
-        // 2. Escaneamos el entorno
         Transform zombiPeligroso = ObtenerZombiMasCercano();
         BuscarCompaneroCaido();
 
-        // ==========================================
-        // EL CEREBRO TÁCTICO: Toma de Decisiones
-        // ==========================================
-
         if (zombiPeligroso != null)
         {
-            // PRIORIDAD 1: LIMPIAR EL PELIGRO
-            CancelarRescate(); // Si estábamos curando, nos detenemos para defendernos
+            CancelarRescate();
             ApuntarYDisparar(zombiPeligroso);
 
-            // Nos acercamos al compañero caído (o al líder) mientras disparamos en movimiento
-            if (objetivoCaido != null)
+            BuscarLiderMasCercano();
+            if (liderActual != null)
             {
-                ComportamientoMoverHacia(objetivoCaido.transform.position, distanciaParaRescatar);
+                ComportamientoMoverHacia(liderActual.position, distanciaParaSeguir);
             }
             else
             {
-                BuscarLiderMasCercano();
-                if (liderActual != null) ComportamientoMoverHacia(liderActual.position, distanciaParaSeguir);
+                agente.isStopped = true;
+                agente.velocity = Vector3.zero;
             }
         }
         else
         {
-            // NO HAY PELIGRO A LA VISTA
             if (objetivoCaido != null)
             {
-                // PRIORIDAD 2: RESCATAR (El área está limpia)
                 ComportamientoRescate();
             }
             else
             {
-                // PRIORIDAD 3: SEGUIR AL LÍDER (No hay heridos ni zombis)
                 BuscarLiderMasCercano();
                 if (liderActual != null) ComportamientoMoverHacia(liderActual.position, distanciaParaSeguir);
                 AjustarRotacionArmaAlMoverse();
             }
         }
     }
-
-    // --- MÉTODOS DE COMPORTAMIENTO ---
 
     private void ComportamientoMoverHacia(Vector3 destino, float distanciaParada)
     {
@@ -154,8 +142,6 @@ public class AliadoBotController : MonoBehaviour
             }
 
             temporizadorRescate += Time.deltaTime;
-
-            // Curamos apuntando el arma hacia donde caminamos por estética
             AjustarRotacionArmaAlMoverse();
 
             if (temporizadorRescate >= tiempoParaLevantar)
@@ -172,8 +158,6 @@ public class AliadoBotController : MonoBehaviour
         estaRescatando = false;
         temporizadorRescate = 0f;
     }
-
-    // --- MÉTODOS DE ESCANEO ---
 
     private Transform ObtenerZombiMasCercano()
     {
@@ -207,7 +191,6 @@ public class AliadoBotController : MonoBehaviour
 
         foreach (SistemaSalud superviviente in GameManager.Instancia.supervivientesActivos)
         {
-            // Ignorarnos a nosotros mismos y buscar solo a los incapacitados
             if (superviviente != null && superviviente != moduloSalud && superviviente.estaIncapacitado)
             {
                 float distancia = Vector2.Distance(transform.position, superviviente.transform.position);
@@ -230,7 +213,6 @@ public class AliadoBotController : MonoBehaviour
 
         foreach (SistemaSalud superviviente in GameManager.Instancia.supervivientesActivos)
         {
-            // Solo seguimos a los humanos que NO estén incapacitados (si están incapacitados, pasamos al modo rescate)
             if (superviviente != null && !superviviente.estaMuertoDefinitivo && !superviviente.estaIncapacitado)
             {
                 JugadorController humano = superviviente.GetComponent<JugadorController>();
@@ -247,8 +229,6 @@ public class AliadoBotController : MonoBehaviour
         }
         liderActual = liderMasCercano;
     }
-
-    // --- MÉTODOS DE COMBATE Y ESTÉTICA ---
 
     private void ApuntarYDisparar(Transform objetivo)
     {

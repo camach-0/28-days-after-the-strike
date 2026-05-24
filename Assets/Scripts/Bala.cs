@@ -10,9 +10,12 @@ public class Bala : MonoBehaviour
 
     [Header("Atributos Físicos")]
     public float velocidad = 20f;
-    public float tiempoDeVida = 3f;
+    // ¡Adiós tiempoDeVida fijo! Ahora es un cálculo dinámico según el arma.
 
     [HideInInspector] public int dano;
+    [HideInInspector] public float fuerzaEmpuje;
+    [HideInInspector] public int penetracionRestante;
+
     private Rigidbody2D rb;
 
     void Awake()
@@ -28,8 +31,8 @@ public class Bala : MonoBehaviour
     // ========================================================
     private void OnEnable()
     {
-        // Al encenderse, activamos una cuenta regresiva para "morir" si no choca con nada
-        StartCoroutine(DesactivarTrasTiempo());
+        // ¡VACÍO! Ya no iniciamos el contador de muerte aquí.
+        // Esperaremos a que el arma nos pase el alcance primero.
     }
 
     private void OnDisable()
@@ -39,33 +42,59 @@ public class Bala : MonoBehaviour
         if (rb != null) rb.linearVelocity = Vector2.zero;
     }
 
-    IEnumerator DesactivarTrasTiempo()
-    {
-        yield return new WaitForSeconds(tiempoDeVida);
-
-        // Si pasaron 3 segundos en el aire, la devolvemos al Pool
-        PoolManager.Instancia.DevolverObjeto(etiquetaPool, gameObject);
-    }
-
-    public void ConfigurarDireccion(Vector2 direccion)
+    // ========================================================
+    // ¡NUEVO! Función unificada que recibe toda la balística
+    // ========================================================
+    public void ConfigurarBala(Vector2 direccion, int danoArma, float empuje, int penetracion, float alcanceMaximo)
     {
         if (rb != null)
         {
             rb.linearVelocity = direccion.normalized * velocidad;
         }
+
+        // Asignamos las estadísticas puras que nos manda el arma
+        dano = danoArma;
+        fuerzaEmpuje = empuje;
+        penetracionRestante = penetracion;
+
+        // Calculamos matemáticamente cuánto tiempo vivirá basada en su alcance y velocidad
+        float tiempoDeVida = alcanceMaximo / velocidad;
+
+        StopAllCoroutines(); // Limpiamos cualquier contador fantasma de su vida pasada
+        StartCoroutine(DesactivarTrasTiempo(tiempoDeVida));
+    }
+
+    IEnumerator DesactivarTrasTiempo(float tiempo)
+    {
+        yield return new WaitForSeconds(tiempo);
+        PoolManager.Instancia.DevolverObjeto(etiquetaPool, gameObject);
     }
 
     private void OnTriggerEnter2D(Collider2D colision)
     {
-        if (colision.CompareTag("Player") || colision.CompareTag("Bala")) return;
+        // Ignoramos al jugador, otras balas y objetos tirados en el piso
+        if (colision.CompareTag("Player") || colision.CompareTag("Bala") || colision.CompareTag("Recogible")) return;
 
         IReceptorDano objetivo = colision.GetComponent<IReceptorDano>();
+
         if (objetivo != null)
         {
-            objetivo.RecibirDano(dano, rb.linearVelocity.normalized, 0f);
+            // Le pasamos el daño, la dirección y la nueva fuerza de empuje para el Knockback
+            objetivo.RecibirDano(dano, rb.linearVelocity.normalized, fuerzaEmpuje);
+
+            // ¡MECÁNICA DE PENETRACIÓN! Restamos a un zombi atravesado
+            penetracionRestante--;
+        }
+        else
+        {
+            // Si choca contra una pared u obstáculo rígido, pierde toda la penetración de golpe
+            penetracionRestante = 0;
         }
 
-        // ¡ADIÓS DESTROY! La bala simplemente se devuelve a la piscina
-        PoolManager.Instancia.DevolverObjeto(etiquetaPool, gameObject);
+        // Solo la devolvemos a la piscina si ya no le queda fuerza de penetración
+        if (penetracionRestante <= 0)
+        {
+            PoolManager.Instancia.DevolverObjeto(etiquetaPool, gameObject);
+        }
     }
 }

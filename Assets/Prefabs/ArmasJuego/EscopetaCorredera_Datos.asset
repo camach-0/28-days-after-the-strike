@@ -15,15 +15,28 @@ MonoBehaviour:
   nombreArma: EscopetaCorredera
   iconoArma: {fileID: 0}
   danoBase: 45
-  cadenciaAtaque: 1
+  cadenciaAtaque: 0.8
   sonidoAtaque: {fileID: 0}
+  etiquetaPoolSuelo: ItemEscopeta
   esAutomatica: 0
   esRafaga: 0
-  balasPorRafaga: 3
+  balasPorRafaga: 4
   tiempoEntreBalasRafaga: 0.05
   municionMaxima: 80
   tamanoCargador: 12
   tiempoRecarga: 0.8
-  dispersionBalas: 12
-  perdigonesPorDisparo: 8
+  reservaInfinita: 0
+  penetracionZombis: 1
+  fuerzaEmpuje: 2
+  causaTambaleo: 0
   alcance: 20
+  dispersionMinima: 2
+  dispersionMaxima: 8
+  incrementoRecoil: 2
+  velocidadRecuperacion: 10
+  tiempoDespliegue: 0.5
+  modificadorVelocidad: 1
+  alcanceEmpujon: 1.5
+  cadenciaEmpujon: 1
+  fuerzaDelCulatazo: 10
+  perdigonesPorDisparo: 8
