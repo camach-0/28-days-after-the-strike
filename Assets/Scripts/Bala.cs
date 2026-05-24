@@ -49,7 +49,7 @@ public class Bala : MonoBehaviour
     {
         // Cuando el bot dispara, no nos manda estadísticas. 
         // Así que le ponemos valores por defecto: 10 daño, 5 empuje, 1 penetración, 15 alcance.
-        ConfigurarBala(direccion, 10, 5f, 1, 15f);
+        ConfigurarBala(direccion, 10, 0.5f, 1 , 15f);
     }
 
     // ========================================================

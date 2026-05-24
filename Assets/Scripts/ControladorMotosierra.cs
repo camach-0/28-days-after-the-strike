@@ -20,6 +20,7 @@ public class ControladorMotosierra : ControladorArma
     private float gasolinaActual;
     private bool botonPresionado = false;
     private InventarioJugador miInventario;
+    private Vector2 direccionCorte = Vector2.right;
 
     // Cumplimos el contrato de la clase abstracta
     public override string EtiquetaPoolSuelo => etiquetaSuelo;
@@ -64,26 +65,32 @@ public class ControladorMotosierra : ControladorArma
         if (gasolinaActual > 0)
         {
             botonPresionado = true;
+            direccionCorte = direccionApuntado; // <-- ¡GUARDAMOS EL APUNTADO!
         }
     }
 
     private void CortarZombis()
     {
-        // Dibujamos un círculo de daño frente al jugador
         Collider2D[] enemigosGolpeados = Physics2D.OverlapCircleAll(puntoDisparo.position, radioDeCorte, capaEnemigos);
 
         foreach (Collider2D colision in enemigosGolpeados)
         {
             IReceptorDano[] receptores = colision.GetComponentsInParent<IReceptorDano>();
 
+            // =========================================================
+            // ¡LA MATEMÁTICA INFALIBLE! 
+            // Dirección = (Posición del Zombi) menos (Posición del Jugador)
+            // Esto garantiza que el zombi SIEMPRE salga empujado hacia atrás,
+            // alejándose de ti de forma radial.
+            // =========================================================
+            Vector2 direccionEmpuje = (colision.transform.position - transform.position).normalized;
+
             foreach (IReceptorDano receptor in receptores)
             {
-                // ATENCIÓN: Como esto corre 60 veces por segundo, multiplicamos el daño por Time.deltaTime
-                // para que el daño total sea exactamente el "danoPorSegundo" repartido en ese segundo.
                 float danoReal = danoPorSegundo * Time.deltaTime;
 
-                // Usamos la dirección en la que mira el jugador (puntoDisparo.right) para el empuje
-                receptor.RecibirDano(danoReal, puntoDisparo.right, fuerzaEmpuje);
+                // Le pasamos esta nueva dirección perfecta
+                receptor.RecibirDano(danoReal, direccionEmpuje, fuerzaEmpuje);
             }
         }
     }

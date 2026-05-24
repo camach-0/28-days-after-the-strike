@@ -27,7 +27,7 @@ MonoBehaviour:
   tiempoRecarga: 2
   reservaInfinita: 0
   penetracionZombis: 1
-  fuerzaEmpuje: 2
+  fuerzaEmpuje: 0.5
   causaTambaleo: 0
   alcance: 25
   dispersionMinima: 1

@@ -17,6 +17,7 @@ public class SistemaSalud : MonoBehaviour, IReceptorDano
     public float desangradoPorSegundo = 2f;  // Cuánta vida pierde solo por segundo
     public float vidaActualIncapacitado { get; private set; }
     public bool estaIncapacitado { get; private set; } = false;
+    private bool estaSiendoEmpujado = false;
 
     [Header("I-Frames (Inmunidad)")]
     public float tiempoInmunidad = 0.2f;
@@ -54,6 +55,7 @@ public class SistemaSalud : MonoBehaviour, IReceptorDano
 
     private void OnDisable()
     {
+        estaSiendoEmpujado = false;
         // ¡NUEVO Y VITAL! Si se apaga (muere el zombi), cortamos todas las corrutinas de empuje
         // para que no nazca con fuerzas fantasma en su próxima vida.
         StopAllCoroutines();
@@ -125,14 +127,16 @@ public class SistemaSalud : MonoBehaviour, IReceptorDano
 
     private void AplicarFuerzaEmpuje(Vector2 direccion, float fuerza)
     {
-        if (fuerza > 0 && rb != null)
+        if (fuerza > 0 && rb != null && !estaSiendoEmpujado)
         {
-            StartCoroutine(RutinaCorteMovimiento(0.2f, direccion, fuerza));
+            // Le bajamos el tiempo a 0.15f para que la motosierra cause un tropiezo rápido y constante
+            StartCoroutine(RutinaCorteMovimiento(0.15f, direccion, fuerza));
         }
     }
 
     private IEnumerator RutinaCorteMovimiento(float tiempo, Vector2 direccion, float fuerza)
     {
+        estaSiendoEmpujado = true; // CERRAMOS EL CANDADO
         JugadorMovimiento jugMov = GetComponent<JugadorMovimiento>();
         ZombiController zomCtrl = GetComponent<ZombiController>();
 
@@ -144,7 +148,7 @@ public class SistemaSalud : MonoBehaviour, IReceptorDano
         if (zomCtrl != null && zomCtrl.agente != null)
         {
             zomCtrl.agente.updatePosition = false;
-            zomCtrl.agente.velocity = Vector3.zero;
+            zomCtrl.agente.velocity = Vector2.zero;
         }
 
         // 3. EL GOLPE FÍSICO
@@ -158,6 +162,8 @@ public class SistemaSalud : MonoBehaviour, IReceptorDano
         if (rb != null) rb.linearVelocity = Vector2.zero;
 
         // 6. Devolvemos el control
+        estaSiendoEmpujado = false; // ABRIMOS EL CANDADO
+
         if (!estaIncapacitado && !estaMuertoDefinitivo)
         {
             if (jugMov != null) jugMov.enabled = true;
