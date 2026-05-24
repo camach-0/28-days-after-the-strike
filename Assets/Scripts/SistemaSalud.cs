@@ -5,7 +5,7 @@ using System.Collections;
 public class SistemaSalud : MonoBehaviour, IReceptorDano
 {
     [Header("Identificación")]
-    [Tooltip("¡IMPORTANTE! Marca esta casilla TRUE solo en tus prefabs de personajes (Cholo, Camba, etc.). En los zombis déjala en FALSE.")]
+    [Tooltip("¡IMPORTANTE! Marca esta casilla TRUE solo en tus prefabs de personajes (Jugador). En los zombis déjala en FALSE.")]
     public bool esSuperviviente = false;
 
     [Header("Estadísticas de Vida Base")]
@@ -29,7 +29,7 @@ public class SistemaSalud : MonoBehaviour, IReceptorDano
 
     // PATRÓN OBSERVER: Eventos globales
     public event Action OnMuerte;
-    public event Action OnIncapacitado; // ¡NUEVO! Avisa al juego que caíste al suelo
+    public event Action OnIncapacitado;
     public event Action<float> OnVidaCambiada;
 
     private void Awake()
@@ -46,6 +46,19 @@ public class SistemaSalud : MonoBehaviour, IReceptorDano
         }
     }
 
+    private void OnEnable()
+    {
+        // Limpiamos los estados por si el objeto acaba de salir de la piscina
+        estaIncapacitado = false;
+    }
+
+    private void OnDisable()
+    {
+        // ¡NUEVO Y VITAL! Si se apaga (muere el zombi), cortamos todas las corrutinas de empuje
+        // para que no nazca con fuerzas fantasma en su próxima vida.
+        StopAllCoroutines();
+    }
+
     private void OnDestroy()
     {
         if (esSuperviviente && GameManager.Instancia != null)
@@ -56,28 +69,30 @@ public class SistemaSalud : MonoBehaviour, IReceptorDano
 
     public void RecibirDano(float cantidad, Vector2 direccion, float fuerza)
     {
-        // Si ya está muerto de verdad, ignoramos
-        if (!esSuperviviente && vidaActual <= 0) return;
+        // Debug más claro para que no nos confunda
+        Debug.Log($"[SISTEMA SALUD] {gameObject.name} recibe daño. ¿Es Superviviente?: {esSuperviviente} | Vida: {vidaActual}");
+
+        if (estaMuertoDefinitivo) return;
 
         if (Time.time - ultimoTiempoDano < tiempoInmunidad) return;
         ultimoTiempoDano = Time.time;
 
-        // --- CASO 1: YA ESTÁ INCAPACITADO ---
+        // --- CASO 1: YA ESTÁ INCAPACITADO (Solo jugadores en el piso) ---
         if (estaIncapacitado)
         {
             vidaActualIncapacitado -= cantidad;
-
-            // Actualizamos la UI con la barra de desangrado
             OnVidaCambiada?.Invoke(vidaActualIncapacitado / vidaIncapacidadMax);
 
             if (vidaActualIncapacitado <= 0)
             {
                 vidaActualIncapacitado = 0;
                 estaIncapacitado = false;
-                OnMuerte?.Invoke(); // Muerte definitiva
+                OnMuerte?.Invoke(); // Muerte definitiva del jugador
             }
-
-            AplicarFuerzaEmpuje(direccion, fuerza);
+            else
+            {
+                AplicarFuerzaEmpuje(direccion, fuerza);
+            }
             return;
         }
 
@@ -85,62 +100,74 @@ public class SistemaSalud : MonoBehaviour, IReceptorDano
         vidaActual -= cantidad;
         OnVidaCambiada?.Invoke(vidaActual / vidaMaxima);
 
-        AplicarFuerzaEmpuje(direccion, fuerza);
-
         if (vidaActual <= 0)
         {
             vidaActual = 0;
 
             if (esSuperviviente)
             {
+                AplicarFuerzaEmpuje(direccion, fuerza);
                 EntrarEnIncapacitado();
             }
             else
             {
-                OnMuerte?.Invoke(); // Los zombis mueren directo
+                // ¡Si es Zombi, muere instantáneamente! No lo empujamos, solo lo destruimos.
+                StopAllCoroutines();
+                OnMuerte?.Invoke();
             }
+        }
+        else
+        {
+            // Aún sigue vivo, le aplicamos el empuje (Knockback)
+            AplicarFuerzaEmpuje(direccion, fuerza);
         }
     }
 
-    // ==========================================
-    // --- NUEVO SISTEMA DE EMPUJE AGRESIVO ---
-    // ==========================================
     private void AplicarFuerzaEmpuje(Vector2 direccion, float fuerza)
     {
-        
-        if (!esSuperviviente && vidaActual <= 0) return;
-
         if (fuerza > 0 && rb != null)
         {
-            // Le pasamos la dirección y fuerza a la rutina para que ella aplique el golpe
             StartCoroutine(RutinaCorteMovimiento(0.2f, direccion, fuerza));
         }
     }
 
     private IEnumerator RutinaCorteMovimiento(float tiempo, Vector2 direccion, float fuerza)
     {
-        // Buscamos si es jugador o zombi
         JugadorMovimiento jugMov = GetComponent<JugadorMovimiento>();
         ZombiController zomCtrl = GetComponent<ZombiController>();
 
-        // 1. Apagamos el dictador del movimiento
+        // 1. Apagamos el script de movimiento SOLO si es el jugador
         if (jugMov != null) jugMov.enabled = false;
-        if (zomCtrl != null) zomCtrl.enabled = false;
 
-        // 2. EL GOLPE DEFINITIVO: Sobrescribimos la velocidad de la física directamente
-        rb.linearVelocity = Vector2.zero; // Frenamos cualquier caminar previo
-        rb.linearVelocity = direccion * fuerza; // ¡Saldrá volando a esta velocidad!
+        // 2. Si es Zombi, ¡NUNCA apagamos su script! (Para que no se cure ni pierda la memoria)
+        // En su lugar, desconectamos temporalmente su "cerebro" del NavMesh
+        if (zomCtrl != null && zomCtrl.agente != null)
+        {
+            zomCtrl.agente.updatePosition = false;
+            zomCtrl.agente.velocity = Vector3.zero;
+        }
 
-        // 3. Esperamos a que termine de volar
+        // 3. EL GOLPE FÍSICO
+        rb.linearVelocity = Vector2.zero;
+        rb.linearVelocity = direccion * fuerza;
+
+        // 4. Esperamos a que termine de volar por los aires
         yield return new WaitForSeconds(tiempo);
 
-        // 4. Frenamos el derrape y le devolvemos el control
-        rb.linearVelocity = Vector2.zero;
+        // 5. Frenamos el derrape físico
+        if (rb != null) rb.linearVelocity = Vector2.zero;
 
-        if (!estaIncapacitado)
+        // 6. Devolvemos el control
+        if (!estaIncapacitado && !estaMuertoDefinitivo)
         {
             if (jugMov != null) jugMov.enabled = true;
-            if (zomCtrl != null) zomCtrl.enabled = true;
+
+            if (zomCtrl != null && zomCtrl.agente != null)
+            {
+                // Teletransportamos el cerebro invisible a donde voló el cuerpo y los reconectamos
+                zomCtrl.agente.Warp(transform.position);
+                zomCtrl.agente.updatePosition = true;
+            }
         }
     }
 
@@ -149,19 +176,16 @@ public class SistemaSalud : MonoBehaviour, IReceptorDano
         estaIncapacitado = true;
         vidaActualIncapacitado = vidaIncapacidadMax;
 
-        // 1. Apagamos su script de movimiento (ya no puede caminar)
         JugadorMovimiento jugMov = GetComponent<JugadorMovimiento>();
         if (jugMov != null) jugMov.enabled = false;
 
-        // 2. Forzamos que saque la pistola (Slot 2 / Índice 1)
         InventarioJugador inventario = GetComponent<InventarioJugador>();
         if (inventario != null)
         {
-            // Le pasamos 'true' para saltarnos el candado que acabamos de crear
+            // Saca la pistola obligatoriamente al caer
             inventario.CambiarSlot(1, true);
         }
 
-        // 3. Avisamos a los sistemas del juego y empezamos el desangrado
         OnIncapacitado?.Invoke();
         StartCoroutine(RutinaDesangrado());
     }
@@ -197,14 +221,13 @@ public class SistemaSalud : MonoBehaviour, IReceptorDano
         vidaActual = vidaAlLevantar;
         OnVidaCambiada?.Invoke(vidaActual / vidaMaxima);
 
-        // Le devolvemos la capacidad de caminar
         JugadorMovimiento jugMov = GetComponent<JugadorMovimiento>();
         if (jugMov != null) jugMov.enabled = true;
     }
 
     public void Curar(float cantidad)
     {
-        if (vidaActual <= 0 || estaIncapacitado) return; // Los incapacitados necesitan ser levantados primero
+        if (vidaActual <= 0 || estaIncapacitado) return;
 
         vidaActual += cantidad;
         if (vidaActual > vidaMaxima) vidaActual = vidaMaxima;

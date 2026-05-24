@@ -34,8 +34,15 @@ public class ControladorMelee : ControladorArma
 
         foreach (Collider2D colision in enemigosGolpeados)
         {
-            IReceptorDano receptor = colision.GetComponent<IReceptorDano>();
-            if (receptor != null) receptor.RecibirDano(datosMelee.danoBase, direccionApuntado, datosMelee.fuerzaEmpuje);
+            // =========================================================
+            // ¡EL MISMO BLINDAJE QUE LA BALA! Buscamos en plural y en los padres
+            // =========================================================
+            IReceptorDano[] receptores = colision.GetComponentsInParent<IReceptorDano>();
+
+            foreach (IReceptorDano receptor in receptores)
+            {
+                receptor.RecibirDano(datosMelee.danoBase, direccionApuntado, datosMelee.fuerzaEmpuje);
+            }
         }
     }
 

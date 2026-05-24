@@ -168,4 +168,4 @@ MonoBehaviour:
   datosMelee: {fileID: 11400000, guid: 7b890e7412bed9e488b149718d60d7a9, type: 2}
   capaEnemigos:
     serializedVersion: 2
-    m_Bits: 1
+    m_Bits: 768

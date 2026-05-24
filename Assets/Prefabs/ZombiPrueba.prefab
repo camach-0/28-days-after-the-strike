@@ -217,4 +217,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   esSuperviviente: 0
   vidaMaxima: 100
-  tiempoInmunidad: 0.2
+  vidaIncapacidadMax: 300
+  desangradoPorSegundo: 2
+  tiempoInmunidad: 0

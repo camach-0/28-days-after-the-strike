@@ -111,6 +111,7 @@ public class ZombiController : MonoBehaviour
 
     private void Morir()
     {
+        Debug.Log("¡El zombi ha muerto! Devolviendo al pool...");
         PoolManager.Instancia.DevolverObjeto(etiquetaPool, gameObject);
     }
 

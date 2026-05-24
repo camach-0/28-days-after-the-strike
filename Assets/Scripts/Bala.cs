@@ -85,19 +85,27 @@ public class Bala : MonoBehaviour
         // Ignoramos al jugador, otras balas y objetos tirados en el piso
         if (colision.CompareTag("Player") || colision.CompareTag("Bala") || colision.CompareTag("Recogible")) return;
 
-        IReceptorDano objetivo = colision.GetComponent<IReceptorDano>();
+        // ¡EL BLINDAJE PARA TRABAJO EN EQUIPO!
+        // Al usar GetComponentsInParent (en plural), buscamos en el objeto y en sus padres
+        // TODOS los scripts que tengan IReceptorDano (Salud, Empuje de tu compañero, etc.)
+        IReceptorDano[] receptores = colision.GetComponentsInParent<IReceptorDano>();
 
-        if (objetivo != null)
+        if (receptores.Length > 0)
         {
-            // Le pasamos el daño, la dirección y la nueva fuerza de empuje para el Knockback
-            objetivo.RecibirDano(dano, rb.linearVelocity.normalized, fuerzaEmpuje);
+            foreach (IReceptorDano receptor in receptores)
+            {
+                // Le avisa a TODO el mundo: "¡Recibimos daño!"
+                Debug.Log($"[BALA] Chocó con {colision.name}. Avisando al script: {receptor.GetType().Name}. Daño enviado: {dano}");
+                // Así tu SistemaSalud quita vida, y el ZombiController de tu amigo aplica el empuje.
+                receptor.RecibirDano(dano, rb.linearVelocity.normalized, fuerzaEmpuje);
+            }
 
             // ¡MECÁNICA DE PENETRACIÓN! Restamos a un zombi atravesado
             penetracionRestante--;
         }
         else
         {
-            // Si choca contra una pared u obstáculo rígido, pierde toda la penetración de golpe
+            // Si choca contra una pared u obstáculo rígido
             penetracionRestante = 0;
         }
 
