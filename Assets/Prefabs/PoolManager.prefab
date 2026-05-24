@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &3056410659798980448
+--- !u!1 &847532731329945693
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,8 +8,8 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 4030461402711270019}
-  - component: {fileID: 7204022843727834515}
+  - component: {fileID: 4156652782033944867}
+  - component: {fileID: 4341876234765524083}
   m_Layer: 0
   m_Name: PoolManager
   m_TagString: Untagged
@@ -17,13 +17,13 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &4030461402711270019
+--- !u!4 &4156652782033944867
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3056410659798980448}
+  m_GameObject: {fileID: 847532731329945693}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -10.479075, y: -11.55, z: -0.012053385}
@@ -32,13 +32,13 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7204022843727834515
+--- !u!114 &4341876234765524083
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3056410659798980448}
+  m_GameObject: {fileID: 847532731329945693}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e96bfc8ddfd007d4eac762b089565ec5, type: 3}
@@ -51,29 +51,47 @@ MonoBehaviour:
   - etiqueta: ZombiBase
     prefab: {fileID: 715580906502479141, guid: 39ebec8c9286bcc438e75893fa228264, type: 3}
     cantidadInicial: 150
-  - etiqueta: ItemBotiquin
-    prefab: {fileID: 5017271401101742472, guid: abc6ca255e85b7e458e4be315f4fd548, type: 3}
-    cantidadInicial: 10
   - etiqueta: EfectoSonido
     prefab: {fileID: 6517644523942789800, guid: 756c1f5cd33ca234fb59567bb99be354, type: 3}
     cantidadInicial: 20
+  - etiqueta: VomitoBoomer
+    prefab: {fileID: 7378859624830328255, guid: 55e733b7700ebb644a4011a21b94bc8d, type: 3}
+    cantidadInicial: 3
   - etiqueta: ZombiBoomer
     prefab: {fileID: 715580906502479141, guid: c3f51b0c3bc87bd4e827e89858624af2, type: 3}
     cantidadInicial: 5
   - etiqueta: ExplosionBoomer
     prefab: {fileID: 5431772821423568349, guid: ba6b78ea07dcc66459ee688d6d2c99c7, type: 3}
     cantidadInicial: 5
-  - etiqueta: VomitoBoomer
-    prefab: {fileID: 7378859624830328255, guid: 55e733b7700ebb644a4011a21b94bc8d, type: 3}
-    cantidadInicial: 3
-  - etiqueta: ItemPildoras
-    prefab: {fileID: 9088521424709666215, guid: 33385a915ead74e46b58a54461678ae7, type: 3}
+  - etiqueta: BombaCasera
+    prefab: {fileID: 7719041416425789523, guid: f005e36a3f7217f438ca9c1b21b160db, type: 3}
     cantidadInicial: 5
-  - etiqueta: ItemMachete
-    prefab: {fileID: 3303739457805541182, guid: a51947529d337fe43826dceb704b2858, type: 3}
+  - etiqueta: FuegoMolotov
+    prefab: {fileID: 387265111958927354, guid: 1ec8ca7b2559cc443a37e883d66fb9aa, type: 3}
+    cantidadInicial: 5
+  - etiqueta: BombaMolotov
+    prefab: {fileID: 5580167305887658923, guid: 7ec1c761620bb8f41a93d354edc7fc8a, type: 3}
+    cantidadInicial: 5
+  - etiqueta: ItemBombaCasera
+    prefab: {fileID: 5017271401101742472, guid: 8eddeff2af512774994b54d104f0eace, type: 3}
+    cantidadInicial: 5
+  - etiqueta: ItemAdrenalina
+    prefab: {fileID: 9088521424709666215, guid: a42832b59be187e43b53cf4d40806c3e, type: 3}
+    cantidadInicial: 5
+  - etiqueta: ItemPildoras
+    prefab: {fileID: 9088521424709666215, guid: e1acefe8f01920e419dc1e98c7ec6303, type: 3}
+    cantidadInicial: 5
+  - etiqueta: ItemBotiquin
+    prefab: {fileID: 5017271401101742472, guid: bd1e6355420894b43b73790aaa342e2a, type: 3}
+    cantidadInicial: 10
+  - etiqueta: ItemMolotov
+    prefab: {fileID: 5017271401101742472, guid: b3894152cc5b7a8408e7f7b72f37fa22, type: 3}
     cantidadInicial: 5
   - etiqueta: ItemEscopeta
     prefab: {fileID: 5292229928750232350, guid: ba5850ea0d6b55248b2725de4f298e5f, type: 3}
+    cantidadInicial: 5
+  - etiqueta: ItemMachete
+    prefab: {fileID: 3303739457805541182, guid: a51947529d337fe43826dceb704b2858, type: 3}
     cantidadInicial: 5
   - etiqueta: ItemM16
     prefab: {fileID: 964643400312512822, guid: 97b4e567d72ea314292dcd39aa57d756, type: 3}
@@ -83,4 +101,7 @@ MonoBehaviour:
     cantidadInicial: 5
   - etiqueta: ItemPistola
     prefab: {fileID: 3733559958536755864, guid: 63411937f74fb664190b45204c16a202, type: 3}
+    cantidadInicial: 5
+  - etiqueta: ItemMotosierra
+    prefab: {fileID: 3303739457805541182, guid: 33da82ea4f3f5de42ba9bdd725b73564, type: 3}
     cantidadInicial: 5
