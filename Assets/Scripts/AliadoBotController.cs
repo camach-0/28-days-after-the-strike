@@ -10,16 +10,17 @@ public class AliadoBotController : MonoBehaviour
 
     [Header("Configuración de IA (Combate)")]
     public float radioDeteccionZombis = 8f;
-    public float tiempoEntreDisparos = 0.8f;
-    private float temporizadorDisparo = 0f;
 
     [Header("Configuración de Rescate")]
     public float distanciaParaRescatar = 1.5f;
     public float tiempoParaLevantar = 3f;
     public float vidaAlLevantar = 30f;
 
-    [Header("Armas y Referencias")]
-    public GameObject balaPrefab;
+    [Header("Armas y Referencias (Modular)")]
+    [Tooltip("Arrastra aquí el Datos_Pistola, Datos_M16, etc. de tus carpetas")]
+    public DatosArmaFuego armaEquipada;
+    [Tooltip("Nombre exacto de la bala en tu PoolManager (ej. BalaBase)")]
+    public string etiquetaPoolBala = "BalaBase";
     public Transform puntoDisparo;
     public Transform pivoteArma;
 
@@ -27,7 +28,8 @@ public class AliadoBotController : MonoBehaviour
     private Transform liderActual;
     public SistemaSalud moduloSalud { get; private set; }
 
-    // Memoria de rescate
+    // Memoria interna
+    private float temporizadorDisparo = 0f;
     private SistemaSalud objetivoCaido;
     private float temporizadorRescate = 0f;
     private bool estaRescatando = false;
@@ -230,19 +232,38 @@ public class AliadoBotController : MonoBehaviour
         liderActual = liderMasCercano;
     }
 
+    // ==========================================
+    // ¡NUEVO SISTEMA DE DISPARO CON POOLMANAGER!
+    // ==========================================
     private void ApuntarYDisparar(Transform objetivo)
     {
-        if (pivoteArma == null) return;
+        if (pivoteArma == null || armaEquipada == null) return;
 
         Vector2 direccionAlObjetivo = (objetivo.position - pivoteArma.position).normalized;
         float angulo = Mathf.Atan2(direccionAlObjetivo.y, direccionAlObjetivo.x) * Mathf.Rad2Deg;
         pivoteArma.rotation = Quaternion.Euler(0, 0, angulo);
 
-        if (temporizadorDisparo <= 0f && balaPrefab != null && puntoDisparo != null)
+        if (temporizadorDisparo <= 0f && puntoDisparo != null)
         {
-            GameObject nuevaBala = Instantiate(balaPrefab, puntoDisparo.position, Quaternion.identity);
-            nuevaBala.GetComponent<Bala>().ConfigurarDireccion(direccionAlObjetivo);
-            temporizadorDisparo = tiempoEntreDisparos;
+            GameObject nuevaBala = PoolManager.Instancia.SolicitarObjeto(etiquetaPoolBala, puntoDisparo.position, Quaternion.identity);
+
+            if (nuevaBala != null)
+            {
+                Bala scriptBala = nuevaBala.GetComponent<Bala>();
+                if (scriptBala != null)
+                {
+                    scriptBala.ConfigurarBala(
+                        direccionAlObjetivo,
+                        (int)armaEquipada.danoBase,
+                        armaEquipada.fuerzaEmpuje,
+                        armaEquipada.penetracionZombis,
+                        armaEquipada.alcance
+                    );
+                }
+            }
+
+            // La cadencia del bot ahora es idéntica a la cadencia real del arma
+            temporizadorDisparo = armaEquipada.cadenciaAtaque;
         }
     }
 

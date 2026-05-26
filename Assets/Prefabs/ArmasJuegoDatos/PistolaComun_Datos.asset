@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d3415ea22f9ce9498053ca2b863b94e, type: 3}
+  m_Name: PistolaComun_Datos
+  m_EditorClassIdentifier: 
+  nombreArma: Pistola
+  iconoArma: {fileID: 0}
+  danoBase: 36
+  cadenciaAtaque: 0.17
+  sonidoAtaque: {fileID: 0}
+  etiquetaPoolSuelo: ItemPistola
+  esAutomatica: 0
+  esRafaga: 0
+  balasPorRafaga: 3
+  tiempoEntreBalasRafaga: 0.05
+  municionMaxima: 9999
+  tamanoCargador: 15
+  tiempoRecarga: 2
+  reservaInfinita: 0
+  penetracionZombis: 1
+  fuerzaEmpuje: 0.5
+  causaTambaleo: 0
+  alcance: 25
+  dispersionMinima: 1
+  dispersionMaxima: 8
+  incrementoRecoil: 2
+  velocidadRecuperacion: 10
+  tiempoDespliegue: 0.5
+  modificadorVelocidad: 1
+  alcanceEmpujon: 1.5
+  cadenciaEmpujon: 1
+  fuerzaDelCulatazo: 10
+  perdigonesPorDisparo: 1
