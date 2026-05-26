@@ -1374,8 +1374,11 @@ MonoBehaviour:
   distanciaParaSeguir: 3
   velocidadMovimiento: 4.5
   radioDeteccionZombis: 8
-  tiempoEntreDisparos: 0.8
-  balaPrefab: {fileID: 6233821941795280886, guid: 49c8ae99b5a71634b80191319a0d04f8, type: 3}
+  distanciaParaRescatar: 1.5
+  tiempoParaLevantar: 3
+  vidaAlLevantar: 30
+  armaEquipada: {fileID: 11400000, guid: 0de55831ae7b7474298d3a7790754977, type: 2}
+  etiquetaPoolBala: BalaBase
   puntoDisparo: {fileID: 2963283873271413508}
   pivoteArma: {fileID: 529070942574236138}
 --- !u!114 &1646079377948078242

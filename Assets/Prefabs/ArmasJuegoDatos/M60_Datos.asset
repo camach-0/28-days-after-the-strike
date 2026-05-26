@@ -10,33 +10,33 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4d3415ea22f9ce9498053ca2b863b94e, type: 3}
-  m_Name: EscopetaCorredera_Datos
+  m_Name: M60_Datos
   m_EditorClassIdentifier: 
-  nombreArma: EscopetaCorredera
+  nombreArma: M60
   iconoArma: {fileID: 0}
-  danoBase: 45
-  cadenciaAtaque: 0.8
+  danoBase: 50
+  cadenciaAtaque: 0.11
   sonidoAtaque: {fileID: 0}
-  etiquetaPoolSuelo: ItemEscopeta
-  esAutomatica: 0
+  etiquetaPoolSuelo: ItemM60
+  esAutomatica: 1
   esRafaga: 0
-  balasPorRafaga: 4
+  balasPorRafaga: 3
   tiempoEntreBalasRafaga: 0.05
-  municionMaxima: 80
-  tamanoCargador: 12
-  tiempoRecarga: 0.8
+  municionMaxima: 0
+  tamanoCargador: 150
+  tiempoRecarga: 0
   reservaInfinita: 0
-  penetracionZombis: 1
-  fuerzaEmpuje: 2
+  penetracionZombis: 3
+  fuerzaEmpuje: 3
   causaTambaleo: 0
-  alcance: 20
+  alcance: 35
   dispersionMinima: 2
-  dispersionMaxima: 8
-  incrementoRecoil: 2
-  velocidadRecuperacion: 10
-  tiempoDespliegue: 0.5
-  modificadorVelocidad: 1
+  dispersionMaxima: 9
+  incrementoRecoil: 3
+  velocidadRecuperacion: 8
+  tiempoDespliegue: 0.6
+  modificadorVelocidad: 0.8
   alcanceEmpujon: 1.5
   cadenciaEmpujon: 1
   fuerzaDelCulatazo: 10
-  perdigonesPorDisparo: 8
+  perdigonesPorDisparo: 1

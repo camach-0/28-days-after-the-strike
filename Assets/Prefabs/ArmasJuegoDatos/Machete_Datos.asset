@@ -19,5 +19,5 @@ MonoBehaviour:
   sonidoAtaque: {fileID: 0}
   etiquetaPoolSuelo: ItemMachete
   radioImpacto: 1.2
-  fuerzaEmpuje: 5
+  fuerzaEmpuje: 4
   esMotosierra: 0
