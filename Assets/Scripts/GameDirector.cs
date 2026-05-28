@@ -41,11 +41,9 @@ public class GameDirector : MonoBehaviour
 
         while (true)
         {
-            // NOTA: Asegúrate de que tus Zombis tengan la etiqueta (Tag) "Enemy" en Unity.
             int zombisActuales = ZombiController.zombisActivosEnMapa;
             Vector2 centroEquipo = ObtenerCentroDelEquipo();
 
-            // ¡CORREGIDO! Ya no verificamos el viejo zombiPrefab, el PoolManager se encarga
             if (centroEquipo != Vector2.zero && zombisActuales < limiteZombisEnMapa)
             {
                 int tamanoHorda = Random.Range(minZombisPorHorda, maxZombisPorHorda);
@@ -57,24 +55,23 @@ public class GameDirector : MonoBehaviour
                 for (int i = 0; i < cantidadGrupos; i++)
                 {
                     Vector2 direccionAtaque = Random.insideUnitCircle.normalized;
-                    Vector2 puntoGeneracion = centroEquipo + (direccionAtaque * distanciaDeAparicion);
+                    Vector2 puntoGeneracionBase = centroEquipo + (direccionAtaque * distanciaDeAparicion);
 
-                    NavMeshHit hit;
-                    if (NavMesh.SamplePosition(puntoGeneracion, out hit, 10f, NavMesh.AllAreas))
+                    // VALIDACIÓN CORRECTA: Calculamos y validamos zombi por zombi
+                    for (int j = 0; j < zombisPorGrupo; j++)
                     {
-                        for (int j = 0; j < zombisPorGrupo; j++)
+                        // 1. Aplicamos el desfase PRIMERO
+                        Vector3 posicionDeseada = (Vector3)puntoGeneracionBase + (Vector3)(Random.insideUnitCircle * 3f);
+
+                        // 2. LUEGO validamos que la posición desfasada esté en el NavMesh
+                        NavMeshHit hit;
+                        if (NavMesh.SamplePosition(posicionDeseada, out hit, 4f, NavMesh.AllAreas))
                         {
-                            Vector3 posicionDesfasada = hit.position + (Vector3)(Random.insideUnitCircle * 2f);
+                            GameObject nuevoZombi = PoolManager.Instancia.SolicitarObjeto(etiquetaZombi, hit.position, Quaternion.identity);
 
-                            // =======================================================
-                            // ¡LA MAGIA DE LA PISCINA! Pedimos zombis ya creados
-                            // =======================================================
-                            GameObject nuevoZombi = PoolManager.Instancia.SolicitarObjeto(etiquetaZombi, posicionDesfasada, Quaternion.identity);
-
-                            if (nuevoZombi != null) // Validamos que la piscina nos haya dado uno
+                            if (nuevoZombi != null)
                             {
                                 ZombiController cerebro = nuevoZombi.GetComponent<ZombiController>();
-
                                 if (cerebro != null)
                                 {
                                     cerebro.esDeHorda = true;
@@ -90,7 +87,6 @@ public class GameDirector : MonoBehaviour
         }
     }
 
-    // --- NUEVO: Calcula el punto medio consultando la lista ultra-rápida del GameManager ---
     private Vector2 ObtenerCentroDelEquipo()
     {
         if (GameManager.Instancia == null || GameManager.Instancia.supervivientesActivos.Count == 0) return Vector2.zero;
@@ -135,18 +131,12 @@ public class GameDirector : MonoBehaviour
         if (porcentaje >= 0.3f) return tiempoPaz_SaludMedia;
         return tiempoPaz_SaludBaja;
     }
-    // --- NUEVO: 2. La función que se llama cuando alguien es vomitado ---
+
     public void DesatarHordaPorVomito(Transform victima)
     {
         Debug.Log($"<color=red>¡EL DIRECTOR SE ENFADA! ¡Enviando horda masiva hacia {victima.name}!</color>");
-
-        // 1. Detenemos la tranquilidad y la cuenta regresiva normal
         StopAllCoroutines();
-
-        // 2. Lanzamos una horda inmediata, más grande y centrada en la víctima
         StartCoroutine(RutinaHordaDirigida(victima));
-
-        // 3. Reiniciamos el ciclo normal para que el juego continúe después del ataque
         StartCoroutine(GenerarHordasDinamicas());
     }
 
@@ -154,24 +144,24 @@ public class GameDirector : MonoBehaviour
     {
         if (victima == null) yield break;
 
-        // Mandamos una cantidad brutal (más que una horda normal)
         int tamanoHorda = Random.Range(maxZombisPorHorda, maxZombisPorHorda + 15);
-        int cantidadGrupos = 4; // Los rodeamos por los 4 lados
+        int cantidadGrupos = 4;
         int zombisPorGrupo = tamanoHorda / cantidadGrupos;
 
         for (int i = 0; i < cantidadGrupos; i++)
         {
             Vector2 direccionAtaque = Random.insideUnitCircle.normalized;
-            // Los hacemos aparecer cerca de la víctima, no del centro del equipo
-            Vector2 puntoGeneracion = (Vector2)victima.position + (direccionAtaque * distanciaDeAparicion);
+            Vector2 puntoGeneracionBase = (Vector2)victima.position + (direccionAtaque * distanciaDeAparicion);
 
-            NavMeshHit hit;
-            if (NavMesh.SamplePosition(puntoGeneracion, out hit, 10f, NavMesh.AllAreas))
+            for (int j = 0; j < zombisPorGrupo; j++)
             {
-                for (int j = 0; j < zombisPorGrupo; j++)
+                // Mismo parche de seguridad aquí
+                Vector3 posicionDeseada = (Vector3)puntoGeneracionBase + (Vector3)(Random.insideUnitCircle * 3f);
+
+                NavMeshHit hit;
+                if (NavMesh.SamplePosition(posicionDeseada, out hit, 4f, NavMesh.AllAreas))
                 {
-                    Vector3 posicionDesfasada = hit.position + (Vector3)(Random.insideUnitCircle * 2f);
-                    GameObject nuevoZombi = PoolManager.Instancia.SolicitarObjeto(etiquetaZombi, posicionDesfasada, Quaternion.identity);
+                    GameObject nuevoZombi = PoolManager.Instancia.SolicitarObjeto(etiquetaZombi, hit.position, Quaternion.identity);
 
                     if (nuevoZombi != null)
                     {
@@ -179,13 +169,12 @@ public class GameDirector : MonoBehaviour
                         if (cerebro != null)
                         {
                             cerebro.esDeHorda = true;
-                            // Forzamos temporalmente al zombi a mirar a la víctima
                             cerebro.objetivoJugador = victima;
                         }
                     }
                 }
             }
         }
-        yield return null; // Esperamos un frame para no congelar el juego
+        yield return null;
     }
 }

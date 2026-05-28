@@ -1374,6 +1374,9 @@ MonoBehaviour:
   distanciaParaSeguir: 3
   velocidadMovimiento: 4.5
   radioDeteccionZombis: 8
+  capasObstaculos:
+    serializedVersion: 2
+    m_Bits: 2048
   distanciaParaRescatar: 1.5
   tiempoParaLevantar: 3
   vidaAlLevantar: 30

@@ -24,6 +24,15 @@ public class ZombiController : MonoBehaviour
     public float danoAlJugador = 10f;
     public float velocidadAtaque = 1.0f;
 
+    // NUEVO: Variables para el Algoritmo Boid (Efecto L4D)
+    [Header("Comportamiento de Horda (Boids)")]
+    [Tooltip("Distancia a la que empieza a empujar a otros zombis")]
+    public float radioSeparacion = 0.8f;
+    [Tooltip("Qué tan fuerte se empujan entre ellos")]
+    public float fuerzaSeparacion = 3f;
+    [Tooltip("La capa de Unity donde están los zombis")]
+    public LayerMask capaZombis;
+
     [HideInInspector] public NavMeshAgent agente;
     [HideInInspector] public SistemaSalud moduloSalud;
     [HideInInspector] public Transform objetivoJugador;
@@ -73,6 +82,44 @@ public class ZombiController : MonoBehaviour
         if (moduloSalud.vidaActual <= 0) return;
 
         estadoActual?.Actualizar(this);
+
+        // NUEVO: Aplicamos la separación de horda en cada frame
+        AplicarSeparacionBoids();
+    }
+
+    // NUEVO: La magia matemática de la Separación
+    private void AplicarSeparacionBoids()
+    {
+        // Lanzamos un radar circular para encontrar a otros zombis
+        Collider2D[] vecinos = Physics2D.OverlapCircleAll(transform.position, radioSeparacion, capaZombis);
+        Vector2 fuerzaRepulsion = Vector2.zero;
+        int conteo = 0;
+
+        foreach (Collider2D vecino in vecinos)
+        {
+            // Evitamos que el zombi se detecte y se empuje a sí mismo
+            if (vecino.gameObject != this.gameObject)
+            {
+                // Calculamos la dirección opuesta al vecino
+                Vector2 direccionAlejamiento = (Vector2)transform.position - (Vector2)vecino.transform.position;
+                float distancia = direccionAlejamiento.magnitude;
+
+                // Cuanto más cerca está el compañero, más fuerte es el empujón
+                if (distancia > 0)
+                {
+                    fuerzaRepulsion += (direccionAlejamiento.normalized / distancia);
+                    conteo++;
+                }
+            }
+        }
+
+        // Si hay zombis cerca, calculamos el empujón final y lo aplicamos
+        if (conteo > 0)
+        {
+            fuerzaRepulsion /= conteo;
+            // Deslizamos al zombi suavemente sin romper su persecución del NavMesh
+            transform.position += (Vector3)(fuerzaRepulsion * fuerzaSeparacion * Time.deltaTime);
+        }
     }
 
     public void CambiarEstado(IEstadoZombi nuevoEstado)
@@ -91,7 +138,6 @@ public class ZombiController : MonoBehaviour
 
         foreach (SistemaSalud superviviente in GameManager.Instancia.supervivientesActivos)
         {
-            // ACTUALIZADO: Buscamos a cualquiera que NO esté muerto definitivamente (incluso si está en el piso)
             if (superviviente != null && !superviviente.estaMuertoDefinitivo)
             {
                 float distancia = Vector2.Distance(transform.position, superviviente.transform.position);
@@ -111,7 +157,6 @@ public class ZombiController : MonoBehaviour
 
     private void Morir()
     {
-        Debug.Log("¡El zombi ha muerto! Devolviendo al pool...");
         PoolManager.Instancia.DevolverObjeto(etiquetaPool, gameObject);
     }
 
@@ -121,6 +166,10 @@ public class ZombiController : MonoBehaviour
         Gizmos.DrawWireSphere(transform.position, radioVision);
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, radioPatrullaje);
+
+        // NUEVO: Dibujamos la burbuja de repulsión en color azul para que la puedas ajustar visualmente
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawWireSphere(transform.position, radioSeparacion);
     }
 }
 
@@ -195,7 +244,6 @@ public class EstadoPerseguirZombi : IEstadoZombi
 
         SistemaSalud saludObjetivo = zombi.objetivoJugador.GetComponent<SistemaSalud>();
 
-        // ACTUALIZADO: Si es un jugador y ya murió DE VERDAD, lo dejamos en paz
         if (saludObjetivo != null && saludObjetivo.estaMuertoDefinitivo)
         {
             zombi.objetivoJugador = null;
@@ -215,7 +263,6 @@ public class EstadoPerseguirZombi : IEstadoZombi
             {
                 if (saludObjetivo != null)
                 {
-                    // Si le pegamos y está incapacitado, le bajaremos esa vida de desangrado
                     saludObjetivo.RecibirDano(zombi.danoAlJugador, Vector2.zero, 0f);
                 }
 

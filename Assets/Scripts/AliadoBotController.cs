@@ -10,6 +10,9 @@ public class AliadoBotController : MonoBehaviour
 
     [Header("Configuración de IA (Combate)")]
     public float radioDeteccionZombis = 8f;
+    // NUEVO: Le decimos al Bot qué cosas son paredes para que el Raycast rebote en ellas
+    [Tooltip("Selecciona aquí la capa (Layer) donde están tus paredes u obstáculos")]
+    public LayerMask capasObstaculos;
 
     [Header("Configuración de Rescate")]
     public float distanciaParaRescatar = 1.5f;
@@ -161,6 +164,7 @@ public class AliadoBotController : MonoBehaviour
         temporizadorRescate = 0f;
     }
 
+    // NUEVO: Modificamos la búsqueda para que use un Raycast (Línea de Visión)
     private Transform ObtenerZombiMasCercano()
     {
         Collider2D[] objetosEnRango = Physics2D.OverlapCircleAll(transform.position, radioDeteccionZombis);
@@ -173,11 +177,21 @@ public class AliadoBotController : MonoBehaviour
 
             if (zombi != null && zombi.moduloSalud != null && !zombi.moduloSalud.estaMuertoDefinitivo)
             {
-                float distancia = Vector2.Distance(transform.position, zombi.transform.position);
-                if (distancia < distanciaMinima)
+                // Calculamos la dirección y distancia exacta hacia este zombi
+                Vector2 direccionAlZombi = zombi.transform.position - transform.position;
+                float distanciaAlZombi = direccionAlZombi.magnitude;
+
+                // Disparamos el Raycast desde el bot hasta el zombi, filtrando solo la capa de obstáculos
+                RaycastHit2D hit = Physics2D.Raycast(transform.position, direccionAlZombi.normalized, distanciaAlZombi, capasObstaculos);
+
+                // Si 'hit.collider' es NULO, significa que el rayo NO chocó con ninguna pared. ¡El zombi está a la vista!
+                if (hit.collider == null)
                 {
-                    distanciaMinima = distancia;
-                    zombiMasCercano = zombi.transform;
+                    if (distanciaAlZombi < distanciaMinima)
+                    {
+                        distanciaMinima = distanciaAlZombi;
+                        zombiMasCercano = zombi.transform;
+                    }
                 }
             }
         }
@@ -232,9 +246,6 @@ public class AliadoBotController : MonoBehaviour
         liderActual = liderMasCercano;
     }
 
-    // ==========================================
-    // ¡NUEVO SISTEMA DE DISPARO CON POOLMANAGER!
-    // ==========================================
     private void ApuntarYDisparar(Transform objetivo)
     {
         if (pivoteArma == null || armaEquipada == null) return;
@@ -262,7 +273,6 @@ public class AliadoBotController : MonoBehaviour
                 }
             }
 
-            // La cadencia del bot ahora es idéntica a la cadencia real del arma
             temporizadorDisparo = armaEquipada.cadenciaAtaque;
         }
     }
