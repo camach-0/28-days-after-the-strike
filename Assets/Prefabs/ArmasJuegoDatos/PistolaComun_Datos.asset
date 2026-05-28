@@ -15,7 +15,7 @@ MonoBehaviour:
   nombreArma: Pistola
   iconoArma: {fileID: 0}
   danoBase: 36
-  cadenciaAtaque: 0.17
+  cadenciaAtaque: 0.35
   sonidoAtaque: {fileID: 0}
   etiquetaPoolSuelo: ItemPistola
   esAutomatica: 0
