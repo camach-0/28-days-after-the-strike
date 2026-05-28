@@ -1,12 +1,8 @@
 using UnityEngine;
-using UnityEngine.InputSystem; // <-- ¡NUEVO! Necesario para el nuevo sistema de controles
 
 public class InteraccionRescate : MonoBehaviour
 {
     [Header("Configuración de Rescate")]
-    [Tooltip("Arrastra aquí la acción 'Interactuar' de tu Input Actions")]
-    public InputActionReference accionInteractuar; // <-- Cambiamos string por InputActionReference
-
     public float radioInteraccion = 2f;
     public float tiempoParaLevantar = 3f;
     public float vidaAlLevantar = 30f;
@@ -15,6 +11,7 @@ public class InteraccionRescate : MonoBehaviour
     public LayerMask capaJugadores;
 
     private SistemaSalud miSalud;
+    private JugadorInput miInput; // <-- NUEVO: Leemos el input individual de este jugador
     private SistemaSalud objetivoCaido;
     private float temporizadorRescate = 0f;
     private bool estaRescatando = false;
@@ -22,6 +19,7 @@ public class InteraccionRescate : MonoBehaviour
     private void Start()
     {
         miSalud = GetComponent<SistemaSalud>();
+        miInput = GetComponent<JugadorInput>();
     }
 
     private void Update()
@@ -33,8 +31,8 @@ public class InteraccionRescate : MonoBehaviour
             return;
         }
 
-        // 2. Leemos si el botón está siendo presionado en este momento
-        bool botonPresionado = accionInteractuar != null && accionInteractuar.action.IsPressed();
+        // 2. Leemos si ESTE jugador específico está manteniendo el botón
+        bool botonPresionado = miInput != null && miInput.ManteniendoInteractuar;
 
         // 3. Si presiono y MANTENGO el botón
         if (botonPresionado)
