@@ -138,11 +138,16 @@ public class EstadoDeambularZombi : IEstadoZombi
 {
     public void Entrar(ZombiController zombi)
     {
-        if (zombi.esEstatico) zombi.agente.isStopped = true;
+        // SEGURIDAD: Solo detener si el agente está activo y en el NavMesh
+        if (zombi.esEstatico && zombi.agente.isActiveAndEnabled && zombi.agente.isOnNavMesh) 
+            zombi.agente.isStopped = true;
     }
 
     public void Actualizar(ZombiController zombi)
     {
+        // ◄ COMPROBACIÓN DE SEGURIDAD CRÍTICA
+        if (!zombi.agente.isActiveAndEnabled || !zombi.agente.isOnNavMesh) return;
+
         Transform presa = zombi.EscanearJugador();
         if (presa != null)
         {
@@ -179,28 +184,34 @@ public class EstadoPerseguirZombi : IEstadoZombi
 {
     public void Entrar(ZombiController zombi)
     {
-        zombi.agente.isStopped = false;
-        zombi.agente.speed = zombi.velocidadMovimiento;
+        // SEGURIDAD: Solo activar si está correctamente posicionado
+        if (zombi.agente.isActiveAndEnabled && zombi.agente.isOnNavMesh)
+        {
+            zombi.agente.isStopped = false;
+            zombi.agente.speed = zombi.velocidadMovimiento;
+        }
     }
 
     public void Actualizar(ZombiController zombi)
     {
+        // ◄ COMPROBACIÓN DE SEGURIDAD CRÍTICA (Evita el crash de consola)
+        if (!zombi.agente.isActiveAndEnabled || !zombi.agente.isOnNavMesh) return;
+
         if (zombi.objetivoJugador == null || !zombi.objetivoJugador.gameObject.activeInHierarchy)
         {
             zombi.objetivoJugador = null;
             zombi.CambiarEstado(zombi.estadoDeambular);
-            if (zombi.agente.isOnNavMesh) zombi.agente.ResetPath();
+            zombi.agente.ResetPath();
             return;
         }
 
         SistemaSalud saludObjetivo = zombi.objetivoJugador.GetComponent<SistemaSalud>();
 
-        // ACTUALIZADO: Si es un jugador y ya murió DE VERDAD, lo dejamos en paz
         if (saludObjetivo != null && saludObjetivo.estaMuertoDefinitivo)
         {
             zombi.objetivoJugador = null;
             zombi.CambiarEstado(zombi.estadoDeambular);
-            if (zombi.agente.isOnNavMesh) zombi.agente.ResetPath();
+            zombi.agente.ResetPath();
             return;
         }
 
@@ -215,16 +226,14 @@ public class EstadoPerseguirZombi : IEstadoZombi
             {
                 if (saludObjetivo != null)
                 {
-                    // Si le pegamos y está incapacitado, le bajaremos esa vida de desangrado
                     saludObjetivo.RecibirDano(zombi.danoAlJugador, Vector2.zero, 0f);
                 }
-
                 zombi.tiempoSiguienteAtaque = Time.time + zombi.velocidadAtaque;
             }
         }
         else
         {
-            zombi.agente.isStopped = false;
+            zombi.agente.isStopped = false; // Aquí daba el error
             zombi.agente.SetDestination(zombi.objetivoJugador.position);
         }
     }

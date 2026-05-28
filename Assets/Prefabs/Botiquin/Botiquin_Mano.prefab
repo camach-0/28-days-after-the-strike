@@ -102,3 +102,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   puntoDisparo: {fileID: 0}
   cantidadCuracion: 50
+  etiquetaSuelo: Pickup_Botiquin

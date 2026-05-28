@@ -36,13 +36,18 @@ public class PoolManager : MonoBehaviour
         {
             Queue<GameObject> colaDeObjetos = new Queue<GameObject>();
 
+            bool estadoOriginal = pool.prefab.activeSelf;
+
+            pool.prefab.SetActive(false);
+
             for (int i = 0; i < pool.cantidadInicial; i++)
             {
-                // Los creamos como hijos de este Manager para que la jerarquía esté limpia
                 GameObject obj = Instantiate(pool.prefab, transform);
-                obj.SetActive(false); // Nacen apagados
+
                 colaDeObjetos.Enqueue(obj);
             }
+
+            pool.prefab.SetActive(estadoOriginal);
 
             diccionarioPiscinas.Add(pool.etiqueta, colaDeObjetos);
         }
