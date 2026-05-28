@@ -1538,6 +1538,84 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &185490632
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 185490634}
+  - component: {fileID: 185490633}
+  m_Layer: 0
+  m_Name: BordesMapa
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!61 &185490633
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 185490632}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 63.3, y: 87.5}
+  m_EdgeRadius: 0
+--- !u!4 &185490634
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 185490632}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 14.5, y: 26.3, z: -0.17422293}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &186449264
 GameObject:
   m_ObjectHideFlags: 0
@@ -3261,6 +3339,7 @@ GameObject:
   - component: {fileID: 376929543}
   - component: {fileID: 376929540}
   - component: {fileID: 376929542}
+  - component: {fileID: 376929544}
   m_Layer: 0
   m_Name: Camara_P4
   m_TagString: MainCamera
@@ -3378,6 +3457,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &376929544
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 376929539}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90cb4e9e40022fd44aeb6867078d5aed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  jugadorASeguir: {fileID: 0}
+  velocidadSuavizado: 10
+  limitesMapa: {fileID: 185490633}
 --- !u!1001 &391202689
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4175,6 +4269,7 @@ GameObject:
   - component: {fileID: 519420031}
   - component: {fileID: 519420029}
   - component: {fileID: 519420030}
+  - component: {fileID: 519420033}
   m_Layer: 0
   m_Name: Camara_P1
   m_TagString: MainCamera
@@ -4300,6 +4395,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &519420033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 519420028}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90cb4e9e40022fd44aeb6867078d5aed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  jugadorASeguir: {fileID: 1345090980}
+  velocidadSuavizado: 10
+  limitesMapa: {fileID: 185490633}
 --- !u!1 &520509174
 GameObject:
   m_ObjectHideFlags: 0
@@ -4613,6 +4723,7 @@ GameObject:
   - component: {fileID: 567461789}
   - component: {fileID: 567461786}
   - component: {fileID: 567461788}
+  - component: {fileID: 567461790}
   m_Layer: 0
   m_Name: Camara_P3
   m_TagString: MainCamera
@@ -4730,6 +4841,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &567461790
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 567461785}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90cb4e9e40022fd44aeb6867078d5aed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  jugadorASeguir: {fileID: 0}
+  velocidadSuavizado: 10
+  limitesMapa: {fileID: 185490633}
 --- !u!1 &580183233
 GameObject:
   m_ObjectHideFlags: 0
@@ -7553,6 +7679,7 @@ GameObject:
   - component: {fileID: 1157389589}
   - component: {fileID: 1157389586}
   - component: {fileID: 1157389588}
+  - component: {fileID: 1157389590}
   m_Layer: 0
   m_Name: Camara_P2
   m_TagString: MainCamera
@@ -7670,6 +7797,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1157389590
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1157389585}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90cb4e9e40022fd44aeb6867078d5aed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  jugadorASeguir: {fileID: 0}
+  velocidadSuavizado: 10
+  limitesMapa: {fileID: 185490633}
 --- !u!1 &1180921675
 GameObject:
   m_ObjectHideFlags: 0
@@ -8492,6 +8634,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1336159590}
   m_CullTransparentMesh: 1
+--- !u!4 &1345090980 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7519346433570874510, guid: 08a7d2134f2927f4185ea9f0c945b4c2, type: 3}
+  m_PrefabInstance: {fileID: 820776318}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1356411235
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -13686,3 +13833,4 @@ SceneRoots:
   - {fileID: 1979582297}
   - {fileID: 391202689}
   - {fileID: 2006019563}
+  - {fileID: 185490634}
