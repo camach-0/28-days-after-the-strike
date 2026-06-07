@@ -21,6 +21,7 @@ public class JugadorInput : MonoBehaviour
 
     private bool usandoRaton = true;
     private Vector2 posicionRatonPantalla;
+    public bool ManteniendoInteractuar { get; private set; }
 
     public void OnMover(InputValue valor)
     {
@@ -47,7 +48,7 @@ public class JugadorInput : MonoBehaviour
     public void OnDisparar(InputValue valor) { EstaDisparando = valor.isPressed; }
     public void OnRecargar(InputValue valor) { if (valor.isPressed) IntentoRecargar = true; }
     public void OnLinterna(InputValue valor) { if (valor.isPressed) IntentoLinterna = true; }
-    public void OnInteractuar(InputValue valor) { if (valor.isPressed) IntentoInteractuar = true; }
+    public void OnInteractuar(InputValue valor) { if (valor.isPressed) IntentoInteractuar = true; ManteniendoInteractuar = valor.isPressed;}
 
     // --- NUEVO INPUT --- Asegúrate de mapear "Empujar" en tu InputActions
     public void OnEmpujar(InputValue valor) { if (valor.isPressed) IntentoEmpujar = true; }
