@@ -16,7 +16,7 @@ public class DatosArmaFuego : DatosArma
     [Tooltip("Activa esto para la pistola inicial. El cargador se vacía, pero la reserva es infinita.")]
     public bool reservaInfinita = false;
 
-    [Header("Horda y Balística (¡NUEVO!)")]
+    [Header("Horda y Balística")]
     [Tooltip("¿A cuántos zombis atraviesa antes de destruirse? (Pistola = 1, Sniper = 5)")]
     public int penetracionZombis = 1;
     public float fuerzaEmpuje = 2f;
@@ -24,7 +24,7 @@ public class DatosArmaFuego : DatosArma
     [Tooltip("Distancia máxima que recorre la bala antes de desaparecer")]
     public float alcance = 20f; // <-- ¡AQUÍ ESTÁ EL ALCANCE!
 
-    [Header("Precisión Dinámica (Cono de Disparo) (¡NUEVO!)")]
+    [Header("Precisión Dinámica (Cono de Disparo)")]
     [Tooltip("Dispersión cuando estás quieto")]
     public float dispersionMinima = 1f;
     [Tooltip("Dispersión cuando corres")]
@@ -34,7 +34,7 @@ public class DatosArmaFuego : DatosArma
     [Tooltip("Qué tan rápido se cierra el cono al dejar de disparar")]
     public float velocidadRecuperacion = 10f;
 
-    [Header("Peso y Manejo (¡NUEVO!)")]
+    [Header("Peso y Manejo")]
     [Tooltip("Tiempo en segundos antes de poder disparar al equiparla")]
     public float tiempoDespliegue = 0.5f;
     [Range(0.1f, 1f)]

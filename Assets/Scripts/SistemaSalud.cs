@@ -5,7 +5,7 @@ using System.Collections;
 public class SistemaSalud : MonoBehaviour, IReceptorDano
 {
     [Header("Identificación")]
-    [Tooltip("¡IMPORTANTE! Marca esta casilla TRUE solo en tus prefabs de personajes (Jugador). En los zombis déjala en FALSE.")]
+    [Tooltip("Marca esta casilla TRUE solo en tus prefabs de personajes (Jugador). En los zombis déjala en FALSE.")]
     public bool esSuperviviente = false;
 
     [Header("Estadísticas de Vida Base")]
