@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1047652601492771593}
   - component: {fileID: 9112103253640361525}
-  - component: {fileID: 5453110515018752184}
+  - component: {fileID: -6937461016207976299}
   m_Layer: 0
   m_Name: Pildoras_Mano
   m_TagString: Recogible
@@ -88,7 +88,7 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
---- !u!114 &5453110515018752184
+--- !u!114 &-6937461016207976299
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -97,8 +97,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 9088521424709666215}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 74504f1d1603c4d4a8cede6df53498d3, type: 3}
+  m_Script: {fileID: 11500000, guid: 42469bb6e27b1c94ea414166ddec6e92, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   puntoDisparo: {fileID: 0}
-  cantidadCuracion: 30
+  prefabSuelo: {fileID: 9088521424709666215, guid: e1acefe8f01920e419dc1e98c7ec6303, type: 3}
+  cantidadSaludTemporal: 60

@@ -201,6 +201,11 @@ MonoBehaviour:
   radioPatrullaje: 8
   danoAlJugador: 10
   velocidadAtaque: 1
+  radioSeparacion: 0.8
+  fuerzaSeparacion: 3
+  capaZombis:
+    serializedVersion: 2
+    m_Bits: 256
   agente: {fileID: 0}
   moduloSalud: {fileID: 0}
   objetivoJugador: {fileID: 0}

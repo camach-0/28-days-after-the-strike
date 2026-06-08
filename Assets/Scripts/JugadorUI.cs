@@ -4,8 +4,11 @@ using UnityEngine.UI;
 [RequireComponent(typeof(SistemaSalud))]
 public class JugadorUI : MonoBehaviour
 {
-    [Header("Referencias de UI (Arrastra la imagen desde tu Canvas hijo)")]
-    public Image barraDeVidaUI;
+    [Header("Referencias de UI")]
+    public Image barraDeVidaUI; // La roja (Vida real)
+
+    [Tooltip("Duplica tu barra roja, píntala naranja/amarilla y ponla AQUÍ")]
+    public Image barraVidaTemporalUI; // La naranja (Vida temporal)
 
     private SistemaSalud moduloSalud;
 
@@ -13,25 +16,44 @@ public class JugadorUI : MonoBehaviour
     {
         moduloSalud = GetComponent<SistemaSalud>();
 
-        // Nos suscribimos al evento: cuando la vida cambie, ejecutamos nuestra función
-        moduloSalud.OnVidaCambiada += ActualizarBarraUI;
+        moduloSalud.OnVidaCambiada += ActualizarBarraReal;
+        moduloSalud.OnVidaTemporalCambiada += ActualizarBarraTemporal;
     }
 
     private void Start()
     {
-        ActualizarBarraUI(1f); // Inicializamos la barra llena
+        ActualizarBarraReal(1f);
+        ActualizarBarraTemporal(0f);
     }
 
     private void OnDestroy()
     {
-        if (moduloSalud != null) moduloSalud.OnVidaCambiada -= ActualizarBarraUI;
+        if (moduloSalud != null)
+        {
+            moduloSalud.OnVidaCambiada -= ActualizarBarraReal;
+            moduloSalud.OnVidaTemporalCambiada -= ActualizarBarraTemporal;
+        }
     }
 
-    private void ActualizarBarraUI(float porcentaje)
+    private void ActualizarBarraReal(float porcentaje)
     {
-        if (barraDeVidaUI != null)
+        if (barraDeVidaUI != null) barraDeVidaUI.fillAmount = porcentaje;
+        RefrescarFondoTemporal();
+    }
+
+    private void ActualizarBarraTemporal(float porcentajeTemp)
+    {
+        RefrescarFondoTemporal();
+    }
+
+    // La barra temporal se pone DETRÁS de la roja, así que sumamos ambos porcentajes.
+    // Ejemplo: 20% roja + 30% temporal = La barra temporal se llena al 50%.
+    private void RefrescarFondoTemporal()
+    {
+        if (barraVidaTemporalUI != null && moduloSalud != null)
         {
-            barraDeVidaUI.fillAmount = porcentaje;
+            float total = (moduloSalud.vidaActual + moduloSalud.vidaTemporal) / moduloSalud.vidaMaxima;
+            barraVidaTemporalUI.fillAmount = total;
         }
     }
 }

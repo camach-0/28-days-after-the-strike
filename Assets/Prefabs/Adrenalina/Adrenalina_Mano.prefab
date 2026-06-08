@@ -101,5 +101,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   puntoDisparo: {fileID: 0}
+  prefabSuelo: {fileID: 9088521424709666215, guid: a42832b59be187e43b53cf4d40806c3e, type: 3}
   multiplicadorVelocidad: 1.5
   tiempoEfecto: 10
+  saludTemporal: 25

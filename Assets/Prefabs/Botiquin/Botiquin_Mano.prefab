@@ -101,4 +101,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   puntoDisparo: {fileID: 0}
+  prefabSuelo: {fileID: 5017271401101742472, guid: bd1e6355420894b43b73790aaa342e2a, type: 3}
   cantidadCuracion: 50
+  etiquetaSuelo: Pickup_Botiquin

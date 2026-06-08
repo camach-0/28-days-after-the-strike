@@ -2,13 +2,10 @@ using UnityEngine;
 
 public class ControladorAdrenalina : ControladorArma
 {
-    [Header("Configuración del Sistema")]
-    // 1. ¡OBLIGATORIO! La etiqueta para que el nuevo sistema lo reconozca en el suelo
-    //public override string EtiquetaPoolSuelo => "Adrenalina";
-
     [Header("Efecto de Adrenalina")]
     public float multiplicadorVelocidad = 1.5f; // Te hace 50% más rápido (1.5x)
     public float tiempoEfecto = 10f; // Dura 10 segundos
+    public float saludTemporal = 25f; // ¡NUEVO! HP temporal que te da
 
     private bool seEstaUsando = false;
 
@@ -18,11 +15,7 @@ public class ControladorAdrenalina : ControladorArma
         Inyectar();
     }
 
-    // 2. ¡OBLIGATORIO! El método de empujón aunque la jeringa no empuje
-    public override void IntentarEmpujon(Vector2 direccion)
-    {
-        // Se deja vacío porque no vamos a empujar zombis con una jeringa
-    }
+    public override void IntentarEmpujon(Vector2 direccion) { }
 
     private void Inyectar()
     {
@@ -35,7 +28,14 @@ public class ControladorAdrenalina : ControladorArma
             movimiento.InyectarAdrenalina(multiplicadorVelocidad, tiempoEfecto);
         }
 
-        // 2. Sacamos la jeringa del inventario de Jorge
+        // 2. ¡NUEVO! Buscamos el sistema de salud y le damos los 25 HP temporales
+        SistemaSalud saludJugador = GetComponentInParent<SistemaSalud>();
+        if (saludJugador != null)
+        {
+            saludJugador.AñadirVidaTemporal(saludTemporal);
+        }
+
+        // 3. Sacamos la jeringa del inventario
         InventarioJugador miInventario = GetComponentInParent<InventarioJugador>();
         if (miInventario != null)
         {
@@ -48,12 +48,11 @@ public class ControladorAdrenalina : ControladorArma
                 }
             }
 
-            // Cambiamos automáticamente al arma primaria o secundaria
             if (miInventario.ranuras[0] != null) miInventario.CambiarSlot(0);
             else miInventario.CambiarSlot(1);
         }
 
-        // 3. Destruimos la jeringa de la mano inmediatamente
+        // 4. Destruimos la jeringa de la mano
         Destroy(gameObject);
     }
 }

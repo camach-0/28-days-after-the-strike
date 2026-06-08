@@ -10,8 +10,10 @@ public class JugadorMovimiento : MonoBehaviour
     private Rigidbody2D rb;
     private Vector2 direccionMovimiento;
 
-    // --- NUEVO: Modificador de velocidad para la Adrenalina ---
     private float multiplicadorActivo = 1f;
+
+    // NUEVO: Variable pública de solo lectura para saber si es inmune a golpes
+    public bool tieneAdrenalinaActiva { get; private set; } = false;
 
     private void Awake()
     {
@@ -21,7 +23,6 @@ public class JugadorMovimiento : MonoBehaviour
 
     public void Mover(Vector2 inputMovimiento, float velocidad)
     {
-        // ¡LA MAGIA AQUÍ! Multiplicamos la velocidad que envía el Cerebro por nuestra adrenalina
         direccionMovimiento = inputMovimiento * (velocidad * multiplicadorActivo);
     }
 
@@ -39,24 +40,22 @@ public class JugadorMovimiento : MonoBehaviour
         rb.MovePosition(rb.position + direccionMovimiento * Time.fixedDeltaTime);
     }
 
-    // =======================================================
-    // --- NUEVO: SISTEMA DE INYECCIÓN DE ADRENALINA ---
-    // =======================================================
     public void InyectarAdrenalina(float multiplicador, float tiempo)
     {
-        // Si ya teníamos adrenalina, detenemos la anterior para que no se bugueen los tiempos
         StopAllCoroutines();
         StartCoroutine(RutinaAdrenalina(multiplicador, tiempo));
     }
 
     private IEnumerator RutinaAdrenalina(float multiplicador, float tiempo)
     {
-        multiplicadorActivo = multiplicador; // Aceleramos
+        multiplicadorActivo = multiplicador;
+        tieneAdrenalinaActiva = true; // Activa la inmunidad a ralentizaciones
         Debug.Log("<color=cyan>JugadorMovimiento: ¡Adrenalina AL MÁXIMO!</color>");
 
-        yield return new WaitForSeconds(tiempo); // Esperamos 10 segundos
+        yield return new WaitForSeconds(tiempo);
 
-        multiplicadorActivo = 1f; // Volvemos a la normalidad
+        multiplicadorActivo = 1f;
+        tieneAdrenalinaActiva = false; // Pierde la inmunidad
         Debug.Log("<color=grey>JugadorMovimiento: El efecto de adrenalina ha terminado.</color>");
     }
 }

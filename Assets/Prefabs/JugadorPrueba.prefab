@@ -258,6 +258,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   puntoDisparo: {fileID: 2491323667648894657}
+  prefabSuelo: {fileID: 0}
   datosFuego: {fileID: 11400000, guid: 086224398b56b40449cf2c6aa1a1ffa5, type: 2}
   etiquetaBala: BalaBase
   municionActualCargador: 120
@@ -350,7 +351,7 @@ GameObject:
   - component: {fileID: 7232925387819990871}
   - component: {fileID: 1216213397275541995}
   m_Layer: 5
-  m_Name: rojo
+  m_Name: FonodVida
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -882,6 +883,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   puntoDisparo: {fileID: 2963283873271413508}
+  prefabSuelo: {fileID: 0}
   datosFuego: {fileID: 11400000, guid: 92334cc16dabce34d93d86aa6ecf0654, type: 2}
   etiquetaBala: BalaBase
   municionActualCargador: 120
@@ -1008,6 +1010,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   puntoDisparo: {fileID: 578075606136363196}
+  prefabSuelo: {fileID: 0}
   datosFuego: {fileID: 11400000, guid: ab9bd30cefb3bf7409b27ef1ce7b69d7, type: 2}
   etiquetaBala: BalaBase
   municionActualCargador: 120
@@ -1487,6 +1490,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   barraDeVidaUI: {fileID: 5520662874354810620}
+  barraVidaTemporalUI: {fileID: 6024233203034783066}
 --- !u!114 &5616706745451312344
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1643,6 +1647,7 @@ RectTransform:
   - {fileID: 20107450855398516}
   - {fileID: 6242529269114277250}
   - {fileID: 3041676779374505422}
+  - {fileID: 1816120806001426934}
   - {fileID: 3987155798280099658}
   m_Father: {fileID: 7519346433570874510}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1801,6 +1806,81 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &7925040150361106950
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1816120806001426934}
+  - component: {fileID: 5860890550477612}
+  - component: {fileID: 6024233203034783066}
+  m_Layer: 5
+  m_Name: VidaTemporal
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1816120806001426934
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7925040150361106950}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1.9, y: 3.3, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7743664478060269685}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0}
+  m_AnchorMax: {x: 0.5, y: 0}
+  m_AnchoredPosition: {x: -574, y: 50}
+  m_SizeDelta: {x: 200, y: 20}
+  m_Pivot: {x: 0.5, y: 0}
+--- !u!222 &5860890550477612
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7925040150361106950}
+  m_CullTransparentMesh: 1
+--- !u!114 &6024233203034783066
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7925040150361106950}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 0.8378445, b: 0, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 7482667652216324306, guid: 48e93eef0688c4a259cb0eddcd8661f7, type: 3}
+  m_Type: 3
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 0
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
 --- !u!1 &7937717270757340476
 GameObject:
   m_ObjectHideFlags: 0
@@ -1935,6 +2015,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   puntoDisparo: {fileID: 4737570293006935956}
+  prefabSuelo: {fileID: 0}
   datosMelee: {fileID: 11400000, guid: 7b890e7412bed9e488b149718d60d7a9, type: 2}
   capaEnemigos:
     serializedVersion: 2
