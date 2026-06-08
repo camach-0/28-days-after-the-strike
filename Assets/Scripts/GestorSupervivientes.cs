@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Unity.Cinemachine; // ¡NUEVO! Necesario para buscar las cámaras virtuales
 
 public class GestorSupervivientes : MonoBehaviour
 {
@@ -7,8 +8,12 @@ public class GestorSupervivientes : MonoBehaviour
     [Tooltip("0=Cholo, 1=Colla, 2=Camba, 3=Chola")]
     public GameObject[] personajesEnEscena;
 
-    [Header("Cámaras")]
+    [Header("Cámaras Reales (Con Cinemachine Brain)")]
     public Camera[] camaras;
+
+    // ¡NUEVO! Arrastra aquí tus 4 vCam desde el Inspector
+    [Header("Cámaras Virtuales (Cinemachine)")]
+    public CinemachineCamera[] camarasVirtuales;
 
     private void Start()
     {
@@ -20,10 +25,14 @@ public class GestorSupervivientes : MonoBehaviour
         int humanos = DatosGlobales.cantidadJugadoresHumanos;
         Debug.Log("Iniciando nivel con " + humanos + " jugadores humanos.");
 
-        // 1. Apagamos TODAS las cámaras primero por seguridad
+        // 1. Apagamos TODAS las cámaras primero por seguridad (Reales y Virtuales)
         foreach (Camera cam in camaras)
         {
             if (cam != null) cam.gameObject.SetActive(false);
+        }
+        foreach (CinemachineCamera vCam in camarasVirtuales)
+        {
+            if (vCam != null) vCam.gameObject.SetActive(false);
         }
 
         // 2. Configuramos a los 4 personajes uno por uno
@@ -35,7 +44,7 @@ public class GestorSupervivientes : MonoBehaviour
             AliadoBotController cerebroBot = personaje.GetComponent<AliadoBotController>();
             UnityEngine.AI.NavMeshAgent agente = personaje.GetComponent<UnityEngine.AI.NavMeshAgent>();
 
-            // 3. Verificamos si alguien en el Lobby eligió a este personaje específico (índice 'i')
+            // 3. Verificamos si alguien en el Lobby eligió a este personaje
             bool esControladoPorHumano = false;
             int idDelHumano = -1; // Nos dirá si fue el P1 (0), P2 (1), etc.
 
@@ -44,7 +53,7 @@ public class GestorSupervivientes : MonoBehaviour
                 if (DatosGlobales.personajesSeleccionados[j] == i)
                 {
                     esControladoPorHumano = true;
-                    idDelHumano = j; // Guardamos qué jugador lo eligió
+                    idDelHumano = j;
                     break;
                 }
             }
@@ -56,17 +65,13 @@ public class GestorSupervivientes : MonoBehaviour
                 if (inputHumano != null)
                 {
                     inputHumano.enabled = true;
-
-                    // --- NUEVO: FORZAMOS AL PERSONAJE A USAR SU CONTROL DEL LOBBY ---
                     var mandosGuardados = DatosGlobales.dispositivosPorJugador[idDelHumano];
                     var esquemaGuardado = DatosGlobales.esquemasControlPorJugador[idDelHumano];
 
                     if (mandosGuardados != null && !string.IsNullOrEmpty(esquemaGuardado))
                     {
-                        // Vincula este personaje ÚNICAMENTE al control que lo eligió
                         inputHumano.SwitchCurrentControlScheme(esquemaGuardado, mandosGuardados);
                     }
-                    // -----------------------------------------------------------------
                 }
 
                 if (scriptHumano != null) scriptHumano.enabled = true;
@@ -75,23 +80,33 @@ public class GestorSupervivientes : MonoBehaviour
 
                 personaje.name += " (Humano P" + (idDelHumano + 1) + ")";
 
-                // Le damos su cámara correspondiente (P1 recibe Camara_P1, P2 recibe Camara_P2...)
+                // --- SISTEMA DE CÁMARAS CINEMACHINE ---
                 if (camaras.Length > idDelHumano && camaras[idDelHumano] != null)
                 {
-                    camaras[idDelHumano].gameObject.SetActive(true); // La encendemos
-                    camaras[idDelHumano].transform.SetParent(personaje.transform);
-                    camaras[idDelHumano].transform.localPosition = new Vector3(0, 0, -10);
+                    // 1. Encendemos su Cámara Real (La pantalla)
+                    camaras[idDelHumano].gameObject.SetActive(true);
 
-                    // --- NUEVO: Le decimos al jugador EXACTAMENTE cuál es su cámara ---
+                    // ¡ELIMINADO EL SETPARENT! Ahora la cámara real se queda donde está, el Brain la moverá.
+                    // camaras[idDelHumano].transform.SetParent(personaje.transform);
+
+                    // 2. Encendemos y Configuramos su Cámara Virtual (El Dron)
+                    if (camarasVirtuales.Length > idDelHumano && camarasVirtuales[idDelHumano] != null)
+                    {
+                        CinemachineCamera miDron = camarasVirtuales[idDelHumano];
+                        miDron.gameObject.SetActive(true);
+                        // Le decimos al dron que siga y mire a ESTE jugador
+                        miDron.Follow = personaje.transform;
+                        //miDron.LookAt = personaje.transform; // (Opcional, en 2D a veces no se usa LookAt)
+                    }
+
                     scriptHumano.camaraPrincipal = camaras[idDelHumano];
-                    // --- LA MAGIA DE LA INTERFAZ AQUÍ ---
+
                     Canvas canvasDelJugador = personaje.GetComponentInChildren<Canvas>();
                     if (canvasDelJugador != null)
                     {
                         canvasDelJugador.worldCamera = camaras[idDelHumano];
-                        canvasDelJugador.planeDistance = 1f; // Lo pone bien cerquita de la cámara
+                        canvasDelJugador.planeDistance = 1f;
                     }
-                    // ------------------------------------
                 }
             }
             else
@@ -104,17 +119,15 @@ public class GestorSupervivientes : MonoBehaviour
 
                 personaje.name += " (Bot)";
 
-                // --- APAGAMOS LA INTERFAZ DEL BOT ---
                 Canvas canvasDelBot = personaje.GetComponentInChildren<Canvas>();
                 if (canvasDelBot != null)
                 {
-                    canvasDelBot.gameObject.SetActive(false); // Los bots no necesitan ver el inventario
+                    canvasDelBot.gameObject.SetActive(false);
                 }
-                // ------------------------------------
             }
         }
 
-        // 5. Cortamos la pantalla según la cantidad de humanos reales
+        // 5. Cortamos la pantalla
         ConfigurarPantallaDividida(humanos);
     }
 
