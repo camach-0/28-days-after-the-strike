@@ -147,6 +147,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7816d63e6693f334e9c7c3772d4e215c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  etiquetaPool: ItemEscopeta
   armaPrefabParaMano: {fileID: 4780316849330651998, guid: 310b626c20e650e478fef7808dd28c5c, type: 3}
   indiceSlot: 0
+  tieneMemoria: 0
+  cargadorGuardado: 0
+  reservaGuardada: 0

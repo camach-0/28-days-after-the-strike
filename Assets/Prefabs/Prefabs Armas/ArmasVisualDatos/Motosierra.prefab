@@ -134,6 +134,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   puntoDisparo: {fileID: 5883602036838424455}
+  prefabSuelo: {fileID: 3303739457805541182, guid: 33da82ea4f3f5de42ba9bdd725b73564, type: 3}
   gasolinaMaxima: 100
   consumoPorSegundo: 15
   danoPorSegundo: 150

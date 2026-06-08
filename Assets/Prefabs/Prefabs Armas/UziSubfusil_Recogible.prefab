@@ -147,6 +147,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7816d63e6693f334e9c7c3772d4e215c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  etiquetaPool: ItemUzi
   armaPrefabParaMano: {fileID: 7383582239340822324, guid: c5e31471dd79bae48ae98bd00a6f4728, type: 3}
   indiceSlot: 0
+  tieneMemoria: 0
+  cargadorGuardado: 0
+  reservaGuardada: 0

@@ -134,8 +134,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   puntoDisparo: {fileID: 5883602036838424455}
+  prefabSuelo: {fileID: 3303739457805541182, guid: b90e7f197d4e8974780736b6e74abc56, type: 3}
   datosM60: {fileID: 11400000, guid: 294851a31b6b9024aac82c2843b540ec, type: 2}
-  puntoDisparo: {fileID: 0}
   etiquetaPoolBala: BalaBase
   etiquetaSuelo: ItemM60
 --- !u!1 &7984054316178748915

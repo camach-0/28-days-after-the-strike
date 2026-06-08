@@ -15,7 +15,7 @@ public class ControladorConsumible : ControladorArma
     // =================================================================
     // ¡NUEVO! Cumplimos con el contrato del molde ControladorArma
     // =================================================================
-    public override string EtiquetaPoolSuelo => etiquetaSuelo;
+    //public override string EtiquetaPoolSuelo => etiquetaSuelo;
 
     private void Start()
     {

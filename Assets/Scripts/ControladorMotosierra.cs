@@ -23,7 +23,7 @@ public class ControladorMotosierra : ControladorArma
     private Vector2 direccionCorte = Vector2.right;
 
     // Cumplimos el contrato de la clase abstracta
-    public override string EtiquetaPoolSuelo => etiquetaSuelo;
+   // public override string EtiquetaPoolSuelo => etiquetaSuelo;
 
     // La motosierra pesa mucho, frena un poco al jugador
     public override float ModificadorVelocidad => 0.75f;

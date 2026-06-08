@@ -9,7 +9,6 @@ public class ControladorMelee : ControladorArma
     public LayerMask capaEnemigos;
 
     // Exponemos la etiqueta del suelo
-    public override string EtiquetaPoolSuelo => datosMelee != null ? datosMelee.etiquetaPoolSuelo : "";
 
     public override void IntentarAtaque(Vector2 direccionApuntado)
     {

@@ -134,6 +134,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   puntoDisparo: {fileID: 8579304322624511576}
+  prefabSuelo: {fileID: 3733559958536755864, guid: 63411937f74fb664190b45204c16a202, type: 3}
   datosFuego: {fileID: 11400000, guid: ab9bd30cefb3bf7409b27ef1ce7b69d7, type: 2}
   etiquetaBala: BalaBase
   municionActualCargador: 120

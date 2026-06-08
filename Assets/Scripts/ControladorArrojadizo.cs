@@ -5,7 +5,7 @@ public class ControladorArrojadizo : ControladorArma
 {
     [Header("Configuración del Sistema")]
     // 1. ¡OBLIGATORIO! La etiqueta para que el nuevo sistema lo reconozca
-    public override string EtiquetaPoolSuelo => "BombaCasera";
+    //public override string EtiquetaPoolSuelo => "BombaCasera";
 
     [Header("Configuración de Lanzamiento")]
     [Tooltip("La etiqueta del Pool de la bomba que saldrá volando")]

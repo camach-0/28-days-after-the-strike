@@ -13,6 +13,7 @@ public class ControladorArmaFuego : ControladorArma
     public int municionActualCargador;
     public int municionActualReserva;
     public bool estaRecargando = false;
+    private bool memoriaCargada = false;
 
     private bool estaDisparandoRafaga = false;
     private bool estaDesplegando = false; // ¡NUEVO! Bloqueo al sacar el arma
@@ -26,9 +27,6 @@ public class ControladorArmaFuego : ControladorArma
     // Exponemos el peso del arma al Jugador
     public override float ModificadorVelocidad => datosFuego != null ? datosFuego.modificadorVelocidad : 1f;
 
-    // ¡NUEVO! Exponemos la etiqueta del suelo
-    public override string EtiquetaPoolSuelo => datosFuego != null ? datosFuego.etiquetaPoolSuelo : "";
-
     private void Awake()
     {
         rbJugador = GetComponentInParent<Rigidbody2D>();
@@ -36,10 +34,11 @@ public class ControladorArmaFuego : ControladorArma
 
     void Start()
     {
-        if (datosFuego != null)
+        // Solo aplica para las armas con las que el jugador NACE al inicio del nivel.
+        // Si el arma es recogida del suelo, esto no hará nada porque memoriaCargada será true.
+        if (datosFuego != null && !memoriaCargada)
         {
-            municionActualCargador = datosFuego.tamanoCargador;
-            municionActualReserva = datosFuego.municionMaxima;
+            LlenarMunicionPorDefecto();
         }
     }
 
@@ -211,5 +210,21 @@ public class ControladorArmaFuego : ControladorArma
         }
 
         estaRecargando = false;
+    }
+    public void LlenarMunicionPorDefecto()
+    {
+        if (datosFuego != null)
+        {
+            municionActualCargador = datosFuego.tamanoCargador;
+            municionActualReserva = datosFuego.municionMaxima;
+            memoriaCargada = true;
+        }
+    }
+    // Función que recibe los datos desde el ItemRecogible
+    public void CargarMemoria(int balasCargador, int balasReserva)
+    {
+        municionActualCargador = balasCargador;
+        municionActualReserva = balasReserva;
+        memoriaCargada = true;
     }
 }

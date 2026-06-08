@@ -165,6 +165,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   puntoDisparo: {fileID: 2145010009278271334}
+  prefabSuelo: {fileID: 3303739457805541182, guid: a51947529d337fe43826dceb704b2858, type: 3}
   datosMelee: {fileID: 11400000, guid: 7b890e7412bed9e488b149718d60d7a9, type: 2}
   capaEnemigos:
     serializedVersion: 2

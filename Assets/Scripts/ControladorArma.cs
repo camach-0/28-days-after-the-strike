@@ -6,16 +6,15 @@ public abstract class ControladorArma : MonoBehaviour
     [Header("Referencias Base")]
     public Transform puntoDisparo;
 
-    protected float tiempoProximoAtaque = 0f;
+    [Header("Sistema de Botín (Drop)")]
+    [Tooltip("El Prefab visual que aparecerá en el suelo cuando tires esta arma")]
+    public GameObject prefabSuelo;
 
-    // ¡NUEVO! Propiedad que el jugador leerá para saber si debe caminar más lento
+    protected float tiempoProximoAtaque = 0f;
     public virtual float ModificadorVelocidad { get { return 1f; } }
 
-    public abstract string EtiquetaPoolSuelo { get; }
 
-    // Obligamos a todos los hijos (armas de fuego, melee, etc) a tener este método
     public abstract void IntentarAtaque(Vector2 direccion);
 
-    // ¡NUEVO! Obligamos a todas las armas a tener un botón de empujar (Clic Derecho)
     public abstract void IntentarEmpujon(Vector2 direccion);
 }

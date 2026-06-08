@@ -19,7 +19,7 @@ public class ControladorM60 : ControladorArma
     private InventarioJugador miInventario;
 
     // Cumplimos el contrato de la clase abstracta
-    public override string EtiquetaPoolSuelo => etiquetaSuelo;
+   // public override string EtiquetaPoolSuelo => etiquetaSuelo;
 
     // Si la M60 es pesada, frenará al jugador usando el dato de tu ScriptableObject
     public override float ModificadorVelocidad => datosM60 != null ? datosM60.modificadorVelocidad : 1f;

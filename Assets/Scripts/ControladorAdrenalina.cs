@@ -4,7 +4,7 @@ public class ControladorAdrenalina : ControladorArma
 {
     [Header("Configuración del Sistema")]
     // 1. ¡OBLIGATORIO! La etiqueta para que el nuevo sistema lo reconozca en el suelo
-    public override string EtiquetaPoolSuelo => "Adrenalina";
+    //public override string EtiquetaPoolSuelo => "Adrenalina";
 
     [Header("Efecto de Adrenalina")]
     public float multiplicadorVelocidad = 1.5f; // Te hace 50% más rápido (1.5x)
