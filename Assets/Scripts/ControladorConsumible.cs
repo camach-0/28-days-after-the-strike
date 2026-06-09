@@ -10,40 +10,74 @@ public class ControladorConsumible : ControladorArma
     public string etiquetaSuelo = "Pickup_Botiquin";
 
     private SistemaSalud saludJugador;
+    private JugadorInput miInput;
     private bool seEstaUsando = false;
     private Vector2 posicionInicial;
+    private float tiempoInicioAccion;
+
+    // ¡NUEVO! Variable directa para saber a quién curamos
+    private bool curandoAliado = false;
+
+    private GestorAcciones miGestor;
+    private GestorAcciones gestorAliado;
 
     private void Start()
     {
         saludJugador = GetComponentInParent<SistemaSalud>();
+        miInput = GetComponentInParent<JugadorInput>();
+
+        if (saludJugador != null)
+        {
+            miGestor = saludJugador.GetComponentInChildren<GestorAcciones>();
+        }
     }
 
     private void Update()
     {
-        // REGLA: Cancelar si el jugador se mueve mientras carga
         if (seEstaUsando)
         {
-            if (Vector2.Distance(transform.position, posicionInicial) > 0.1f)
+            if (Time.time - tiempoInicioAccion < 0.2f) return;
+
+            if (Vector2.Distance(transform.root.position, posicionInicial) > 0.1f)
             {
-                GestorAcciones.Instancia.CancelarAccion();
-                seEstaUsando = false;
-                Debug.Log("<color=orange>Curación cancelada por movimiento.</color>");
+                CancelarUso("Curación cancelada por movimiento.");
+            }
+            // ¡NUEVA REGLA! Ya no dependemos de si el aliado tiene UI o no
+            else if (!curandoAliado && miInput != null && !miInput.EstaDisparando)
+            {
+                CancelarUso("Curación cancelada por soltar el botón izquierdo.");
+            }
+            else if (curandoAliado && miInput != null && !miInput.EstaEmpujando)
+            {
+                CancelarUso("Curación de aliado cancelada por soltar el botón derecho.");
             }
         }
     }
 
-    // CLIC IZQUIERDO: Curarse a uno mismo
+    private void CancelarUso(string mensaje)
+    {
+        if (miGestor != null) miGestor.CancelarAccion();
+        if (gestorAliado != null) gestorAliado.CancelarAccion();
+        seEstaUsando = false;
+        gestorAliado = null;
+        Debug.Log($"<color=orange>{mensaje}</color>");
+    }
+
     public override void IntentarAtaque(Vector2 direccionApuntado)
     {
         if (seEstaUsando || saludJugador == null) return;
         if (saludJugador.vidaActual >= saludJugador.vidaMaxima) return;
 
         seEstaUsando = true;
-        posicionInicial = transform.position;
-        GestorAcciones.Instancia.IniciarAccion(tiempoUso, "CURÁNDOSE...", () => AplicarCuracion(saludJugador));
+        curandoAliado = false; // Me curo a mí mismo
+        posicionInicial = transform.root.position;
+        tiempoInicioAccion = Time.time;
+        gestorAliado = null;
+
+        if (miGestor != null)
+            miGestor.IniciarAccion(tiempoUso, "CURÁNDOSE...", () => AplicarCuracion(saludJugador));
     }
 
-    // CLIC DERECHO: Curar a un compañero cercano
     public override void IntentarEmpujon(Vector2 direccion)
     {
         if (seEstaUsando || saludJugador == null) return;
@@ -67,16 +101,24 @@ public class ControladorConsumible : ControladorArma
         if (aliadoDestino != null)
         {
             seEstaUsando = true;
-            posicionInicial = transform.position;
-            GestorAcciones.Instancia.IniciarAccion(tiempoUso, "CURANDO A COMPAÑERO...", () => AplicarCuracion(aliadoDestino));
+            curandoAliado = true; // Curamos a otro
+            posicionInicial = transform.root.position;
+            tiempoInicioAccion = Time.time;
+
+            gestorAliado = aliadoDestino.GetComponentInChildren<GestorAcciones>();
+
+            if (miGestor != null)
+                miGestor.IniciarAccion(tiempoUso, "CURANDO A COMPAÑERO...", () => AplicarCuracion(aliadoDestino));
+
+            if (gestorAliado != null)
+                gestorAliado.IniciarAccion(tiempoUso, "SIENDO CURADO...");
         }
     }
 
     private void AplicarCuracion(SistemaSalud objetivo)
     {
         objetivo.Curar(cantidadCuracion);
-        Debug.Log($"<color=green>Botiquín aplicado a {objetivo.gameObject.name}</color>");
-
+        gestorAliado = null;
         ConsumirYDestruir();
     }
 

@@ -121,7 +121,7 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": ""Disparar"",
-                    ""type"": ""Value"",
+                    ""type"": ""PassThrough"",
                     ""id"": ""11b4f99e-9ebe-4aa2-b091-70b724b63099"",
                     ""expectedControlType"": """",
                     ""processors"": """",
@@ -202,7 +202,7 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": ""Interactuar"",
-                    ""type"": ""Button"",
+                    ""type"": ""PassThrough"",
                     ""id"": ""ed96642e-2d67-4a0f-a1e2-777a6385df21"",
                     ""expectedControlType"": """",
                     ""processors"": """",
@@ -229,7 +229,7 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": ""Empujar"",
-                    ""type"": ""Button"",
+                    ""type"": ""PassThrough"",
                     ""id"": ""d7523aa8-5a36-4c0b-b506-8b31a5550123"",
                     ""expectedControlType"": """",
                     ""processors"": """",

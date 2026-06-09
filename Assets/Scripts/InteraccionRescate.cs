@@ -6,76 +6,61 @@ public class InteraccionRescate : MonoBehaviour
     public float radioInteraccion = 2f;
     public float tiempoParaLevantar = 3f;
     public float vidaAlLevantar = 30f;
-
-    [Tooltip("Capa de los jugadores para que el radar los encuentre")]
     public LayerMask capaJugadores;
 
     private SistemaSalud miSalud;
     private JugadorInput miInput;
     private SistemaSalud objetivoCaido;
     private bool estaRescatando = false;
-
-    // --- NUEVO: Variable para vigilar si recibe daño zombi ---
     private float ultimaVidaAliado;
+
+    private Vector2 posicionInicial;
+
+    private GestorAcciones miGestor;
+    private GestorAcciones gestorAliado;
 
     private void Start()
     {
         miSalud = GetComponent<SistemaSalud>();
         miInput = GetComponent<JugadorInput>();
+        miGestor = GetComponentInChildren<GestorAcciones>();
     }
 
     private void Update()
     {
-        // 1. Si YO estoy incapacitado o muerto, cancelamos cualquier intento de rescate
         if (miSalud != null && (miSalud.estaIncapacitado || miSalud.estaMuertoDefinitivo))
         {
             CancelarRescate();
             return;
         }
 
-        // 2. Leemos si ESTE jugador específico está manteniendo el botón
         bool botonPresionado = miInput != null && miInput.ManteniendoInteractuar;
 
-        // 3. Si presiono y MANTENGO el botón
         if (botonPresionado)
         {
             if (!estaRescatando)
             {
                 BuscarCompaneroCaido();
             }
-            // Si ya estamos rescatando a alguien...
             else if (objetivoCaido != null)
             {
-                // Si se curó mágicamente o murió del todo
-                if (!objetivoCaido.estaIncapacitado)
+                if (Vector2.Distance(transform.root.position, posicionInicial) > 0.1f)
                 {
                     CancelarRescate();
+                    Debug.Log("<color=orange>Rescate cancelado por movimiento.</color>");
+                    return;
                 }
+
+                if (!objetivoCaido.estaIncapacitado) CancelarRescate();
                 else
                 {
-                    // --- REGLA DE INTERRUPCIÓN POR DAÑO ---
-                    // Comparamos su vida actual con la del frame anterior
                     float danoRecibido = ultimaVidaAliado - objetivoCaido.vidaActualIncapacitado;
-
-                    // Si baja de golpe más de 3 puntos (el sangrado quita menos de eso en un instante)
-                    if (danoRecibido > 3f)
-                    {
-                        CancelarRescate();
-                        Debug.Log("<color=red>¡Zombi atacó al caído! Rescate interrumpido.</color>");
-                    }
-                    else
-                    {
-                        // Si es solo el desangrado normal, guardamos su vida para vigilarla en el próximo frame
-                        ultimaVidaAliado = objetivoCaido.vidaActualIncapacitado;
-                    }
+                    if (danoRecibido > 3f) CancelarRescate();
+                    else ultimaVidaAliado = objetivoCaido.vidaActualIncapacitado;
                 }
             }
         }
-        // 4. Si suelto el botón, cancelamos la barra
-        else
-        {
-            CancelarRescate();
-        }
+        else CancelarRescate();
     }
 
     private void BuscarCompaneroCaido()
@@ -84,53 +69,63 @@ public class InteraccionRescate : MonoBehaviour
         foreach (Collider2D col in cercanos)
         {
             if (col.gameObject == this.gameObject) continue;
-
             SistemaSalud saludOtro = col.GetComponent<SistemaSalud>();
 
             if (saludOtro != null && saludOtro.estaIncapacitado)
             {
                 objetivoCaido = saludOtro;
                 estaRescatando = true;
-
-                // ¡AQUÍ GUARDAMOS SU VIDA INICIAL ANTES DE EMPEZAR A LEVANTARLO!
                 ultimaVidaAliado = objetivoCaido.vidaActualIncapacitado;
 
-                if (GestorAcciones.Instancia != null)
-                {
-                    GestorAcciones.Instancia.IniciarAccion(tiempoParaLevantar, "LEVANTANDO A UN COMPAÑERO...", CompletarRescate);
-                }
-                break; // Solo levantamos a uno a la vez
+                posicionInicial = transform.root.position;
+
+                gestorAliado = objetivoCaido.GetComponentInChildren<GestorAcciones>();
+
+                if (miGestor != null) miGestor.IniciarAccion(tiempoParaLevantar, "LEVANTANDO A UN COMPAÑERO...", CompletarRescate);
+                if (gestorAliado != null) gestorAliado.IniciarAccion(tiempoParaLevantar, "SIENDO LEVANTADO...");
+                break;
             }
         }
     }
 
-    // Esta función la llamará automáticamente el Gestor cuando la barra se llene
     private void CompletarRescate()
     {
         if (objetivoCaido != null)
         {
             objetivoCaido.LevantarRescatado(vidaAlLevantar);
+
+            // ---> LA CORRECCIÓN CLAVE ESTÁ AQUÍ <---
+            // Buscamos el Input nativo de Unity, es la forma más segura de saber si es Humano o Bot.
+            UnityEngine.InputSystem.PlayerInput inputHumano = objetivoCaido.GetComponent<UnityEngine.InputSystem.PlayerInput>();
+
+            // Si NO tiene el control de Unity encendido, entonces es 100% un Bot
+            if (inputHumano == null || !inputHumano.enabled)
+            {
+                AliadoBotController bot = objetivoCaido.GetComponent<AliadoBotController>();
+                if (bot != null) bot.enabled = true;
+
+                UnityEngine.AI.NavMeshAgent agente = objetivoCaido.GetComponent<UnityEngine.AI.NavMeshAgent>();
+                if (agente != null) agente.enabled = true;
+            }
+
             Debug.Log("<color=green>¡Compañero levantado con éxito!</color>");
         }
 
-        // Limpiamos las variables
         estaRescatando = false;
         objetivoCaido = null;
+        gestorAliado = null;
     }
 
     private void CancelarRescate()
     {
         if (estaRescatando)
         {
-            // Le avisamos a la UI que apague la barra
-            if (GestorAcciones.Instancia != null)
-            {
-                GestorAcciones.Instancia.CancelarAccion();
-            }
+            if (miGestor != null) miGestor.CancelarAccion();
+            if (gestorAliado != null) gestorAliado.CancelarAccion();
         }
-
         estaRescatando = false;
         objetivoCaido = null;
+        gestorAliado = null;
     }
 
     private void OnDrawGizmosSelected()

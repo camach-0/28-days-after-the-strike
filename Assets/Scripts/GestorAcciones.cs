@@ -1,38 +1,34 @@
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro; // Usamos TextMeshPro para que se vea en alta calidad
+using TMPro;
 using System;
 using System.Collections;
 
 public class GestorAcciones : MonoBehaviour
 {
-    // Patrón Singleton para llamarlo desde cualquier script sin buscarlo
-    public static GestorAcciones Instancia;
-
     [Header("Referencias UI")]
     public GameObject panelAccion;
     public TextMeshProUGUI textoAccion;
     public Image barraRelleno;
 
     private Coroutine rutinaActual;
-    private Action accionPendiente; // Aquí guardamos la curación/resurrección para ejecutarla al final
+    private Action accionPendiente;
 
     private void Awake()
     {
-        if (Instancia == null) Instancia = this;
-        panelAccion.SetActive(false); // Iniciamos con la barra invisible
+        if (panelAccion != null) panelAccion.SetActive(false);
     }
 
-    // ESTA ES LA FUNCIÓN MÁGICA: Recibe el tiempo, el texto dinámico y lo que hará al final
-    public void IniciarAccion(float tiempo, string mensaje, Action accionAlTerminar)
+    // Le agregamos "= null" para que los aliados puedan usar la barra solo de forma visual (sin ejecutar código doble)
+    public void IniciarAccion(float tiempo, string mensaje, Action accionAlTerminar = null)
     {
-        CancelarAccion(); // Por si había otra acción a medias
+        CancelarAccion();
 
-        panelAccion.SetActive(true);
-        textoAccion.text = mensaje; // ¡Aquí cambiamos el texto dinámicamente!
-        barraRelleno.fillAmount = 0f;
+        if (panelAccion != null) panelAccion.SetActive(true);
+        if (textoAccion != null) textoAccion.text = mensaje;
+        if (barraRelleno != null) barraRelleno.fillAmount = 0f;
+
         accionPendiente = accionAlTerminar;
-
         rutinaActual = StartCoroutine(RutinaProgreso(tiempo));
     }
 
@@ -43,7 +39,7 @@ public class GestorAcciones : MonoBehaviour
             StopCoroutine(rutinaActual);
             rutinaActual = null;
         }
-        panelAccion.SetActive(false);
+        if (panelAccion != null) panelAccion.SetActive(false);
         accionPendiente = null;
     }
 
@@ -54,16 +50,18 @@ public class GestorAcciones : MonoBehaviour
         while (tiempoPasado < tiempoTotal)
         {
             tiempoPasado += Time.deltaTime;
-            barraRelleno.fillAmount = tiempoPasado / tiempoTotal;
-            yield return null; // Esperamos al siguiente frame
+            if (barraRelleno != null) barraRelleno.fillAmount = tiempoPasado / tiempoTotal;
+            yield return null;
         }
 
-        // ¡Si llegamos aquí, la barra se llenó completa sin ser cancelada!
-        panelAccion.SetActive(false);
+        if (panelAccion != null) panelAccion.SetActive(false);
 
         if (accionPendiente != null)
         {
-            accionPendiente.Invoke(); // Ejecutamos la curación/resurrección
+            // Limpiamos antes de ejecutar
+            Action accionFinal = accionPendiente;
+            accionPendiente = null;
+            accionFinal.Invoke();
         }
     }
 }

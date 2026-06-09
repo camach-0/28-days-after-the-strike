@@ -13,7 +13,8 @@ public class JugadorInput : MonoBehaviour
     public bool IntentoRecargar { get; set; }
     public bool IntentoLinterna { get; set; }
     public bool IntentoInteractuar { get; set; }
-    public bool IntentoEmpujar { get; set; } // <-- ¡NUEVO! Clic Derecho / Melee
+    public bool IntentoEmpujar { get; set; }
+    public bool EstaEmpujando { get; private set; } // <-- ¡NUEVO! Detecta si mantienes el clic derecho
 
     public int IntentoCambioSlot { get; set; } = -1;
     public int IntentoScrollArma { get; set; } = 0;
@@ -48,10 +49,13 @@ public class JugadorInput : MonoBehaviour
     public void OnDisparar(InputValue valor) { EstaDisparando = valor.isPressed; }
     public void OnRecargar(InputValue valor) { if (valor.isPressed) IntentoRecargar = true; }
     public void OnLinterna(InputValue valor) { if (valor.isPressed) IntentoLinterna = true; }
-    public void OnInteractuar(InputValue valor) { if (valor.isPressed) IntentoInteractuar = true; ManteniendoInteractuar = valor.isPressed;}
+    public void OnInteractuar(InputValue valor) { if (valor.isPressed) IntentoInteractuar = true; ManteniendoInteractuar = valor.isPressed; }
 
-    // --- NUEVO INPUT --- Asegúrate de mapear "Empujar" en tu InputActions
-    public void OnEmpujar(InputValue valor) { if (valor.isPressed) IntentoEmpujar = true; }
+    public void OnEmpujar(InputValue valor)
+    {
+        EstaEmpujando = valor.isPressed; // <-- ¡NUEVO! Leemos si se mantiene presionado
+        if (valor.isPressed) IntentoEmpujar = true;
+    }
 
     public void OnArmaPrincipal(InputValue valor) { if (valor.isPressed) IntentoCambioSlot = 0; }
     public void OnArmaSecundaria(InputValue valor) { if (valor.isPressed) IntentoCambioSlot = 1; }

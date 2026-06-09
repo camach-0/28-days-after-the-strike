@@ -9,16 +9,37 @@ public class ControladorDesfibrilador : ControladorArma
     private bool seEstaUsando = false;
     private Vector2 posicionInicial;
 
+    private GestorAcciones miGestor;
+    private JugadorInput miInput;
+
+    private void Start()
+    {
+        SistemaSalud raizJugador = GetComponentInParent<SistemaSalud>();
+        miInput = GetComponentInParent<JugadorInput>();
+
+        if (raizJugador != null)
+        {
+            miGestor = raizJugador.GetComponentInChildren<GestorAcciones>();
+        }
+    }
+
     private void Update()
     {
-        // REGLA: Cancelar si te mueves
         if (seEstaUsando)
         {
-            if (Vector2.Distance(transform.position, posicionInicial) > 0.1f)
+            // REGLA 1: Cancelar por moverse
+            if (Vector2.Distance(transform.root.position, posicionInicial) > 0.1f)
             {
-                GestorAcciones.Instancia.CancelarAccion();
+                if (miGestor != null) miGestor.CancelarAccion();
                 seEstaUsando = false;
                 Debug.Log("<color=orange>Desfibrilador cancelado por movimiento.</color>");
+            }
+            // REGLA 2: Cancelar si suelto el clic izquierdo
+            else if (miInput != null && !miInput.EstaDisparando)
+            {
+                if (miGestor != null) miGestor.CancelarAccion();
+                seEstaUsando = false;
+                Debug.Log("<color=orange>Desfibrilador cancelado por soltar el botón.</color>");
             }
         }
     }
@@ -49,8 +70,12 @@ public class ControladorDesfibrilador : ControladorArma
         if (cadaverEncontrado != null)
         {
             seEstaUsando = true;
-            posicionInicial = transform.position;
-            GestorAcciones.Instancia.IniciarAccion(tiempoUso, "REVIVIENDO...", () => CompletarDesfibrilador(cadaverEncontrado));
+            posicionInicial = transform.root.position;
+
+            if (miGestor != null)
+            {
+                miGestor.IniciarAccion(tiempoUso, "REVIVIENDO...", () => CompletarDesfibrilador(cadaverEncontrado));
+            }
         }
         else
         {

@@ -10,7 +10,6 @@ public class AliadoBotController : MonoBehaviour
 
     [Header("Configuración de IA (Combate)")]
     public float radioDeteccionZombis = 8f;
-    // NUEVO: Le decimos al Bot qué cosas son paredes para que el Raycast rebote en ellas
     [Tooltip("Selecciona aquí la capa (Layer) donde están tus paredes u obstáculos")]
     public LayerMask capasObstaculos;
 
@@ -20,9 +19,7 @@ public class AliadoBotController : MonoBehaviour
     public float vidaAlLevantar = 30f;
 
     [Header("Armas y Referencias (Modular)")]
-    [Tooltip("Arrastra aquí el Datos_Pistola, Datos_M16, etc. de tus carpetas")]
     public DatosArmaFuego armaEquipada;
-    [Tooltip("Nombre exacto de la bala en tu PoolManager (ej. BalaBase)")]
     public string etiquetaPoolBala = "BalaBase";
     public Transform puntoDisparo;
     public Transform pivoteArma;
@@ -36,6 +33,9 @@ public class AliadoBotController : MonoBehaviour
     private SistemaSalud objetivoCaido;
     private float temporizadorRescate = 0f;
     private bool estaRescatando = false;
+
+    // ¡NUEVO! Referencia para la pantalla del jugador al que el bot está salvando
+    private GestorAcciones gestorAliado;
 
     private void Awake()
     {
@@ -90,8 +90,11 @@ public class AliadoBotController : MonoBehaviour
             }
             else
             {
-                agente.isStopped = true;
-                agente.velocity = Vector3.zero;
+                if (agente.isOnNavMesh)
+                {
+                    agente.isStopped = true;
+                    agente.velocity = Vector3.zero;
+                }
             }
         }
         else
@@ -112,15 +115,19 @@ public class AliadoBotController : MonoBehaviour
     private void ComportamientoMoverHacia(Vector3 destino, float distanciaParada)
     {
         float distancia = Vector2.Distance(transform.position, destino);
-        if (distancia > distanciaParada)
+
+        if (agente.isOnNavMesh)
         {
-            agente.isStopped = false;
-            agente.SetDestination(destino);
-        }
-        else
-        {
-            agente.isStopped = true;
-            agente.velocity = Vector3.zero;
+            if (distancia > distanciaParada)
+            {
+                agente.isStopped = false;
+                agente.SetDestination(destino);
+            }
+            else
+            {
+                agente.isStopped = true;
+                agente.velocity = Vector3.zero;
+            }
         }
     }
 
@@ -130,20 +137,32 @@ public class AliadoBotController : MonoBehaviour
 
         if (distancia > distanciaParaRescatar)
         {
-            agente.isStopped = false;
-            agente.SetDestination(objetivoCaido.transform.position);
-            estaRescatando = false;
-            temporizadorRescate = 0f;
+            if (agente.isOnNavMesh)
+            {
+                agente.isStopped = false;
+                agente.SetDestination(objetivoCaido.transform.position);
+            }
+
+            if (estaRescatando) CancelarRescate();
         }
         else
         {
-            agente.isStopped = true;
-            agente.velocity = Vector3.zero;
+            if (agente.isOnNavMesh)
+            {
+                agente.isStopped = true;
+                agente.velocity = Vector3.zero;
+            }
 
             if (!estaRescatando)
             {
                 Debug.Log($"<color=cyan>Bot {gameObject.name} curando a {objetivoCaido.gameObject.name} libre de peligro.</color>");
                 estaRescatando = true;
+
+                gestorAliado = objetivoCaido.GetComponentInChildren<GestorAcciones>();
+                if (gestorAliado != null)
+                {
+                    gestorAliado.IniciarAccion(tiempoParaLevantar, "SIENDO LEVANTADO...");
+                }
             }
 
             temporizadorRescate += Time.deltaTime;
@@ -152,7 +171,23 @@ public class AliadoBotController : MonoBehaviour
             if (temporizadorRescate >= tiempoParaLevantar)
             {
                 objetivoCaido.LevantarRescatado(vidaAlLevantar);
+
+                // ---> LA CORRECCIÓN CLAVE ESTÁ AQUÍ <---
+                // Miramos el PlayerInput nativo de Unity para saber si el rescatado es Humano o Bot
+                UnityEngine.InputSystem.PlayerInput inputHumano = objetivoCaido.GetComponent<UnityEngine.InputSystem.PlayerInput>();
+
+                if (inputHumano == null || !inputHumano.enabled)
+                {
+                    AliadoBotController botRescatado = objetivoCaido.GetComponent<AliadoBotController>();
+                    if (botRescatado != null) botRescatado.enabled = true;
+
+                    NavMeshAgent agenteRescatado = objetivoCaido.GetComponent<NavMeshAgent>();
+                    if (agenteRescatado != null) agenteRescatado.enabled = true;
+                }
+
                 Debug.Log($"<color=green>¡Bot {gameObject.name} levantó a {objetivoCaido.gameObject.name}!</color>");
+
+                if (gestorAliado != null) gestorAliado.CancelarAccion();
                 CancelarRescate();
             }
         }
@@ -160,11 +195,16 @@ public class AliadoBotController : MonoBehaviour
 
     private void CancelarRescate()
     {
+        if (estaRescatando && gestorAliado != null)
+        {
+            gestorAliado.CancelarAccion();
+        }
+
         estaRescatando = false;
         temporizadorRescate = 0f;
+        gestorAliado = null;
     }
 
-    // NUEVO: Modificamos la búsqueda para que use un Raycast (Línea de Visión)
     private Transform ObtenerZombiMasCercano()
     {
         Collider2D[] objetosEnRango = Physics2D.OverlapCircleAll(transform.position, radioDeteccionZombis);
@@ -177,14 +217,11 @@ public class AliadoBotController : MonoBehaviour
 
             if (zombi != null && zombi.moduloSalud != null && !zombi.moduloSalud.estaMuertoDefinitivo)
             {
-                // Calculamos la dirección y distancia exacta hacia este zombi
                 Vector2 direccionAlZombi = zombi.transform.position - transform.position;
                 float distanciaAlZombi = direccionAlZombi.magnitude;
 
-                // Disparamos el Raycast desde el bot hasta el zombi, filtrando solo la capa de obstáculos
                 RaycastHit2D hit = Physics2D.Raycast(transform.position, direccionAlZombi.normalized, distanciaAlZombi, capasObstaculos);
 
-                // Si 'hit.collider' es NULO, significa que el rayo NO chocó con ninguna pared. ¡El zombi está a la vista!
                 if (hit.collider == null)
                 {
                     if (distanciaAlZombi < distanciaMinima)
