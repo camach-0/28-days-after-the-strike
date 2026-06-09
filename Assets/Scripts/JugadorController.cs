@@ -182,7 +182,6 @@ public class JugadorController : MonoBehaviour
     }
     public void ConfigurarRol(bool esHumano)
     {
-        // 1. Buscamos todos los componentes implicados
         PlayerInput pInput = GetComponent<PlayerInput>();
         JugadorInput jInput = GetComponent<JugadorInput>();
         JugadorUI jUI = GetComponent<JugadorUI>();
@@ -193,31 +192,29 @@ public class JugadorController : MonoBehaviour
 
         if (esHumano)
         {
-            // ENCENDEMOS cerebro humano
+            // ---> ¡LA SOLUCIÓN AL BUG ESTÁ AQUÍ! <---
+            this.enabled = true; // Encendemos este script
+
             if (pInput != null) pInput.enabled = true;
             if (jInput != null) jInput.enabled = true;
             if (jUI != null) jUI.enabled = true;
             if (iRescate != null) iRescate.enabled = true;
 
-            // APAGAMOS cerebro bot
             if (botController != null) botController.enabled = false;
             if (agente != null) agente.enabled = false;
-
-            Debug.Log($"<color=cyan>{gameObject.name} configurado como HUMANO.</color>");
         }
         else
         {
-            // APAGAMOS cerebro humano
+            // ---> ¡LA SOLUCIÓN AL BUG ESTÁ AQUÍ! <---
+            this.enabled = false; // Apagamos este script para los bots
+
             if (pInput != null) pInput.enabled = false;
             if (jInput != null) jInput.enabled = false;
             if (jUI != null) jUI.enabled = false;
             if (iRescate != null) iRescate.enabled = false;
 
-            // ENCENDEMOS cerebro bot
             if (agente != null) agente.enabled = true;
             if (botController != null) botController.enabled = true;
-
-            Debug.Log($"<color=yellow>{gameObject.name} configurado como BOT.</color>");
         }
     }
 }

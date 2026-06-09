@@ -1,17 +1,15 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using Unity.Cinemachine; // ¡NUEVO! Necesario para buscar las cámaras virtuales
+using Unity.Cinemachine;
 
 public class GestorSupervivientes : MonoBehaviour
 {
     [Header("El Equipo (Debe coincidir con el orden del Lobby)")]
-    [Tooltip("0=Cholo, 1=Colla, 2=Camba, 3=Chola")]
     public GameObject[] personajesEnEscena;
 
     [Header("Cámaras Reales (Con Cinemachine Brain)")]
     public Camera[] camaras;
 
-    // ¡NUEVO! Arrastra aquí tus 4 vCam desde el Inspector
     [Header("Cámaras Virtuales (Cinemachine)")]
     public CinemachineCamera[] camarasVirtuales;
 
@@ -23,30 +21,20 @@ public class GestorSupervivientes : MonoBehaviour
     private void AsignarControles()
     {
         int humanos = DatosGlobales.cantidadJugadoresHumanos;
-        Debug.Log("Iniciando nivel con " + humanos + " jugadores humanos.");
 
-        // 1. Apagamos TODAS las cámaras primero por seguridad (Reales y Virtuales)
-        foreach (Camera cam in camaras)
-        {
-            if (cam != null) cam.gameObject.SetActive(false);
-        }
-        foreach (CinemachineCamera vCam in camarasVirtuales)
-        {
-            if (vCam != null) vCam.gameObject.SetActive(false);
-        }
+        // 1. Apagamos todas las cámaras por seguridad
+        foreach (Camera cam in camaras) if (cam != null) cam.gameObject.SetActive(false);
+        foreach (CinemachineCamera vCam in camarasVirtuales) if (vCam != null) vCam.gameObject.SetActive(false);
 
-        // 2. Configuramos a los 4 personajes uno por uno
+        // 2. Configuramos a los 4 personajes
         for (int i = 0; i < personajesEnEscena.Length; i++)
         {
             GameObject personaje = personajesEnEscena[i];
             PlayerInput inputHumano = personaje.GetComponent<PlayerInput>();
-            JugadorController scriptHumano = personaje.GetComponent<JugadorController>();
-            AliadoBotController cerebroBot = personaje.GetComponent<AliadoBotController>();
-            UnityEngine.AI.NavMeshAgent agente = personaje.GetComponent<UnityEngine.AI.NavMeshAgent>();
+            JugadorController scriptJugador = personaje.GetComponent<JugadorController>();
 
-            // 3. Verificamos si alguien en el Lobby eligió a este personaje
             bool esControladoPorHumano = false;
-            int idDelHumano = -1; // Nos dirá si fue el P1 (0), P2 (1), etc.
+            int idDelHumano = -1;
 
             for (int j = 0; j < humanos; j++)
             {
@@ -58,13 +46,14 @@ public class GestorSupervivientes : MonoBehaviour
                 }
             }
 
-            // 4. Asignamos los roles
             if (esControladoPorHumano)
             {
                 // --- ES UN HUMANO ---
+                // ¡Usamos tu función maestra para encender todo lo del humano!
+                if (scriptJugador != null) scriptJugador.ConfigurarRol(true);
+
                 if (inputHumano != null)
                 {
-                    inputHumano.enabled = true;
                     var mandosGuardados = DatosGlobales.dispositivosPorJugador[idDelHumano];
                     var esquemaGuardado = DatosGlobales.esquemasControlPorJugador[idDelHumano];
 
@@ -74,32 +63,22 @@ public class GestorSupervivientes : MonoBehaviour
                     }
                 }
 
-                if (scriptHumano != null) scriptHumano.enabled = true;
-                if (cerebroBot != null) cerebroBot.enabled = false;
-                if (agente != null) agente.enabled = false;
-
-                personaje.name += " (Humano P" + (idDelHumano + 1) + ")";
+                // Le ponemos su nombre oficial (Ej: "CHOLO")
+                personaje.name = DatosGlobales.nombresPersonajes[i];
 
                 // --- SISTEMA DE CÁMARAS CINEMACHINE ---
                 if (camaras.Length > idDelHumano && camaras[idDelHumano] != null)
                 {
-                    // 1. Encendemos su Cámara Real (La pantalla)
                     camaras[idDelHumano].gameObject.SetActive(true);
 
-                    // ¡ELIMINADO EL SETPARENT! Ahora la cámara real se queda donde está, el Brain la moverá.
-                    // camaras[idDelHumano].transform.SetParent(personaje.transform);
-
-                    // 2. Encendemos y Configuramos su Cámara Virtual (El Dron)
                     if (camarasVirtuales.Length > idDelHumano && camarasVirtuales[idDelHumano] != null)
                     {
                         CinemachineCamera miDron = camarasVirtuales[idDelHumano];
                         miDron.gameObject.SetActive(true);
-                        // Le decimos al dron que siga y mire a ESTE jugador
                         miDron.Follow = personaje.transform;
-                        //miDron.LookAt = personaje.transform; // (Opcional, en 2D a veces no se usa LookAt)
                     }
 
-                    scriptHumano.camaraPrincipal = camaras[idDelHumano];
+                    if (scriptJugador != null) scriptJugador.camaraPrincipal = camaras[idDelHumano];
 
                     Canvas canvasDelJugador = personaje.GetComponentInChildren<Canvas>();
                     if (canvasDelJugador != null)
@@ -112,12 +91,11 @@ public class GestorSupervivientes : MonoBehaviour
             else
             {
                 // --- ES UN BOT ---
-                if (inputHumano != null) inputHumano.enabled = false;
-                if (scriptHumano != null) scriptHumano.enabled = false;
-                if (cerebroBot != null) cerebroBot.enabled = true;
-                if (agente != null) agente.enabled = true;
+                // ¡Usamos tu función maestra para encender la IA y apagar el Input!
+                if (scriptJugador != null) scriptJugador.ConfigurarRol(false);
 
-                personaje.name += " (Bot)";
+                // Le ponemos su nombre oficial más la etiqueta Bot (Ej: "COLLA (Bot)")
+                personaje.name = DatosGlobales.nombresPersonajes[i] + " (Bot)";
 
                 Canvas canvasDelBot = personaje.GetComponentInChildren<Canvas>();
                 if (canvasDelBot != null)
@@ -127,7 +105,6 @@ public class GestorSupervivientes : MonoBehaviour
             }
         }
 
-        // 5. Cortamos la pantalla
         ConfigurarPantallaDividida(humanos);
     }
 

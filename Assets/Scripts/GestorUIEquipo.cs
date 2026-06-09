@@ -12,6 +12,10 @@ public class GestorUIEquipo : MonoBehaviour
 
     private SistemaSalud miSalud;
 
+    [Header("Imágenes de Personajes (Caras)")]
+    [Tooltip("Orden: 0=Cholo, 1=Colla, 2=Camba, 3=Chola")]
+    public Sprite[] carasPersonajes;
+
     private void Start()
     {
         // Buscamos nuestra propia salud para NO crear una tarjeta para nosotros mismos
@@ -41,10 +45,21 @@ public class GestorUIEquipo : MonoBehaviour
 
             if (scriptTarjeta != null)
             {
-                // Limpiamos un poco el nombre para que no diga "(Bot)" o "(Clone)" tan feo en pantalla
                 string nombreLimpio = aliado.gameObject.name.Replace("(Clone)", "").Replace("(Bot)", "").Trim();
 
-                scriptTarjeta.Inicializar(aliado, nombreLimpio);
+                // ¡NUEVO! Buscamos qué CARA le toca leyendo su nombre
+                Sprite caraAsignada = null;
+                for (int i = 0; i < DatosGlobales.nombresPersonajes.Length; i++)
+                {
+                    if (nombreLimpio == DatosGlobales.nombresPersonajes[i])
+                    {
+                        if (carasPersonajes.Length > i) caraAsignada = carasPersonajes[i];
+                        break;
+                    }
+                }
+
+                // Le pasamos el Sprite de la cara en lugar del color
+                scriptTarjeta.Inicializar(aliado, nombreLimpio, caraAsignada);
             }
         }
     }

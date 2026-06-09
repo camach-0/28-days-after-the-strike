@@ -2253,6 +2253,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefabTarjetaAliado: {fileID: 8619630992804809667, guid: 914e63c2f3db47848b248a997437722f, type: 3}
   contenedorTarjetas: {fileID: 4864700206467640672}
+  carasPersonajes:
+  - {fileID: -8514925768281243838, guid: 37fb7d10c2425704096e8b433f744de7, type: 3}
+  - {fileID: -1345883014919538527, guid: b66426e036ad2a64d9a288080e368cdc, type: 3}
+  - {fileID: -8579853722817384451, guid: 9deea3048a33cf440aca296eb286b05d, type: 3}
+  - {fileID: 2955892557625681686, guid: 51c20073348687a4f85b093ce3634019, type: 3}
 --- !u!1 &7813398071151139269
 GameObject:
   m_ObjectHideFlags: 0

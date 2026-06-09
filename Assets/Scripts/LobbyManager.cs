@@ -12,6 +12,12 @@ public class LobbyManager : MonoBehaviour
     public GameObject[] slotsVisuales;
     public Button botonEmpezar;
 
+    [Header("Estilo Metal Slug (Fotos)")]
+    [Tooltip("Las 4 fotos en BLANCO Y NEGRO (Orden: Cholo, Colla, Camba, Chola)")]
+    public Sprite[] fotosBlancoYNegro;
+    [Tooltip("Las 4 fotos a TODO COLOR (Orden: Cholo, Colla, Camba, Chola)")]
+    public Sprite[] fotosColor;
+
     private List<ControladorLobby> jugadoresConectados = new List<ControladorLobby>();
 
     private void Awake()
@@ -36,34 +42,61 @@ public class LobbyManager : MonoBehaviour
 
     public void ActualizarVisuales()
     {
-        // 1. Apagamos todos los paneles
+        // Revisamos los 4 paneles (0 al 3)
         for (int i = 0; i < slotsVisuales.Length; i++)
         {
-            slotsVisuales[i].GetComponent<Image>().color = new Color(0.3f, 0.3f, 0.3f); // Gris
-            Transform objetoTexto = slotsVisuales[i].transform.Find("STAR");
-            if (objetoTexto != null)
+            GameObject panel = slotsVisuales[i];
+
+            // Buscamos la foto y el texto dentro de este panel
+            Transform objetoFoto = panel.transform.Find("FOTO");
+            Transform objetoTexto = panel.transform.Find("STAR");
+
+            Image imagenFoto = objetoFoto != null ? objetoFoto.GetComponent<Image>() : null;
+            TMP_Text textoStar = objetoTexto != null ? objetoTexto.GetComponent<TMP_Text>() : null;
+
+            // Variables para saber qué pasa en este panel específico
+            bool hayAlguienAqui = false;
+            bool estanListos = false;
+            string nombresJugadores = "";
+
+            // Preguntamos a todos los jugadores si están parados en este panel
+            foreach (ControladorLobby jug in jugadoresConectados)
             {
-                TMP_Text texto = objetoTexto.GetComponent<TMP_Text>();
-                if (texto != null) texto.text = "VACÍO";
-            }
-        }
-
-        // 2. Pintamos los paneles donde haya un jugador
-        foreach (ControladorLobby jug in jugadoresConectados)
-        {
-            GameObject panelActual = slotsVisuales[jug.indicePersonajeActual];
-
-            // Amarillo = Eligiendo, Verde = Listo
-            panelActual.GetComponent<Image>().color = jug.estaListo ? Color.green : Color.yellow;
-
-            Transform objetoTexto = panelActual.transform.Find("STAR");
-            if (objetoTexto != null)
-            {
-                TMP_Text texto = objetoTexto.GetComponent<TMP_Text>();
-                if (texto != null)
+                if (jug.indicePersonajeActual == i)
                 {
-                    string nombreJugador = "P" + (jug.miIDJugador + 1);
-                    texto.text = jug.estaListo ? nombreJugador + " LISTO" : nombreJugador + " ELIGIENDO...";
+                    hayAlguienAqui = true;
+                    if (jug.estaListo) estanListos = true;
+                    nombresJugadores += "P" + (jug.miIDJugador + 1) + " "; // Ej: "P1 " o "P1 P2 "
+                }
+            }
+
+            // APLICAMOS EL EFECTO METAL SLUG
+            if (imagenFoto != null)
+            {
+                if (hayAlguienAqui)
+                {
+                    // Alguien está encima: PONEMOS LA FOTO A COLOR
+                    if (fotosColor.Length > i) imagenFoto.sprite = fotosColor[i];
+                    imagenFoto.color = Color.white; // Color puro
+                }
+                else
+                {
+                    // Nadie está encima: PONEMOS LA FOTO EN BLANCO Y NEGRO
+                    if (fotosBlancoYNegro.Length > i) imagenFoto.sprite = fotosBlancoYNegro[i];
+                    imagenFoto.color = new Color(0.7f, 0.7f, 0.7f); // Un poco oscurecido para dar contraste
+                }
+            }
+
+            if (textoStar != null)
+            {
+                if (hayAlguienAqui)
+                {
+                    textoStar.text = estanListos ? nombresJugadores + "LISTO" : nombresJugadores;
+                    textoStar.color = estanListos ? Color.green : Color.yellow;
+                }
+                else
+                {
+                    textoStar.text = ""; // Si no hay nadie, ocultamos el texto de "P1"
                 }
             }
         }

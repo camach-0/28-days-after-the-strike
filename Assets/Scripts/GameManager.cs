@@ -51,19 +51,17 @@ public class GameManager : MonoBehaviour
         int humanosTotales = 0;
         int humanosCaidos = 0;
 
-        // Evaluamos a todos los supervivientes en la lista
         foreach (SistemaSalud superviviente in supervivientesActivos)
         {
             if (superviviente != null)
             {
-                // Un superviviente es un humano real si tiene el componente JugadorController activo
-                JugadorController humano = superviviente.GetComponent<JugadorController>();
+                // ¡CORRECCIÓN! Un humano real es el que tiene el Input (Mando/Teclado) encendido
+                UnityEngine.InputSystem.PlayerInput humano = superviviente.GetComponent<UnityEngine.InputSystem.PlayerInput>();
 
                 if (humano != null && humano.enabled)
                 {
                     humanosTotales++;
 
-                    // Contamos al humano como caído si está incapacitado en el suelo o muerto definitivamente
                     if (superviviente.estaIncapacitado || superviviente.vidaActual <= 0)
                     {
                         humanosCaidos++;
@@ -72,7 +70,6 @@ public class GameManager : MonoBehaviour
             }
         }
 
-        // REGLA L4D: Si hay jugadores humanos en la partida y TODOS están en el suelo o muertos, la partida termina
         if (humanosTotales > 0 && humanosCaidos == humanosTotales)
         {
             EjecutarGameOver();
