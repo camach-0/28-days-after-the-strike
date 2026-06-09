@@ -5,54 +5,100 @@ public class ControladorPildoras : ControladorArma
     [Header("Efecto de las Píldoras")]
     public float cantidadSaludTemporal = 60f;
 
+    [Header("Sistema de Botín (Drop)")]
+    public string etiquetaSuelo = "Pickup_Pildoras";
+
     private SistemaSalud saludJugador;
-    private bool seEstaUsando = false;
 
     private void Start()
     {
         saludJugador = GetComponentInParent<SistemaSalud>();
     }
 
+    // CLIC IZQUIERDO: Tomarse las pastillas
     public override void IntentarAtaque(Vector2 direccionApuntado)
     {
-        if (seEstaUsando || saludJugador == null) return;
+        if (saludJugador == null || (saludJugador.vidaActual + saludJugador.vidaTemporal) >= saludJugador.vidaMaxima) return;
 
-        // Si ya tiene la vida al 100% (sumando real + temporal), no deja tomar pastillas
-        if (saludJugador.vidaActual + saludJugador.vidaTemporal >= saludJugador.vidaMaxima)
-        {
-            Debug.Log("Vida al máximo, no necesitas píldoras.");
-            return;
-        }
+        saludJugador.AñadirVidaTemporal(cantidadSaludTemporal);
+        Debug.Log("<color=cyan>¡Píldoras tomadas! +60 HP Temporal.</color>");
 
-        TomarPildoras();
+        ConsumirYDestruir();
     }
 
-    private void TomarPildoras()
+    // CLIC DERECHO: Pasar a un compañero
+    public override void IntentarEmpujon(Vector2 direccion)
     {
-        seEstaUsando = true;
+        if (saludJugador == null) return;
 
-        // ¡LA CLAVE ESTÁ AQUÍ! Añade vida que se irá decayendo
-        saludJugador.AñadirVidaTemporal(cantidadSaludTemporal);
-        Debug.Log("¡Píldoras tomadas! +60 HP Temporal.");
-
-        InventarioJugador miInventario = GetComponentInParent<InventarioJugador>();
-        if (miInventario != null)
+        Collider2D[] cercanos = Physics2D.OverlapCircleAll(transform.position, 1.5f);
+        foreach (var col in cercanos)
         {
-            for (int i = 0; i < miInventario.ranuras.Length; i++)
+            if (col.gameObject != saludJugador.gameObject)
             {
-                if (miInventario.ranuras[i] == this)
+                SistemaSalud s = col.GetComponent<SistemaSalud>();
+                if (s != null && s.esSuperviviente && !s.estaMuertoDefinitivo)
                 {
-                    miInventario.ranuras[i] = null;
+                    PasarItem(s);
                     break;
                 }
             }
-
-            if (miInventario.ranuras[0] != null) miInventario.CambiarSlot(0);
-            else miInventario.CambiarSlot(1);
         }
-
-        Destroy(gameObject);
     }
 
-    public override void IntentarEmpujon(Vector2 direccion) { }
+    private void PasarItem(SistemaSalud aliado)
+    {
+        InventarioJugador invAliado = aliado.GetComponent<InventarioJugador>();
+        InventarioJugador miInv = GetComponentInParent<InventarioJugador>();
+
+        if (invAliado == null || miInv == null) return;
+
+        // --- CORRECCIÓN: Buscamos desde la última ranura hacia la primera ---
+        int slotVacio = -1;
+        for (int i = invAliado.ranuras.Length - 1; i >= 0; i--)
+        {
+            if (invAliado.ranuras[i] == null)
+            {
+                slotVacio = i;
+                break;
+            }
+        }
+
+        if (slotVacio != -1)
+        {
+            for (int i = 0; i < miInv.ranuras.Length; i++)
+            {
+                if (miInv.ranuras[i] == this) miInv.ranuras[i] = null;
+            }
+
+            JugadorMovimiento movAliado = aliado.GetComponent<JugadorMovimiento>();
+            transform.SetParent(movAliado != null ? movAliado.pivoteArma : aliado.transform);
+            transform.localPosition = Vector3.zero;
+            transform.localRotation = Quaternion.identity;
+
+            invAliado.ranuras[slotVacio] = this;
+            this.saludJugador = aliado;
+            gameObject.SetActive(false);
+
+            if (miInv.ranuras[0] != null) miInv.CambiarSlot(0);
+            else miInv.CambiarSlot(1);
+
+            Debug.Log("<color=green>Píldoras entregadas al aliado.</color>");
+        }
+    }
+
+    private void ConsumirYDestruir()
+    {
+        InventarioJugador miInv = GetComponentInParent<InventarioJugador>();
+        if (miInv != null)
+        {
+            for (int i = 0; i < miInv.ranuras.Length; i++)
+            {
+                if (miInv.ranuras[i] == this) { miInv.ranuras[i] = null; break; }
+            }
+            if (miInv.ranuras[0] != null) miInv.CambiarSlot(0);
+            else miInv.CambiarSlot(1);
+        }
+        Destroy(gameObject);
+    }
 }

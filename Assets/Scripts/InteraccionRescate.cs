@@ -11,10 +11,12 @@ public class InteraccionRescate : MonoBehaviour
     public LayerMask capaJugadores;
 
     private SistemaSalud miSalud;
-    private JugadorInput miInput; // <-- NUEVO: Leemos el input individual de este jugador
+    private JugadorInput miInput;
     private SistemaSalud objetivoCaido;
-    private float temporizadorRescate = 0f;
     private bool estaRescatando = false;
+
+    // --- NUEVO: Variable para vigilar si recibe daño zombi ---
+    private float ultimaVidaAliado;
 
     private void Start()
     {
@@ -24,8 +26,8 @@ public class InteraccionRescate : MonoBehaviour
 
     private void Update()
     {
-        // 1. Si YO estoy incapacitado o muerto, no puedo ser el héroe
-        if (miSalud != null && (miSalud.estaIncapacitado || miSalud.vidaActual <= 0))
+        // 1. Si YO estoy incapacitado o muerto, cancelamos cualquier intento de rescate
+        if (miSalud != null && (miSalud.estaIncapacitado || miSalud.estaMuertoDefinitivo))
         {
             CancelarRescate();
             return;
@@ -41,25 +43,35 @@ public class InteraccionRescate : MonoBehaviour
             {
                 BuscarCompaneroCaido();
             }
-
-            if (estaRescatando && objetivoCaido != null)
+            // Si ya estamos rescatando a alguien...
+            else if (objetivoCaido != null)
             {
+                // Si se curó mágicamente o murió del todo
                 if (!objetivoCaido.estaIncapacitado)
                 {
                     CancelarRescate();
-                    return;
                 }
-
-                temporizadorRescate += Time.deltaTime;
-                Debug.Log($"<color=cyan>Rescatando... {temporizadorRescate:F1}s / {tiempoParaLevantar}s</color>");
-
-                if (temporizadorRescate >= tiempoParaLevantar)
+                else
                 {
-                    CompletarRescate();
+                    // --- REGLA DE INTERRUPCIÓN POR DAÑO ---
+                    // Comparamos su vida actual con la del frame anterior
+                    float danoRecibido = ultimaVidaAliado - objetivoCaido.vidaActualIncapacitado;
+
+                    // Si baja de golpe más de 3 puntos (el sangrado quita menos de eso en un instante)
+                    if (danoRecibido > 3f)
+                    {
+                        CancelarRescate();
+                        Debug.Log("<color=red>¡Zombi atacó al caído! Rescate interrumpido.</color>");
+                    }
+                    else
+                    {
+                        // Si es solo el desangrado normal, guardamos su vida para vigilarla en el próximo frame
+                        ultimaVidaAliado = objetivoCaido.vidaActualIncapacitado;
+                    }
                 }
             }
         }
-        // 4. Si suelto el botón o no lo estoy tocando
+        // 4. Si suelto el botón, cancelamos la barra
         else
         {
             CancelarRescate();
@@ -79,13 +91,20 @@ public class InteraccionRescate : MonoBehaviour
             {
                 objetivoCaido = saludOtro;
                 estaRescatando = true;
-                temporizadorRescate = 0f;
-                Debug.Log("<color=yellow>¡Comenzando a levantar al compañero!</color>");
-                break;
+
+                // ¡AQUÍ GUARDAMOS SU VIDA INICIAL ANTES DE EMPEZAR A LEVANTARLO!
+                ultimaVidaAliado = objetivoCaido.vidaActualIncapacitado;
+
+                if (GestorAcciones.Instancia != null)
+                {
+                    GestorAcciones.Instancia.IniciarAccion(tiempoParaLevantar, "LEVANTANDO A UN COMPAÑERO...", CompletarRescate);
+                }
+                break; // Solo levantamos a uno a la vez
             }
         }
     }
 
+    // Esta función la llamará automáticamente el Gestor cuando la barra se llene
     private void CompletarRescate()
     {
         if (objetivoCaido != null)
@@ -93,17 +112,24 @@ public class InteraccionRescate : MonoBehaviour
             objetivoCaido.LevantarRescatado(vidaAlLevantar);
             Debug.Log("<color=green>¡Compañero levantado con éxito!</color>");
         }
-        CancelarRescate();
+
+        // Limpiamos las variables
+        estaRescatando = false;
+        objetivoCaido = null;
     }
 
     private void CancelarRescate()
     {
         if (estaRescatando)
         {
-            Debug.Log("<color=red>Rescate cancelado o interrumpido.</color>");
+            // Le avisamos a la UI que apague la barra
+            if (GestorAcciones.Instancia != null)
+            {
+                GestorAcciones.Instancia.CancelarAccion();
+            }
         }
+
         estaRescatando = false;
-        temporizadorRescate = 0f;
         objetivoCaido = null;
     }
 

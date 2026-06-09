@@ -3,56 +3,108 @@ using UnityEngine;
 public class ControladorAdrenalina : ControladorArma
 {
     [Header("Efecto de Adrenalina")]
-    public float multiplicadorVelocidad = 1.5f; // Te hace 50% más rápido (1.5x)
-    public float tiempoEfecto = 10f; // Dura 10 segundos
-    public float saludTemporal = 25f; // ¡NUEVO! HP temporal que te da
+    public float multiplicadorVelocidad = 1.5f;
+    public float tiempoEfecto = 10f;
+    public float saludTemporal = 25f;
 
-    private bool seEstaUsando = false;
+    private SistemaSalud saludJugador;
 
-    public override void IntentarAtaque(Vector2 direccionApuntado)
+    private void Start()
     {
-        if (seEstaUsando) return;
-        Inyectar();
+        saludJugador = GetComponentInParent<SistemaSalud>();
     }
 
-    public override void IntentarEmpujon(Vector2 direccion) { }
-
-    private void Inyectar()
+    // CLIC IZQUIERDO: Inyectarse
+    public override void IntentarAtaque(Vector2 direccionApuntado)
     {
-        seEstaUsando = true;
-
-        // 1. Buscamos el movimiento y le mandamos el efecto de velocidad
         JugadorMovimiento movimiento = GetComponentInParent<JugadorMovimiento>();
         if (movimiento != null)
         {
             movimiento.InyectarAdrenalina(multiplicadorVelocidad, tiempoEfecto);
         }
 
-        // 2. ¡NUEVO! Buscamos el sistema de salud y le damos los 25 HP temporales
-        SistemaSalud saludJugador = GetComponentInParent<SistemaSalud>();
         if (saludJugador != null)
         {
             saludJugador.AñadirVidaTemporal(saludTemporal);
+            Debug.Log("<color=cyan>¡Adrenalina inyectada!</color>");
         }
 
-        // 3. Sacamos la jeringa del inventario
-        InventarioJugador miInventario = GetComponentInParent<InventarioJugador>();
-        if (miInventario != null)
+        ConsumirYDestruir();
+    }
+
+    // CLIC DERECHO: Pasar a un compañero
+    public override void IntentarEmpujon(Vector2 direccion)
+    {
+        if (saludJugador == null) return;
+
+        Collider2D[] cercanos = Physics2D.OverlapCircleAll(transform.position, 1.5f);
+        foreach (var col in cercanos)
         {
-            for (int i = 0; i < miInventario.ranuras.Length; i++)
+            if (col.gameObject != saludJugador.gameObject)
             {
-                if (miInventario.ranuras[i] == this)
+                SistemaSalud s = col.GetComponent<SistemaSalud>();
+                if (s != null && s.esSuperviviente && !s.estaMuertoDefinitivo)
                 {
-                    miInventario.ranuras[i] = null;
+                    PasarItem(s);
                     break;
                 }
             }
+        }
+    }
 
-            if (miInventario.ranuras[0] != null) miInventario.CambiarSlot(0);
-            else miInventario.CambiarSlot(1);
+    private void PasarItem(SistemaSalud aliado)
+    {
+        InventarioJugador invAliado = aliado.GetComponent<InventarioJugador>();
+        InventarioJugador miInv = GetComponentInParent<InventarioJugador>();
+
+        if (invAliado == null || miInv == null) return;
+
+        // --- CORRECCIÓN: Buscamos desde la última ranura hacia la primera ---
+        int slotVacio = -1;
+        for (int i = invAliado.ranuras.Length - 1; i >= 0; i--)
+        {
+            if (invAliado.ranuras[i] == null)
+            {
+                slotVacio = i;
+                break;
+            }
         }
 
-        // 4. Destruimos la jeringa de la mano
+        if (slotVacio != -1)
+        {
+            for (int i = 0; i < miInv.ranuras.Length; i++)
+            {
+                if (miInv.ranuras[i] == this) miInv.ranuras[i] = null;
+            }
+
+            JugadorMovimiento movAliado = aliado.GetComponent<JugadorMovimiento>();
+            transform.SetParent(movAliado != null ? movAliado.pivoteArma : aliado.transform);
+            transform.localPosition = Vector3.zero;
+            transform.localRotation = Quaternion.identity;
+
+            invAliado.ranuras[slotVacio] = this;
+            this.saludJugador = aliado;
+            gameObject.SetActive(false);
+
+            if (miInv.ranuras[0] != null) miInv.CambiarSlot(0);
+            else miInv.CambiarSlot(1);
+
+            Debug.Log("<color=green>Adrenalina entregada al aliado.</color>");
+        }
+    }
+
+    private void ConsumirYDestruir()
+    {
+        InventarioJugador miInv = GetComponentInParent<InventarioJugador>();
+        if (miInv != null)
+        {
+            for (int i = 0; i < miInv.ranuras.Length; i++)
+            {
+                if (miInv.ranuras[i] == this) { miInv.ranuras[i] = null; break; }
+            }
+            if (miInv.ranuras[0] != null) miInv.CambiarSlot(0);
+            else miInv.CambiarSlot(1);
+        }
         Destroy(gameObject);
     }
 }

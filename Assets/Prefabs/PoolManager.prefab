@@ -108,3 +108,6 @@ MonoBehaviour:
   - etiqueta: ItemM60
     prefab: {fileID: 3303739457805541182, guid: b90e7f197d4e8974780736b6e74abc56, type: 3}
     cantidadInicial: 5
+  - etiqueta: ItemDesfibrilador
+    prefab: {fileID: 3755532917166824391, guid: d5c32074dbd39a743af5edb25f36baeb, type: 3}
+    cantidadInicial: 5

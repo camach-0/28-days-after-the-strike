@@ -7,6 +7,10 @@ public class InventarioJugador : MonoBehaviour
     [Header("Ranuras estilo L4D2")]
     public ControladorArma[] ranuras = new ControladorArma[5];
 
+    [Header("Configuración de Muerte")]
+    [Tooltip("Prefab de la pistola básica (de mano) que recibirá al revivir")]
+    public GameObject prefabPistolaBase;
+
     // PATRÓN OBSERVER: Evento que avisa a quien quiera escuchar que cambiamos de arma
     public event Action<int> OnArmaCambiada;
 
@@ -99,5 +103,47 @@ public class InventarioJugador : MonoBehaviour
 
         if (indiceSlotActual == 0 && ranuras[1] != null) CambiarSlot(1);
         else if (ranuras[0] != null) CambiarSlot(0);
+    }
+
+    // ====================================================================
+    // --- SISTEMA DE RESURRECCIÓN ---
+    // ====================================================================
+
+    public void ResetearInventarioPorMuerte()
+    {
+        // 1. Soltamos los objetos con dispersión
+        for (int i = 0; i < ranuras.Length; i++)
+        {
+            if (ranuras[i] != null)
+            {
+                if (ranuras[i].prefabSuelo != null)
+                {
+                    // ¡NUEVO! Creamos un pequeño desplazamiento aleatorio
+                    Vector2 offset = UnityEngine.Random.insideUnitCircle * 1.0f;
+                    Vector3 posicionCaida = transform.position + new Vector3(offset.x, offset.y, 0f);
+
+                    Instantiate(ranuras[i].prefabSuelo, posicionCaida, Quaternion.identity);
+                }
+
+                Destroy(ranuras[i].gameObject);
+                ranuras[i] = null;
+            }
+        }
+
+        // 2. Le creamos su pistola en el lugar CORRECTO (El Pivote)
+        if (prefabPistolaBase != null)
+        {
+            // ¡CORRECCIÓN! Buscamos el pivote para pegarle el arma ahí
+            Transform pivote = jugador.GetComponent<JugadorMovimiento>().pivoteArma;
+
+            GameObject nuevaPistola = Instantiate(prefabPistolaBase, pivote);
+            ControladorArma scriptPistola = nuevaPistola.GetComponent<ControladorArma>();
+
+            if (scriptPistola != null)
+            {
+                ranuras[1] = scriptPistola;
+                CambiarSlot(1, true);
+            }
+        }
     }
 }

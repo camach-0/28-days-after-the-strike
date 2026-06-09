@@ -11,7 +11,6 @@ public class SistemaSalud : MonoBehaviour, IReceptorDano
     public float vidaMaxima = 100f;
     public float vidaActual { get; private set; }
 
-    // --- NUEVO: VIDA TEMPORAL ---
     public float vidaTemporal { get; private set; } = 0f;
 
     [Header("Incapacidad (Solo Supervivientes)")]
@@ -27,15 +26,16 @@ public class SistemaSalud : MonoBehaviour, IReceptorDano
 
     private Rigidbody2D rb;
 
-    public bool estaMuertoDefinitivo => vidaActual <= 0 && !estaIncapacitado;
+    // ¡CORRECCIÓN! Para estar 100% muerto no debes tener ni vida real ni temporal.
+    public bool estaMuertoDefinitivo => vidaActual <= 0 && vidaTemporal <= 0 && !estaIncapacitado;
 
     // EVENTOS
     public event Action OnMuerte;
     public event Action OnIncapacitado;
     public event Action<float> OnVidaCambiada;
-    public event Action<float> OnVidaTemporalCambiada; // NUEVO EVENTO PARA LA UI
+    public event Action<float> OnVidaTemporalCambiada;
 
-    private Coroutine rutinaDecaimiento; // Para controlar la pérdida de vida temporal
+    private Coroutine rutinaDecaimiento;
 
     private void Awake()
     {
@@ -94,34 +94,35 @@ public class SistemaSalud : MonoBehaviour, IReceptorDano
             return;
         }
 
-        // --- NUEVA LÓGICA DE DAÑO: PRIMERO ABSORBE LA VIDA TEMPORAL ---
+        // LÓGICA DE DAÑO: PRIMERO ABSORBE LA VIDA TEMPORAL
         if (vidaTemporal > 0)
         {
             if (cantidad <= vidaTemporal)
             {
                 vidaTemporal -= cantidad;
-                cantidad = 0; // El daño fue absorbido por completo
+                cantidad = 0;
             }
             else
             {
-                cantidad -= vidaTemporal; // Sobró daño
+                cantidad -= vidaTemporal;
                 vidaTemporal = 0;
             }
             OnVidaTemporalCambiada?.Invoke(vidaTemporal / vidaMaxima);
         }
 
-        // Si todavía quedó daño (o no había vida temporal), restamos de la vida real
         if (cantidad > 0)
         {
             vidaActual -= cantidad;
+            if (vidaActual < 0) vidaActual = 0;
             OnVidaCambiada?.Invoke(vidaActual / vidaMaxima);
         }
 
-        if (vidaActual <= 0)
+        if (vidaActual <= 0 && vidaTemporal <= 0)
         {
             vidaActual = 0;
-            vidaTemporal = 0; // Por si acaso
+            vidaTemporal = 0;
             OnVidaTemporalCambiada?.Invoke(0f);
+            OnVidaCambiada?.Invoke(0f);
 
             if (esSuperviviente)
             {
@@ -136,7 +137,6 @@ public class SistemaSalud : MonoBehaviour, IReceptorDano
         }
         else
         {
-            // Solo empujamos si sigue vivo y NO tiene Adrenalina activa
             bool ignorarEmpuje = false;
             JugadorMovimiento jugMov = GetComponent<JugadorMovimiento>();
             if (jugMov != null && jugMov.tieneAdrenalinaActiva) ignorarEmpuje = true;
@@ -190,12 +190,15 @@ public class SistemaSalud : MonoBehaviour, IReceptorDano
         }
     }
 
-    // --- NUEVO: AGREGAR VIDA TEMPORAL (Píldoras/Adrenalina) ---
+    // ====================================================================
+    // --- SISTEMA DE CURACIÓN Y VIDA TEMPORAL ---
+    // ====================================================================
+
     public void AñadirVidaTemporal(float cantidad)
     {
-        if (vidaActual <= 0 || estaIncapacitado) return;
+        // ¡CORRECCIÓN! Usamos estaMuertoDefinitivo para saber si realmente es un cadáver
+        if (estaMuertoDefinitivo || estaIncapacitado) return;
 
-        // No podemos pasar de 100 en total (Vida Real + Vida Temporal)
         float espacioDisponible = vidaMaxima - vidaActual;
 
         vidaTemporal += cantidad;
@@ -203,14 +206,27 @@ public class SistemaSalud : MonoBehaviour, IReceptorDano
 
         OnVidaTemporalCambiada?.Invoke(vidaTemporal / vidaMaxima);
 
-        // Reiniciamos el decaimiento para que empiece a bajar
         if (rutinaDecaimiento != null) StopCoroutine(rutinaDecaimiento);
         rutinaDecaimiento = StartCoroutine(RutinaDecaimientoTemporal());
     }
 
+    public void Curar(float cantidad)
+    {
+        // ¡CORRECCIÓN! Evitamos que rechace curar si tiene 1 de vida o vida temporal
+        if (estaMuertoDefinitivo || estaIncapacitado) return;
+
+        vidaActual += cantidad;
+        if (vidaActual > vidaMaxima) vidaActual = vidaMaxima;
+
+        // Al curar con botiquín, la vida temporal desaparece porque ya tienes vida real
+        vidaTemporal = 0;
+
+        OnVidaTemporalCambiada?.Invoke(0f);
+        OnVidaCambiada?.Invoke(vidaActual / vidaMaxima);
+    }
+
     private IEnumerator RutinaDecaimientoTemporal()
     {
-        // Pierde 1 punto cada 4 segundos mientras no esté en el suelo
         while (vidaTemporal > 0 && !estaIncapacitado && !estaMuertoDefinitivo)
         {
             yield return new WaitForSeconds(4f);
@@ -221,17 +237,26 @@ public class SistemaSalud : MonoBehaviour, IReceptorDano
         }
     }
 
+    // ====================================================================
+    // --- SISTEMA DE ESTADOS: INCAPACITADO / LEVANTAR / REVIVIR ---
+    // ====================================================================
+
     private void EntrarEnIncapacitado()
     {
         estaIncapacitado = true;
         vidaActualIncapacitado = vidaIncapacidadMax;
 
-        // Al caer borramos la vida temporal sobrante
         vidaTemporal = 0;
         OnVidaTemporalCambiada?.Invoke(0f);
 
         JugadorMovimiento jugMov = GetComponent<JugadorMovimiento>();
         if (jugMov != null) jugMov.enabled = false;
+
+        UnityEngine.AI.NavMeshAgent agente = GetComponent<UnityEngine.AI.NavMeshAgent>();
+        if (agente != null) agente.enabled = false;
+
+        MonoBehaviour botCtrl = GetComponent("AliadoBotController") as MonoBehaviour;
+        if (botCtrl != null) botCtrl.enabled = false;
 
         InventarioJugador inventario = GetComponent<InventarioJugador>();
         if (inventario != null)
@@ -264,39 +289,60 @@ public class SistemaSalud : MonoBehaviour, IReceptorDano
         }
     }
 
-    public void LevantarRescatado(float vidaAlLevantar)
+    private void ReactivarCuerpo()
+    {
+        JugadorMovimiento jugMov = GetComponent<JugadorMovimiento>();
+        if (jugMov != null) jugMov.enabled = true;
+
+        MonoBehaviour inputHumano = GetComponent("JugadorInput") as MonoBehaviour;
+        bool esHumano = (inputHumano != null && inputHumano.enabled);
+
+        if (!esHumano)
+        {
+            UnityEngine.AI.NavMeshAgent agente = GetComponent<UnityEngine.AI.NavMeshAgent>();
+            if (agente != null)
+            {
+                agente.enabled = true;
+                agente.isStopped = false;
+            }
+
+            MonoBehaviour botCtrl = GetComponent("AliadoBotController") as MonoBehaviour;
+            if (botCtrl != null) botCtrl.enabled = true;
+        }
+    }
+
+    // ESTADO 1: Levantar de estar abatido en el suelo
+    public void LevantarRescatado(float vidaAlLevantar = 30f)
     {
         if (!estaIncapacitado) return;
 
         estaIncapacitado = false;
         StopCoroutine(RutinaDesangrado());
 
-        vidaActual = 0; // En L4D te levantan con vida temporal, pero respetaremos tu lógica actual
-        AñadirVidaTemporal(vidaAlLevantar); // ¡Se levanta con salud temporal!
+        // ¡EL ARREGLO CRÍTICO DEL FANTASMA!
+        vidaActual = 1f;  // Te damos 1 HP real para que no te consideren muerto.
+        vidaTemporal = vidaAlLevantar;
 
-        JugadorMovimiento jugMov = GetComponent<JugadorMovimiento>();
-        if (jugMov != null) jugMov.enabled = true;
-    }
+        ReactivarCuerpo();
 
-    public void Curar(float cantidad)
-    {
-        if (vidaActual <= 0 || estaIncapacitado) return;
-
-        vidaActual += cantidad;
-        if (vidaActual > vidaMaxima) vidaActual = vidaMaxima;
-
-        // Si nos curamos con botiquín, limpiamos la vida temporal porque ya es vida sólida
-        vidaTemporal = 0;
-        OnVidaTemporalCambiada?.Invoke(0f);
         OnVidaCambiada?.Invoke(vidaActual / vidaMaxima);
+        OnVidaTemporalCambiada?.Invoke(vidaTemporal / vidaMaxima);
+
+        if (rutinaDecaimiento != null) StopCoroutine(rutinaDecaimiento);
+        rutinaDecaimiento = StartCoroutine(RutinaDecaimientoTemporal());
     }
 
+    // ESTADO 2: Revivir de la muerte absoluta
     public void Revivir()
     {
         estaIncapacitado = false;
-        vidaActual = vidaMaxima;
-        vidaTemporal = 0;
-        OnVidaTemporalCambiada?.Invoke(0f);
-        OnVidaCambiada?.Invoke(1f);
+
+        vidaActual = 50f;
+        vidaTemporal = 0f;
+
+        ReactivarCuerpo();
+
+        OnVidaCambiada?.Invoke(vidaActual / vidaMaxima);
+        OnVidaTemporalCambiada?.Invoke(vidaTemporal / vidaMaxima);
     }
 }

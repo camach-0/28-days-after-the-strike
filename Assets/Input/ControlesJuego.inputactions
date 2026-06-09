@@ -140,6 +140,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Empujar",
+                    "type": "Button",
+                    "id": "d7523aa8-5a36-4c0b-b506-8b31a5550123",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -492,6 +501,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "Saltar/Dash",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "0cbb361a-d539-47be-9841-b88b4224508b",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Empujar",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a0aab723-c1ce-4ca7-8b4b-04fd67d36a9a",
+                    "path": "<Gamepad>/leftTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Empujar",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

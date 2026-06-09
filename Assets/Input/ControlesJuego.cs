@@ -226,6 +226,15 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Empujar"",
+                    ""type"": ""Button"",
+                    ""id"": ""d7523aa8-5a36-4c0b-b506-8b31a5550123"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -580,6 +589,28 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
                     ""action"": ""Saltar/Dash"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""0cbb361a-d539-47be-9841-b88b4224508b"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Empujar"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a0aab723-c1ce-4ca7-8b4b-04fd67d36a9a"",
+                    ""path"": ""<Gamepad>/leftTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Empujar"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -631,6 +662,7 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
         m_Jugador_Interactuar = m_Jugador.FindAction("Interactuar", throwIfNotFound: true);
         m_Jugador_Linterna = m_Jugador.FindAction("Linterna", throwIfNotFound: true);
         m_Jugador_SaltarDash = m_Jugador.FindAction("Saltar/Dash", throwIfNotFound: true);
+        m_Jugador_Empujar = m_Jugador.FindAction("Empujar", throwIfNotFound: true);
     }
 
     ~@ControlesJuego()
@@ -726,6 +758,7 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
     private readonly InputAction m_Jugador_Interactuar;
     private readonly InputAction m_Jugador_Linterna;
     private readonly InputAction m_Jugador_SaltarDash;
+    private readonly InputAction m_Jugador_Empujar;
     /// <summary>
     /// Provides access to input actions defined in input action map "Jugador".
     /// </summary>
@@ -798,6 +831,10 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @SaltarDash => m_Wrapper.m_Jugador_SaltarDash;
         /// <summary>
+        /// Provides access to the underlying input action "Jugador/Empujar".
+        /// </summary>
+        public InputAction @Empujar => m_Wrapper.m_Jugador_Empujar;
+        /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
         public InputActionMap Get() { return m_Wrapper.m_Jugador; }
@@ -868,6 +905,9 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
             @SaltarDash.started += instance.OnSaltarDash;
             @SaltarDash.performed += instance.OnSaltarDash;
             @SaltarDash.canceled += instance.OnSaltarDash;
+            @Empujar.started += instance.OnEmpujar;
+            @Empujar.performed += instance.OnEmpujar;
+            @Empujar.canceled += instance.OnEmpujar;
         }
 
         /// <summary>
@@ -924,6 +964,9 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
             @SaltarDash.started -= instance.OnSaltarDash;
             @SaltarDash.performed -= instance.OnSaltarDash;
             @SaltarDash.canceled -= instance.OnSaltarDash;
+            @Empujar.started -= instance.OnEmpujar;
+            @Empujar.performed -= instance.OnEmpujar;
+            @Empujar.canceled -= instance.OnEmpujar;
         }
 
         /// <summary>
@@ -1095,5 +1138,12 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnSaltarDash(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Empujar" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnEmpujar(InputAction.CallbackContext context);
     }
 }

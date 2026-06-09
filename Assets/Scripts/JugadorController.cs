@@ -21,10 +21,18 @@ public class JugadorController : MonoBehaviour
     [Header("¡OBLIGATORIO: Configuración de Cámara!")]
     public Camera camaraPrincipal;
 
+    [Header("Sistema de Muerte")]
+    [Tooltip("El prefab del cuerpo sin vida que quedará en el suelo")]
+    public GameObject prefabCadaver; // ¡NUEVO!
+
     [Header("Linterna")]
     public GameObject objetoLinterna;
 
     private bool estaMuerto = false;
+
+    // Variables para recuperar la cámara tras resucitar
+    private Transform padreOriginalCamara;
+    private Vector3 posicionOriginalCamara;
 
     public ControladorArma armaEquipada
     {
@@ -42,6 +50,14 @@ public class JugadorController : MonoBehaviour
         moduloInteraccion = GetComponent<InteraccionJugador>();
 
         if (camaraPrincipal == null) camaraPrincipal = Camera.main;
+
+        // Guardamos dónde estaba la cámara para devolvérsela si revive
+        Camera miCamara = GetComponentInChildren<Camera>();
+        if (miCamara != null)
+        {
+            padreOriginalCamara = miCamara.transform.parent;
+            posicionOriginalCamara = miCamara.transform.localPosition;
+        }
 
         if (moduloSalud != null) moduloSalud.OnMuerte += ProcesarMuerte;
     }
@@ -68,9 +84,6 @@ public class JugadorController : MonoBehaviour
 
         moduloInput.ProcesarApuntadoRaton();
 
-        // ====================================================================
-        // --- ¡NUEVO! CÁLCULO DE PESO DEL ARMA EN LA VELOCIDAD ---
-        // ====================================================================
         float velocidadFinal = velocidadMovimiento;
         if (armaEquipada != null) velocidadFinal *= armaEquipada.ModificadorVelocidad;
 
@@ -92,7 +105,6 @@ public class JugadorController : MonoBehaviour
             moduloInput.IntentoLinterna = false;
         }
 
-        // --- ¡NUEVO! DELEGACIÓN DEL CULATAZO ---
         if (moduloInput.IntentoEmpujar)
         {
             moduloCombate.ProcesarInputEmpujon(moduloInput.DireccionMirando);
@@ -130,9 +142,40 @@ public class JugadorController : MonoBehaviour
         Debug.Log(gameObject.name + " ha muerto.");
         moduloMovimiento.Mover(Vector2.zero, 0f);
         moduloCombate.ProcesarInputDisparo(false, moduloInput.DireccionMirando);
+
+        // --- CREACIÓN DEL CADÁVER ---
+        if (prefabCadaver != null)
+        {
+            GameObject miCadaver = Instantiate(prefabCadaver, transform.position, transform.rotation);
+            Cadaver scriptCadaver = miCadaver.GetComponent<Cadaver>();
+            if (scriptCadaver != null) scriptCadaver.ConfigurarCadaver(this);
+        }
+
         if (GameManager.Instancia != null) GameManager.Instancia.VerificarEstadoJugadores();
+
         Camera miCamara = GetComponentInChildren<Camera>();
         if (miCamara != null) miCamara.transform.SetParent(null);
+
+        // --- ¡NUEVO! LIMPIAR INVENTARIO Y DAR PISTOLA ANTES DE MORIR ---
+        if (moduloInventario != null) moduloInventario.ResetearInventarioPorMuerte();
+
         gameObject.SetActive(false);
+    }
+
+    public void RevivirDesdeCadaver(Vector3 posicionResurreccion)
+    {
+        transform.position = posicionResurreccion;
+        gameObject.SetActive(true);
+        estaMuerto = false;
+
+        if (camaraPrincipal != null && padreOriginalCamara != null)
+        {
+            camaraPrincipal.transform.SetParent(padreOriginalCamara);
+            camaraPrincipal.transform.localPosition = posicionOriginalCamara;
+        }
+
+        if (moduloSalud != null) moduloSalud.Revivir();
+
+        Debug.Log($"<color=green>{gameObject.name} ha sido revivido por el Desfibrilador.</color>");
     }
 }
