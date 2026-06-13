@@ -15,6 +15,9 @@ public class ControladorArmaFuego : ControladorArma
     public bool estaRecargando = false;
     private bool memoriaCargada = false;
 
+    [Header("Efectos Visuales (VFX)")]
+    public EfectoDestelloArma destelloVisual;
+
     private bool estaDisparandoRafaga = false;
     private bool estaDesplegando = false; // ¡NUEVO! Bloqueo al sacar el arma
 
@@ -144,6 +147,11 @@ public class ControladorArmaFuego : ControladorArma
             {
                 objSonido.GetComponent<AudioReciclable>().Reproducir(datosFuego.sonidoAtaque);
             }
+        }
+
+        if (destelloVisual != null)
+        {
+            destelloVisual.ReproducirDestello();
         }
 
         // ¡MECÁNICA DE PRECISIÓN DINÁMICA!
