@@ -18,13 +18,18 @@ public class ControladorArmaFuego : ControladorArma
     [Header("Efectos Visuales (VFX)")]
     public EfectoDestelloArma destelloVisual;
 
-    private bool estaDisparandoRafaga = false;
-    private bool estaDesplegando = false; // ¡NUEVO! Bloqueo al sacar el arma
+    [Tooltip("El punto exacto por donde saltan los casquillos")]
+    public Transform puntoExpulsionCasquillo;
+    [Tooltip("Debe coincidir con la etiqueta del PoolManager (ej. 'CasquilloUzi')")]
+    public string etiquetaPoolCasquillo = "CasquilloBase";
 
-    // ¡NUEVO! Variables dinámicas
+    private bool estaDisparandoRafaga = false;
+    private bool estaDesplegando = false; 
+
+  
     private float recoilActual = 0f;
     private float tiempoProximoEmpujon = 0f;
-    private Rigidbody2D rbJugador; // Para saber si se está moviendo
+    private Rigidbody2D rbJugador; 
 
    
     // Exponemos el peso del arma al Jugador
@@ -152,6 +157,20 @@ public class ControladorArmaFuego : ControladorArma
         if (destelloVisual != null)
         {
             destelloVisual.ReproducirDestello();
+        }
+
+        if (puntoExpulsionCasquillo != null && !string.IsNullOrEmpty(etiquetaPoolCasquillo))
+        {
+            GameObject casquilloObj = PoolManager.Instancia.SolicitarObjeto(etiquetaPoolCasquillo, puntoExpulsionCasquillo.position, puntoExpulsionCasquillo.rotation);
+            if (casquilloObj != null)
+            {
+                CasquilloVisual scriptCasquillo = casquilloObj.GetComponent<CasquilloVisual>();
+                if (scriptCasquillo != null)
+                {
+                    // Le pasamos la dirección a la que estamos disparando
+                    scriptCasquillo.Expulsar(direccionApuntado);
+                }
+            }
         }
 
         // ¡MECÁNICA DE PRECISIÓN DINÁMICA!

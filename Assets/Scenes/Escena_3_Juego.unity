@@ -15055,6 +15055,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4341876234765524083, guid: 05da7ed88bd1df94e88877b089815d2a, type: 3}
+      propertyPath: listaDePiscinas.Array.size
+      value: 23
+      objectReference: {fileID: 0}
+    - target: {fileID: 4341876234765524083, guid: 05da7ed88bd1df94e88877b089815d2a, type: 3}
+      propertyPath: listaDePiscinas.Array.data[22].prefab
+      value: 
+      objectReference: {fileID: 8444781402599522111, guid: 23707eb4d641c1344a19b869049d3259, type: 3}
+    - target: {fileID: 4341876234765524083, guid: 05da7ed88bd1df94e88877b089815d2a, type: 3}
+      propertyPath: listaDePiscinas.Array.data[22].etiqueta
+      value: CasquilloBase
+      objectReference: {fileID: 0}
+    - target: {fileID: 4341876234765524083, guid: 05da7ed88bd1df94e88877b089815d2a, type: 3}
+      propertyPath: listaDePiscinas.Array.data[22].cantidadInicial
+      value: 50
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

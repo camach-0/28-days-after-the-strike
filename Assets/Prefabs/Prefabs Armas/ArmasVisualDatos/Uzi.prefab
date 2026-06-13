@@ -164,6 +164,37 @@ MonoBehaviour:
   framesPorSegundo: 60
   spriteRenderer: {fileID: 7441280788237795168}
   luzDestello: {fileID: 6199634618801502350}
+--- !u!1 &3831515630518733189
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3706032698016531801}
+  m_Layer: 0
+  m_Name: PuntoExpulsion
+  m_TagString: Untagged
+  m_Icon: {fileID: 4162164826716764455, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3706032698016531801
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3831515630518733189}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.3, y: -0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6627379544079642898}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &4992750990654005006
 GameObject:
   m_ObjectHideFlags: 0
@@ -196,6 +227,7 @@ Transform:
   m_Children:
   - {fileID: 5883602036838424455}
   - {fileID: 7434686614923311916}
+  - {fileID: 3706032698016531801}
   m_Father: {fileID: 8936961040067335062}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &8595158721730053017
@@ -306,6 +338,8 @@ MonoBehaviour:
   municionActualReserva: 12
   estaRecargando: 0
   destelloVisual: {fileID: 425642520820339704}
+  puntoExpulsionCasquillo: {fileID: 3706032698016531801}
+  etiquetaPoolCasquillo: CasquilloBase
 --- !u!1 &7984054316178748915
 GameObject:
   m_ObjectHideFlags: 0
