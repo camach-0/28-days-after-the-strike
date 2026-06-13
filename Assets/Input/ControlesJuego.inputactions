@@ -133,7 +133,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Saltar/Dash",
+                    "name": "Saltar",
                     "type": "Button",
                     "id": "85ba7d62-02d6-42ae-9533-1cd5f88df513",
                     "expectedControlType": "",
@@ -489,7 +489,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Saltar/Dash",
+                    "action": "Saltar",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -500,7 +500,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Saltar/Dash",
+                    "action": "Saltar",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

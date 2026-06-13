@@ -14,11 +14,13 @@ public class JugadorInput : MonoBehaviour
     public bool IntentoLinterna { get; set; }
     public bool IntentoInteractuar { get; set; }
     public bool IntentoEmpujar { get; set; }
-    public bool EstaEmpujando { get; private set; } // <-- ¡NUEVO! Detecta si mantienes el clic derecho
+    public bool EstaEmpujando { get; private set; } 
 
     public int IntentoCambioSlot { get; set; } = -1;
     public int IntentoScrollArma { get; set; } = 0;
     public bool IntentoCambioRapido { get; set; }
+
+    public bool IntentoSalto { get; set; }
 
     private bool usandoRaton = true;
     private Vector2 posicionRatonPantalla;
@@ -53,7 +55,7 @@ public class JugadorInput : MonoBehaviour
 
     public void OnEmpujar(InputValue valor)
     {
-        EstaEmpujando = valor.isPressed; // <-- ¡NUEVO! Leemos si se mantiene presionado
+        EstaEmpujando = valor.isPressed; 
         if (valor.isPressed) IntentoEmpujar = true;
     }
 
@@ -62,6 +64,7 @@ public class JugadorInput : MonoBehaviour
     public void OnArojadizos(InputValue valor) { if (valor.isPressed) IntentoCambioSlot = 2; }
     public void OnBotiquin(InputValue valor) { if (valor.isPressed) IntentoCambioSlot = 3; }
     public void OnPildoras(InputValue valor) { if (valor.isPressed) IntentoCambioSlot = 4; }
+    public void OnSaltar(InputValue valor) { if (valor.isPressed) IntentoSalto = true; }
 
     public void OnRuedaRaton(InputValue valor)
     {

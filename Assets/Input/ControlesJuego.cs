@@ -219,7 +219,7 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Saltar/Dash"",
+                    ""name"": ""Saltar"",
                     ""type"": ""Button"",
                     ""id"": ""85ba7d62-02d6-42ae-9533-1cd5f88df513"",
                     ""expectedControlType"": """",
@@ -575,7 +575,7 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Saltar/Dash"",
+                    ""action"": ""Saltar"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -586,7 +586,7 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Saltar/Dash"",
+                    ""action"": ""Saltar"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -661,7 +661,7 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
         m_Jugador_CambioRapido = m_Jugador.FindAction("CambioRapido", throwIfNotFound: true);
         m_Jugador_Interactuar = m_Jugador.FindAction("Interactuar", throwIfNotFound: true);
         m_Jugador_Linterna = m_Jugador.FindAction("Linterna", throwIfNotFound: true);
-        m_Jugador_SaltarDash = m_Jugador.FindAction("Saltar/Dash", throwIfNotFound: true);
+        m_Jugador_Saltar = m_Jugador.FindAction("Saltar", throwIfNotFound: true);
         m_Jugador_Empujar = m_Jugador.FindAction("Empujar", throwIfNotFound: true);
     }
 
@@ -757,7 +757,7 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
     private readonly InputAction m_Jugador_CambioRapido;
     private readonly InputAction m_Jugador_Interactuar;
     private readonly InputAction m_Jugador_Linterna;
-    private readonly InputAction m_Jugador_SaltarDash;
+    private readonly InputAction m_Jugador_Saltar;
     private readonly InputAction m_Jugador_Empujar;
     /// <summary>
     /// Provides access to input actions defined in input action map "Jugador".
@@ -827,9 +827,9 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
         /// </summary>
         public InputAction @Linterna => m_Wrapper.m_Jugador_Linterna;
         /// <summary>
-        /// Provides access to the underlying input action "Jugador/SaltarDash".
+        /// Provides access to the underlying input action "Jugador/Saltar".
         /// </summary>
-        public InputAction @SaltarDash => m_Wrapper.m_Jugador_SaltarDash;
+        public InputAction @Saltar => m_Wrapper.m_Jugador_Saltar;
         /// <summary>
         /// Provides access to the underlying input action "Jugador/Empujar".
         /// </summary>
@@ -902,9 +902,9 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
             @Linterna.started += instance.OnLinterna;
             @Linterna.performed += instance.OnLinterna;
             @Linterna.canceled += instance.OnLinterna;
-            @SaltarDash.started += instance.OnSaltarDash;
-            @SaltarDash.performed += instance.OnSaltarDash;
-            @SaltarDash.canceled += instance.OnSaltarDash;
+            @Saltar.started += instance.OnSaltar;
+            @Saltar.performed += instance.OnSaltar;
+            @Saltar.canceled += instance.OnSaltar;
             @Empujar.started += instance.OnEmpujar;
             @Empujar.performed += instance.OnEmpujar;
             @Empujar.canceled += instance.OnEmpujar;
@@ -961,9 +961,9 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
             @Linterna.started -= instance.OnLinterna;
             @Linterna.performed -= instance.OnLinterna;
             @Linterna.canceled -= instance.OnLinterna;
-            @SaltarDash.started -= instance.OnSaltarDash;
-            @SaltarDash.performed -= instance.OnSaltarDash;
-            @SaltarDash.canceled -= instance.OnSaltarDash;
+            @Saltar.started -= instance.OnSaltar;
+            @Saltar.performed -= instance.OnSaltar;
+            @Saltar.canceled -= instance.OnSaltar;
             @Empujar.started -= instance.OnEmpujar;
             @Empujar.performed -= instance.OnEmpujar;
             @Empujar.canceled -= instance.OnEmpujar;
@@ -1132,12 +1132,12 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnLinterna(InputAction.CallbackContext context);
         /// <summary>
-        /// Method invoked when associated input action "Saltar/Dash" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "Saltar" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnSaltarDash(InputAction.CallbackContext context);
+        void OnSaltar(InputAction.CallbackContext context);
         /// <summary>
         /// Method invoked when associated input action "Empujar" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>

@@ -23,6 +23,7 @@ public class SistemaSalud : MonoBehaviour, IReceptorDano
     [Header("I-Frames (Inmunidad)")]
     public float tiempoInmunidad = 0.2f;
     private float ultimoTiempoDano = -100f;
+    private JugadorController controladorJugador;
 
     private Rigidbody2D rb;
 
@@ -41,6 +42,7 @@ public class SistemaSalud : MonoBehaviour, IReceptorDano
     {
         vidaActual = vidaMaxima;
         rb = GetComponent<Rigidbody2D>();
+        controladorJugador = GetComponent<JugadorController>();
     }
 
     private void Start()
@@ -73,6 +75,9 @@ public class SistemaSalud : MonoBehaviour, IReceptorDano
     public void RecibirDano(float cantidad, Vector2 direccion, float fuerza)
     {
         if (estaMuertoDefinitivo) return;
+
+        if (controladorJugador != null && controladorJugador.estaSaltando) return;
+
         if (Time.time - ultimoTiempoDano < tiempoInmunidad) return;
         ultimoTiempoDano = Time.time;
 

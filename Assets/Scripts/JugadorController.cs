@@ -30,6 +30,8 @@ public class JugadorController : MonoBehaviour
     [Header("Linterna")]
     public GameObject objetoLinterna;
 
+    [HideInInspector] public bool estaSaltando = false;
+
     private bool estaMuerto = false;
 
     // Variables para recuperar la cámara tras resucitar
@@ -77,10 +79,13 @@ public class JugadorController : MonoBehaviour
 
     private void Update()
     {
-        if (estaMuerto)
+
+        if (estaMuerto || estaSaltando)
         {
             moduloMovimiento.Mover(Vector2.zero, 0f);
             moduloCombate.ProcesarInputDisparo(false, moduloInput.DireccionMirando);
+
+            if (estaSaltando) moduloInput.IntentoSalto = false; // Consumimos el input para evitar bugs
             return;
         }
 
@@ -192,8 +197,8 @@ public class JugadorController : MonoBehaviour
 
         if (esHumano)
         {
-            // ---> ¡LA SOLUCIÓN AL BUG ESTÁ AQUÍ! <---
-            this.enabled = true; // Encendemos este script
+            
+            this.enabled = true; 
 
             if (pInput != null) pInput.enabled = true;
             if (jInput != null) jInput.enabled = true;
@@ -205,8 +210,8 @@ public class JugadorController : MonoBehaviour
         }
         else
         {
-            // ---> ¡LA SOLUCIÓN AL BUG ESTÁ AQUÍ! <---
-            this.enabled = false; // Apagamos este script para los bots
+         
+            this.enabled = false; 
 
             if (pInput != null) pInput.enabled = false;
             if (jInput != null) jInput.enabled = false;
@@ -216,5 +221,40 @@ public class JugadorController : MonoBehaviour
             if (agente != null) agente.enabled = true;
             if (botController != null) botController.enabled = true;
         }
+    }
+
+    public void IniciarSaltoValla(Vector3 puntoDestino, float duracion)
+    {
+        if (!estaSaltando && !estaMuerto)
+        {
+            StartCoroutine(RutinaSaltoValla(puntoDestino, duracion));
+        }
+    }
+
+    private System.Collections.IEnumerator RutinaSaltoValla(Vector3 destino, float duracion)
+    {
+        estaSaltando = true;
+
+        // Apagamos la colisión para atravesar la valla físicamente
+        Collider2D miCollider = GetComponent<Collider2D>();
+        if (miCollider != null) miCollider.enabled = false;
+
+        Vector3 inicio = transform.position;
+        float tiempoPasado = 0f;
+
+        // Movimiento ultra-fluido (Lerp matemático)
+        while (tiempoPasado < duracion)
+        {
+            transform.position = Vector3.Lerp(inicio, destino, tiempoPasado / duracion);
+            tiempoPasado += Time.deltaTime;
+            yield return null;
+        }
+
+        // Aseguramos que termine exactamente en el punto
+        transform.position = destino;
+
+        // Restauramos al jugador
+        if (miCollider != null) miCollider.enabled = true;
+        estaSaltando = false;
     }
 }

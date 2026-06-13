@@ -154,7 +154,15 @@ public class ZombiController : MonoBehaviour
         }
         return jugadorMasCercano;
     }
+    public void Ralentizar(float porcentaje)
+    {
+        if (agente != null) agente.speed = velocidadMovimiento * porcentaje;
+    }
 
+    public void RestaurarVelocidad()
+    {
+        if (agente != null) agente.speed = velocidadMovimiento;
+    }
     private void Morir()
     {
         PoolManager.Instancia.DevolverObjeto(etiquetaPool, gameObject);
