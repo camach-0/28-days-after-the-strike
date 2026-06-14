@@ -101,9 +101,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7816d63e6693f334e9c7c3772d4e215c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  etiquetaPool: ItemMolotov
   armaPrefabParaMano: {fileID: 3966038693361337947, guid: 69c516644bbc169418fc8b4b77279e5a, type: 3}
   indiceSlot: 2
+  tieneMemoria: 0
+  cargadorGuardado: 0
+  reservaGuardada: 0
 --- !u!61 &1490990833323198406
 BoxCollider2D:
   m_ObjectHideFlags: 0

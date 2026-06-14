@@ -47,7 +47,7 @@ public class ItemRecogible : MonoBehaviour
 
         // 2. Instanciar la nueva arma en la mano
         GameObject nuevaArmaObj = Instantiate(armaPrefabParaMano, pivoteArma);
-        nuevaArmaObj.transform.localPosition = new Vector3(0.6f, 0, 0);
+        nuevaArmaObj.transform.localPosition = new Vector3(0.15f, 0, 0);
         nuevaArmaObj.transform.localRotation = Quaternion.identity;
 
         ControladorArma nuevoControlador = nuevaArmaObj.GetComponent<ControladorArma>();

@@ -23,6 +23,13 @@ public class ControladorArmaFuego : ControladorArma
     [Tooltip("Debe coincidir con la etiqueta del PoolManager (ej. 'CasquilloUzi')")]
     public string etiquetaPoolCasquillo = "CasquilloBase";
 
+
+    [Header("Animaciones del Arma")]
+    public Animator animatorArma;
+
+    private readonly int hashDisparar = Animator.StringToHash("Disparar");
+    private readonly int hashRecargar = Animator.StringToHash("Recargar");
+
     private bool estaDisparandoRafaga = false;
     private bool estaDesplegando = false; 
 
@@ -159,6 +166,11 @@ public class ControladorArmaFuego : ControladorArma
             destelloVisual.ReproducirDestello();
         }
 
+        if (animatorArma != null)
+        {
+            animatorArma.SetTrigger(hashDisparar);
+        }
+
         if (puntoExpulsionCasquillo != null && !string.IsNullOrEmpty(etiquetaPoolCasquillo))
         {
             GameObject casquilloObj = PoolManager.Instancia.SolicitarObjeto(etiquetaPoolCasquillo, puntoExpulsionCasquillo.position, puntoExpulsionCasquillo.rotation);
@@ -209,6 +221,10 @@ public class ControladorArmaFuego : ControladorArma
 
     public void IniciarRecarga()
     {
+        if (animatorArma != null)
+        {
+            animatorArma.SetTrigger(hashRecargar);
+        }
         if (!estaRecargando && municionActualCargador < datosFuego.tamanoCargador)
         {
             if (datosFuego.reservaInfinita || municionActualReserva > 0)
