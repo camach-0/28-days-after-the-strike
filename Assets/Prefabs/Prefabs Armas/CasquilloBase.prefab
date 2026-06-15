@@ -77,7 +77,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 3
   m_Sprite: {fileID: 7444995207389981657, guid: ad35f4382082d90478495ddfbe54efa1, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -131,4 +131,4 @@ MonoBehaviour:
   fuerzaMinima: 3
   fuerzaMaxima: 5
   torqueAleatorio: 500
-  tiempoVida: 1
+  tiempoVida: 0.5
