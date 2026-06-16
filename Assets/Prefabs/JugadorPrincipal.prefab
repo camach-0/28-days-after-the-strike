@@ -355,7 +355,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: -8520283693059095266, guid: b6fda8e2ca51d19459380fbce9491e70, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -505,10 +505,10 @@ MonoBehaviour:
   prefabTarjetaAliado: {fileID: 8619630992804809667, guid: 914e63c2f3db47848b248a997437722f, type: 3}
   contenedorTarjetas: {fileID: 7689037144634199516}
   carasPersonajes:
-  - {fileID: -8514925768281243838, guid: 37fb7d10c2425704096e8b433f744de7, type: 3}
-  - {fileID: -1345883014919538527, guid: b66426e036ad2a64d9a288080e368cdc, type: 3}
-  - {fileID: -8579853722817384451, guid: 9deea3048a33cf440aca296eb286b05d, type: 3}
-  - {fileID: 2955892557625681686, guid: 51c20073348687a4f85b093ce3634019, type: 3}
+  - {fileID: -7426043819265290518, guid: ea75dd9455bcdf948ae679abcb5018a5, type: 3}
+  - {fileID: 1104734993525691483, guid: c333032669fdd02408276eeb38b53374, type: 3}
+  - {fileID: 894715177870542775, guid: fe0a24978e602c44bafda44d1dc0c918, type: 3}
+  - {fileID: 2777168949390205583, guid: 14f12b45bb61ac141b76075fe0e40a3b, type: 3}
 --- !u!1 &1060740599537716561
 GameObject:
   m_ObjectHideFlags: 0
@@ -649,7 +649,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 8684992999707593719, guid: bdb9a9b8b134dfa47b170597eb923047, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -861,7 +861,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
+  m_Sprite: {fileID: 8877640415228654637, guid: 62c0c079b9c0bf849a56bebca3b2b064, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
