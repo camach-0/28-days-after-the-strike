@@ -24,14 +24,15 @@ public class ZombiController : MonoBehaviour
     public float danoAlJugador = 10f;
     public float velocidadAtaque = 1.0f;
 
-    // NUEVO: Variables para el Algoritmo Boid (Efecto L4D)
     [Header("Comportamiento de Horda (Boids)")]
-    [Tooltip("Distancia a la que empieza a empujar a otros zombis")]
     public float radioSeparacion = 0.8f;
-    [Tooltip("Qué tan fuerte se empujan entre ellos")]
     public float fuerzaSeparacion = 3f;
-    [Tooltip("La capa de Unity donde están los zombis")]
     public LayerMask capaZombis;
+
+    [Header("Efectos de Sonido")]
+    public AudioClip sonidoAtaque;
+    public AudioClip sonidoIdle;
+    [HideInInspector] public float tiempoSiguienteSonidoIdle = 0f;
 
     [HideInInspector] public NavMeshAgent agente;
     [HideInInspector] public SistemaSalud moduloSalud;
@@ -82,29 +83,22 @@ public class ZombiController : MonoBehaviour
         if (moduloSalud.vidaActual <= 0) return;
 
         estadoActual?.Actualizar(this);
-
-        // NUEVO: Aplicamos la separación de horda en cada frame
         AplicarSeparacionBoids();
     }
 
-    // NUEVO: La magia matemática de la Separación
     private void AplicarSeparacionBoids()
     {
-        // Lanzamos un radar circular para encontrar a otros zombis
         Collider2D[] vecinos = Physics2D.OverlapCircleAll(transform.position, radioSeparacion, capaZombis);
         Vector2 fuerzaRepulsion = Vector2.zero;
         int conteo = 0;
 
         foreach (Collider2D vecino in vecinos)
         {
-            // Evitamos que el zombi se detecte y se empuje a sí mismo
             if (vecino.gameObject != this.gameObject)
             {
-                // Calculamos la dirección opuesta al vecino
                 Vector2 direccionAlejamiento = (Vector2)transform.position - (Vector2)vecino.transform.position;
                 float distancia = direccionAlejamiento.magnitude;
 
-                // Cuanto más cerca está el compañero, más fuerte es el empujón
                 if (distancia > 0)
                 {
                     fuerzaRepulsion += (direccionAlejamiento.normalized / distancia);
@@ -113,11 +107,9 @@ public class ZombiController : MonoBehaviour
             }
         }
 
-        // Si hay zombis cerca, calculamos el empujón final y lo aplicamos
         if (conteo > 0)
         {
             fuerzaRepulsion /= conteo;
-            // Deslizamos al zombi suavemente sin romper su persecución del NavMesh
             transform.position += (Vector3)(fuerzaRepulsion * fuerzaSeparacion * Time.deltaTime);
         }
     }
@@ -174,16 +166,11 @@ public class ZombiController : MonoBehaviour
         Gizmos.DrawWireSphere(transform.position, radioVision);
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, radioPatrullaje);
-
-        // NUEVO: Dibujamos la burbuja de repulsión en color azul para que la puedas ajustar visualmente
         Gizmos.color = Color.cyan;
         Gizmos.DrawWireSphere(transform.position, radioSeparacion);
     }
 }
 
-// ==========================================
-// PATRÓN STATE: LAS CLASES DE COMPORTAMIENTO
-// ==========================================
 public interface IEstadoZombi
 {
     void Entrar(ZombiController zombi);
@@ -196,6 +183,8 @@ public class EstadoDeambularZombi : IEstadoZombi
     public void Entrar(ZombiController zombi)
     {
         if (zombi.esEstatico) zombi.agente.isStopped = true;
+        // Reiniciamos el temporizador para que no gruñan apenas nacen
+        zombi.tiempoSiguienteSonidoIdle = Time.time + Random.Range(3f, 8f);
     }
 
     public void Actualizar(ZombiController zombi)
@@ -206,6 +195,13 @@ public class EstadoDeambularZombi : IEstadoZombi
             zombi.objetivoJugador = presa;
             zombi.CambiarEstado(zombi.estadoPerseguir);
             return;
+        }
+
+        // Lógica de Sonido Reposo: Gruñidos aleatorios mientras patrullan
+        if (Time.time >= zombi.tiempoSiguienteSonidoIdle && zombi.sonidoIdle != null)
+        {
+            AudioSource.PlayClipAtPoint(zombi.sonidoIdle, zombi.transform.position, 0.3f);
+            zombi.tiempoSiguienteSonidoIdle = Time.time + Random.Range(5f, 12f);
         }
 
         if (!zombi.esDeHorda && !zombi.esEstatico)
@@ -272,6 +268,12 @@ public class EstadoPerseguirZombi : IEstadoZombi
                 if (saludObjetivo != null)
                 {
                     saludObjetivo.RecibirDano(zombi.danoAlJugador, Vector2.zero, 0f);
+
+                    // Lógica de Sonido Ataque: Suena justo al golpear al jugador
+                    if (zombi.sonidoAtaque != null)
+                    {
+                        AudioSource.PlayClipAtPoint(zombi.sonidoAtaque, zombi.transform.position, 0.6f);
+                    }
                 }
 
                 zombi.tiempoSiguienteAtaque = Time.time + zombi.velocidadAtaque;

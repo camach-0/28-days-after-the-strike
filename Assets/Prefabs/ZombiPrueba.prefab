@@ -203,6 +203,9 @@ MonoBehaviour:
   capaZombis:
     serializedVersion: 2
     m_Bits: 256
+  sonidoAtaque: {fileID: 8300000, guid: d17ccb9f54d31f642a64e4284db2c280, type: 3}
+  sonidoIdle: {fileID: 8300000, guid: 3a0f7e79b5b9f184fae8a1bd6bf37d1e, type: 3}
+  tiempoSiguienteSonidoIdle: 0
   agente: {fileID: 0}
   moduloSalud: {fileID: 0}
   objetivoJugador: {fileID: 0}
@@ -225,3 +228,4 @@ MonoBehaviour:
   vidaIncapacidadMax: 300
   desangradoPorSegundo: 2
   tiempoInmunidad: 0
+  etiquetaSangrePool: SangreZombi
