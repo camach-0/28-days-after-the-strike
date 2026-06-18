@@ -76,7 +76,10 @@ public class SistemaSalud : MonoBehaviour, IReceptorDano
         }
     }
 
-    public void RecibirDano(float cantidad, Vector2 direccion, float fuerza)
+    // ==========================================
+    // ¡CORREGIDO! Firma actualizada con idAtacante = -1
+    // ==========================================
+    public void RecibirDano(float cantidad, Vector2 direccion, float fuerza, int idAtacante = -1)
     {
         if (estaMuertoDefinitivo) return;
 
@@ -128,6 +131,14 @@ public class SistemaSalud : MonoBehaviour, IReceptorDano
 
         if (cantidad > 0)
         {
+            // ==========================================
+            // ¡ESTADÍSTICA! Sumamos el daño recibido al jugador
+            // ==========================================
+            if (esSuperviviente && controladorJugador != null && controladorJugador.idJugador != -1)
+            {
+                DatosGlobales.statsDanoRecibido[controladorJugador.idJugador] += cantidad;
+            }
+
             vidaActual -= cantidad;
             if (vidaActual < 0) vidaActual = 0;
             OnVidaCambiada?.Invoke(vidaActual / vidaMaxima);
@@ -147,6 +158,24 @@ public class SistemaSalud : MonoBehaviour, IReceptorDano
             }
             else
             {
+                // ==========================================
+                // ¡ESTADÍSTICA! Un zombi acaba de morir, le damos la Kill al atacante
+                // ==========================================
+                if (idAtacante >= 0 && idAtacante < 4)
+                {
+                    ZombiController zombiBase = GetComponent<ZombiController>();
+                    if (zombiBase != null)
+                    {
+                        DatosGlobales.statsZombiesMuertos[idAtacante]++;
+
+                        // Si el zombi tiene la casilla "esEspecial" marcada, le suma a la cuenta de especiales
+                        /*if (zombiBase.esEspecial)
+                        {
+                            DatosGlobales.statsEspecialesMuertos[idAtacante]++;
+                        }*/
+                    }
+                }
+
                 StopAllCoroutines();
                 OnMuerte?.Invoke();
             }
@@ -319,7 +348,12 @@ public class SistemaSalud : MonoBehaviour, IReceptorDano
             if (agente != null)
             {
                 agente.enabled = true;
-                agente.isStopped = false;
+
+                // ¡PARCHE DE SEGURIDAD! Solo lo movemos si Unity confirma que está tocando el NavMesh
+                if (agente.isOnNavMesh)
+                {
+                    agente.isStopped = false;
+                }
             }
 
             MonoBehaviour botCtrl = GetComponent("AliadoBotController") as MonoBehaviour;
@@ -353,7 +387,18 @@ public class SistemaSalud : MonoBehaviour, IReceptorDano
     {
         estaIncapacitado = false;
 
-        vidaActual = 50f;
+        // ¡LA MAGIA ESTÁ AQUÍ! Separamos la lógica usando tu variable esSuperviviente
+        if (esSuperviviente)
+        {
+            // Los jugadores reviven con el desfibrilador a 50 HP
+            vidaActual = 50f;
+        }
+        else
+        {
+            // Los zombis (y el Tank) nacen del Pool con su vida máxima intacta (ej. 6000)
+            vidaActual = vidaMaxima;
+        }
+
         vidaTemporal = 0f;
 
         ReactivarCuerpo();

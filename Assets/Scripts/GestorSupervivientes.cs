@@ -22,11 +22,9 @@ public class GestorSupervivientes : MonoBehaviour
     {
         int humanos = DatosGlobales.cantidadJugadoresHumanos;
 
-        // 1. Apagamos todas las cámaras por seguridad
         foreach (Camera cam in camaras) if (cam != null) cam.gameObject.SetActive(false);
         foreach (CinemachineCamera vCam in camarasVirtuales) if (vCam != null) vCam.gameObject.SetActive(false);
 
-        // 2. Configuramos a los 4 personajes
         for (int i = 0; i < personajesEnEscena.Length; i++)
         {
             GameObject personaje = personajesEnEscena[i];
@@ -48,9 +46,12 @@ public class GestorSupervivientes : MonoBehaviour
 
             if (esControladoPorHumano)
             {
-                // --- ES UN HUMANO ---
-                // ¡Usamos tu función maestra para encender todo lo del humano!
-                if (scriptJugador != null) scriptJugador.ConfigurarRol(true);
+                if (scriptJugador != null)
+                {
+                    scriptJugador.ConfigurarRol(true);
+                    // ¡AQUÍ ESTÁ LA MAGIA! Le inyectamos su ID oficial
+                    scriptJugador.idJugador = idDelHumano;
+                }
 
                 if (inputHumano != null)
                 {
@@ -63,10 +64,8 @@ public class GestorSupervivientes : MonoBehaviour
                     }
                 }
 
-                // Le ponemos su nombre oficial (Ej: "CHOLO")
                 personaje.name = DatosGlobales.nombresPersonajes[i];
 
-                // --- SISTEMA DE CÁMARAS CINEMACHINE ---
                 if (camaras.Length > idDelHumano && camaras[idDelHumano] != null)
                 {
                     camaras[idDelHumano].gameObject.SetActive(true);
@@ -90,11 +89,12 @@ public class GestorSupervivientes : MonoBehaviour
             }
             else
             {
-                // --- ES UN BOT ---
-                // ¡Usamos tu función maestra para encender la IA y apagar el Input!
-                if (scriptJugador != null) scriptJugador.ConfigurarRol(false);
+                if (scriptJugador != null)
+                {
+                    scriptJugador.ConfigurarRol(false);
+                    scriptJugador.idJugador = -1; // Nos aseguramos de que el bot no robe puntos
+                }
 
-                // Le ponemos su nombre oficial más la etiqueta Bot (Ej: "COLLA (Bot)")
                 personaje.name = DatosGlobales.nombresPersonajes[i] + " (Bot)";
 
                 Canvas canvasDelBot = personaje.GetComponentInChildren<Canvas>();

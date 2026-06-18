@@ -6,8 +6,7 @@ public class ControladorM60 : ControladorArma
     [Tooltip("Arrastra aquí el DatosArmaFuego de tu M60")]
     public DatosArmaFuego datosM60;
 
-    /*[Tooltip("Punto desde donde salen las balas")]
-    public Transform puntoDisparo;*/
+    
 
     [Tooltip("Nombre de la bala en el PoolManager")]
     public string etiquetaPoolBala = "BalaBase";
@@ -17,20 +16,16 @@ public class ControladorM60 : ControladorArma
 
     private int balasRestantes;
     private InventarioJugador miInventario;
+    private int miIDJugador = -1;
 
-    // Cumplimos el contrato de la clase abstracta
-   // public override string EtiquetaPoolSuelo => etiquetaSuelo;
-
-    // Si la M60 es pesada, frenará al jugador usando el dato de tu ScriptableObject
     public override float ModificadorVelocidad => datosM60 != null ? datosM60.modificadorVelocidad : 1f;
 
     private void Awake()
     {
-        if (datosM60 != null)
-        {
-            // La M60 arranca con su cargador al máximo (ej. 150 balas)
-            balasRestantes = datosM60.tamanoCargador;
-        }
+        if (datosM60 != null) balasRestantes = datosM60.tamanoCargador;
+
+    JugadorController miJugador = GetComponentInParent<JugadorController>();
+    if (miJugador != null) miIDJugador = miJugador.idJugador;
     }
 
     private void Start()
@@ -72,7 +67,8 @@ public class ControladorM60 : ControladorArma
                     (int)datosM60.danoBase,
                     datosM60.fuerzaEmpuje,
                     datosM60.penetracionZombis,
-                    datosM60.alcance
+                    datosM60.alcance,
+                    miIDJugador
                 );
             }
         }

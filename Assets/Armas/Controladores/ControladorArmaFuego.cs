@@ -39,15 +39,16 @@ public class ControladorArmaFuego : ControladorArma
   
     private float recoilActual = 0f;
     private float tiempoProximoEmpujon = 0f;
-    private Rigidbody2D rbJugador; 
-
-   
+    private Rigidbody2D rbJugador;
+    private int miIDJugador = -1;
     // Exponemos el peso del arma al Jugador
     public override float ModificadorVelocidad => datosFuego != null ? datosFuego.modificadorVelocidad : 1f;
 
     private void Awake()
     {
         rbJugador = GetComponentInParent<Rigidbody2D>();
+        JugadorController miJugador = GetComponentInParent<JugadorController>();
+        if (miJugador != null) miIDJugador = miJugador.idJugador;
     }
 
     void Start()
@@ -213,13 +214,14 @@ public class ControladorArmaFuego : ControladorArma
             {
                 Bala scriptBala = nuevaBala.GetComponent<Bala>();
 
-                // ¡AQUÍ LE PASAMOS ABSOLUTAMENTE TODO A LA BALA!
+           
                 scriptBala.ConfigurarBala(
                     rotacionFinalBala * Vector2.right, // Dirección
                     (int)datosFuego.danoBase,          // Daño
                     datosFuego.fuerzaEmpuje,           // Knockback
                     datosFuego.penetracionZombis,      // Penetración
-                    datosFuego.alcance                 // Alcance (Tiempo de vida)
+                    datosFuego.alcance,                // Alcance (Tiempo de vida)
+                    miIDJugador                         // ID del atacante
                 );
             }
         }

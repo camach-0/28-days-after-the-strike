@@ -10,11 +10,11 @@ public class Bala : MonoBehaviour
 
     [Header("Atributos Físicos")]
     public float velocidad = 20f;
-    // ¡Adiós tiempoDeVida fijo! Ahora es un cálculo dinámico según el arma.
 
     [HideInInspector] public int dano;
     [HideInInspector] public float fuerzaEmpuje;
     [HideInInspector] public int penetracionRestante;
+    [HideInInspector] public int idAtacante = -1;
 
     private Rigidbody2D rb;
 
@@ -31,13 +31,12 @@ public class Bala : MonoBehaviour
     // ========================================================
     private void OnEnable()
     {
-        // ¡VACÍO! Ya no iniciamos el contador de muerte aquí.
-        // Esperaremos a que el arma nos pase el alcance primero.
+        
     }
 
     private void OnDisable()
     {
-        // Al apagarse, limpiamos su inercia para que no nazca moviéndose en su próxima vida
+       
         StopAllCoroutines();
         if (rb != null) rb.linearVelocity = Vector2.zero;
     }
@@ -47,30 +46,30 @@ public class Bala : MonoBehaviour
     // ========================================================
     public void ConfigurarDireccion(Vector2 direccion)
     {
-        // Cuando el bot dispara, no nos manda estadísticas. 
-        // Así que le ponemos valores por defecto: 10 daño, 5 empuje, 1 penetración, 15 alcance.
-        ConfigurarBala(direccion, 10, 0.5f, 1 , 15f);
+
+        ConfigurarBala(direccion, 10, 0.5f, 1, 15f, -1);
     }
 
     // ========================================================
     // Función unificada que recibe toda la balística del jugador
     // ========================================================
-    public void ConfigurarBala(Vector2 direccion, int danoArma, float empuje, int penetracion, float alcanceMaximo)
+    public void ConfigurarBala(Vector2 direccion, int danoArma, float empuje, int penetracion, float alcanceMaximo, int idAtacanteFinal = -1)
     {
         if (rb != null)
         {
             rb.linearVelocity = direccion.normalized * velocidad;
         }
 
-        // Asignamos las estadísticas puras que nos manda el arma
+       
         dano = danoArma;
         fuerzaEmpuje = empuje;
         penetracionRestante = penetracion;
+        idAtacante = idAtacanteFinal;
 
-        // Calculamos matemáticamente cuánto tiempo vivirá basada en su alcance y velocidad
+
         float tiempoDeVida = alcanceMaximo / velocidad;
 
-        StopAllCoroutines(); // Limpiamos cualquier contador fantasma de su vida pasada
+        StopAllCoroutines(); 
         StartCoroutine(DesactivarTrasTiempo(tiempoDeVida));
     }
 
@@ -82,34 +81,32 @@ public class Bala : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D colision)
     {
-        // Ignoramos al jugador, otras balas y objetos tirados en el piso
+        
         if (colision.CompareTag("Player") || colision.CompareTag("Bala") || colision.CompareTag("Recogible")) return;
 
-        // ¡EL BLINDAJE PARA TRABAJO EN EQUIPO!
-        // Al usar GetComponentsInParent (en plural), buscamos en el objeto y en sus padres
-        // TODOS los scripts que tengan IReceptorDano (Salud, Empuje de tu compañero, etc.)
+     
         IReceptorDano[] receptores = colision.GetComponentsInParent<IReceptorDano>();
 
         if (receptores.Length > 0)
         {
             foreach (IReceptorDano receptor in receptores)
             {
-                // Le avisa a TODO el mundo: "¡Recibimos daño!"
+                
                 Debug.Log($"[BALA] Chocó con {colision.name}. Avisando al script: {receptor.GetType().Name}. Daño enviado: {dano}");
-                // Así tu SistemaSalud quita vida, y el ZombiController de tu amigo aplica el empuje.
-                receptor.RecibirDano(dano, rb.linearVelocity.normalized, fuerzaEmpuje);
+
+                receptor.RecibirDano(dano, rb.linearVelocity.normalized, fuerzaEmpuje, idAtacante);
             }
 
-            // ¡MECÁNICA DE PENETRACIÓN! Restamos a un zombi atravesado
+         
             penetracionRestante--;
         }
         else
         {
-            // Si choca contra una pared u obstáculo rígido
+
             penetracionRestante = 0;
         }
 
-        // Solo la devolvemos a la piscina si ya no le queda fuerza de penetración
+  
         if (penetracionRestante <= 0)
         {
             PoolManager.Instancia.DevolverObjeto(etiquetaPool, gameObject);
