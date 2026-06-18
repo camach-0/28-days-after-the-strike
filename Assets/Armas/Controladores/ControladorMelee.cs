@@ -7,8 +7,13 @@ public class ControladorMelee : ControladorArma
 
     [Tooltip("Define qué capas (Layers) reciben daño para no golpear paredes")]
     public LayerMask capaEnemigos;
+    private int miIDJugador = -1;
 
-    // Exponemos la etiqueta del suelo
+    private void Start()
+    {
+        JugadorController miJugador = GetComponentInParent<JugadorController>();
+        if (miJugador != null) miIDJugador = miJugador.idJugador;
+    }
 
     public override void IntentarAtaque(Vector2 direccionApuntado)
     {
@@ -40,7 +45,12 @@ public class ControladorMelee : ControladorArma
 
             foreach (IReceptorDano receptor in receptores)
             {
-                receptor.RecibirDano(datosMelee.danoBase, direccionApuntado, datosMelee.fuerzaEmpuje);
+                receptor.RecibirDano(datosMelee.danoBase, direccionApuntado, datosMelee.fuerzaEmpuje, miIDJugador);
+                SistemaSalud saludEnemigo = colision.GetComponentInParent<SistemaSalud>();
+                if (saludEnemigo != null && saludEnemigo.vidaActual <= 0 && miIDJugador >= 0)
+                {
+                    DatosGlobales.statsBajasMelee[miIDJugador]++;
+                }
             }
         }
     }
