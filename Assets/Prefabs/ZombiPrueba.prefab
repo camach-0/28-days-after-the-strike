@@ -15,6 +15,8 @@ GameObject:
   - component: {fileID: -5195807299367350778}
   - component: {fileID: 1943248567774476257}
   - component: {fileID: 1708112719996731842}
+  - component: {fileID: -5716621277062781276}
+  - component: {fileID: -4389352860081089038}
   m_Layer: 8
   m_Name: ZombiPrueba
   m_TagString: Enemy
@@ -82,7 +84,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 1
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.18798423, g: 1, b: 0, a: 1}
+  m_Color: {r: 0.6203132, g: 0.96981126, b: 0.636051, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -190,6 +192,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   etiquetaPool: ZombiBase
+  esEspecial: 0
   esDeHorda: 0
   esEstatico: 0
   velocidadMovimiento: 5
@@ -206,6 +209,8 @@ MonoBehaviour:
   sonidoAtaque: {fileID: 8300000, guid: d17ccb9f54d31f642a64e4284db2c280, type: 3}
   sonidoIdle: {fileID: 8300000, guid: 3a0f7e79b5b9f184fae8a1bd6bf37d1e, type: 3}
   tiempoSiguienteSonidoIdle: 0
+  animator: {fileID: 0}
+  spriteRenderer: {fileID: 0}
   agente: {fileID: 0}
   moduloSalud: {fileID: 0}
   objetivoJugador: {fileID: 0}
@@ -229,3 +234,43 @@ MonoBehaviour:
   desangradoPorSegundo: 2
   tiempoInmunidad: 0
   etiquetaSangrePool: SangreZombi
+--- !u!114 &-5716621277062781276
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 715580906502479141}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: abfbd2f4faa8ab04f96e8741e960dcdf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animator: {fileID: -4389352860081089038}
+  variacionesAnimacion:
+  - {fileID: 9100000, guid: 3073ca996b5be5e45b1884fc507abe2d, type: 2}
+  - {fileID: 22100000, guid: f7e7c7f8cd5b41e4db29b065dad7c797, type: 2}
+  - {fileID: 22100000, guid: 2bd2849e12763e84fa366c171cbd6f87, type: 2}
+  - {fileID: 22100000, guid: ccb8c540bb5eadd4b94d7e67b8801622, type: 2}
+--- !u!95 &-4389352860081089038
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 715580906502479141}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 3073ca996b5be5e45b1884fc507abe2d, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0

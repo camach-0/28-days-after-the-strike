@@ -11,6 +11,7 @@ public class ZombiController : MonoBehaviour
     public static int zombisActivosEnMapa = 0;
 
     [Header("Cerebro de IA")]
+    public bool esEspecial = false;
     public bool esDeHorda = false;
     public bool esEstatico = false;
     public float velocidadMovimiento = 4f;
@@ -34,6 +35,12 @@ public class ZombiController : MonoBehaviour
     public AudioClip sonidoIdle;
     [HideInInspector] public float tiempoSiguienteSonidoIdle = 0f;
 
+    // ==========================================
+    // ¡NUEVO! REFERENCIAS DE ANIMACIÓN
+    // ==========================================
+    [HideInInspector] public Animator animator;
+    [HideInInspector] public SpriteRenderer spriteRenderer;
+
     [HideInInspector] public NavMeshAgent agente;
     [HideInInspector] public SistemaSalud moduloSalud;
     [HideInInspector] public Transform objetivoJugador;
@@ -48,6 +55,10 @@ public class ZombiController : MonoBehaviour
     {
         agente = GetComponent<NavMeshAgent>();
         moduloSalud = GetComponent<SistemaSalud>();
+
+        // Buscamos el Animator y el SpriteRenderer (incluso si están en un objeto hijo)
+        animator = GetComponentInChildren<Animator>();
+        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
 
         agente.updateRotation = false;
         agente.updateUpAxis = false;
@@ -84,6 +95,25 @@ public class ZombiController : MonoBehaviour
 
         estadoActual?.Actualizar(this);
         AplicarSeparacionBoids();
+
+        // ==========================================
+        // ¡NUEVO! ACTUALIZAR ANIMACIONES Y DIRECCIÓN
+        // ==========================================
+        if (agente != null)
+        {
+            // 1. Le decimos al Animator a qué velocidad nos movemos
+            if (animator != null)
+            {
+                animator.SetFloat("Velocidad", agente.velocity.magnitude);
+            }
+
+            // 2. Volteamos el Sprite si camina a la izquierda (solo si se está moviendo)
+            if (spriteRenderer != null && agente.velocity.sqrMagnitude > 0.01f)
+            {
+                // Si la velocidad en X es menor a 0, mira a la izquierda (flipX = true)
+                spriteRenderer.flipX = agente.velocity.x < 0;
+            }
+        }
     }
 
     private void AplicarSeparacionBoids()
@@ -183,7 +213,6 @@ public class EstadoDeambularZombi : IEstadoZombi
     public void Entrar(ZombiController zombi)
     {
         if (zombi.esEstatico) zombi.agente.isStopped = true;
-        // Reiniciamos el temporizador para que no gruñan apenas nacen
         zombi.tiempoSiguienteSonidoIdle = Time.time + Random.Range(3f, 8f);
     }
 
@@ -197,7 +226,6 @@ public class EstadoDeambularZombi : IEstadoZombi
             return;
         }
 
-        // Lógica de Sonido Reposo: Gruñidos aleatorios mientras patrullan
         if (Time.time >= zombi.tiempoSiguienteSonidoIdle && zombi.sonidoIdle != null)
         {
             AudioSource.PlayClipAtPoint(zombi.sonidoIdle, zombi.transform.position, 0.3f);
@@ -267,9 +295,16 @@ public class EstadoPerseguirZombi : IEstadoZombi
             {
                 if (saludObjetivo != null)
                 {
+                    // ==========================================
+                    // ¡NUEVO! DISPARAMOS LA ANIMACIÓN DE ATAQUE
+                    // ==========================================
+                    if (zombi.animator != null)
+                    {
+                        zombi.animator.SetTrigger("Atacar");
+                    }
+
                     saludObjetivo.RecibirDano(zombi.danoAlJugador, Vector2.zero, 0f);
 
-                    // Lógica de Sonido Ataque: Suena justo al golpear al jugador
                     if (zombi.sonidoAtaque != null)
                     {
                         AudioSource.PlayClipAtPoint(zombi.sonidoAtaque, zombi.transform.position, 0.6f);
