@@ -15,11 +15,11 @@ GameObject:
   - component: {fileID: 768873954676075199}
   - component: {fileID: 327531220024756157}
   - component: {fileID: 1163859890575609166}
-  - component: {fileID: 3078536054224421438}
   - component: {fileID: 2460270746568832450}
-  m_Layer: 0
+  - component: {fileID: 7333449552616175373}
+  m_Layer: 9
   m_Name: Zombi_Tank
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -33,7 +33,7 @@ Transform:
   m_GameObject: {fileID: 2075032916746073749}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -36.49668, y: -14.309911, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -84,7 +84,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
+  m_Sprite: {fileID: 4326872430171513394, guid: 1b15f63e032cc2942a434de9f40c706e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -114,7 +114,7 @@ NavMeshAgent:
   m_AutoBraking: 1
   m_AutoRepath: 1
   m_Height: 1
-  m_BaseOffset: 0.5
+  m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
 --- !u!61 &6950364569521057000
@@ -155,7 +155,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
+    oldSize: {x: 1.4135135, y: 1.4162163}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
@@ -171,14 +171,14 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2075032916746073749}
-  m_BodyType: 0
+  m_BodyType: 1
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
   m_LinearDamping: 0
   m_AngularDamping: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 0
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
@@ -203,7 +203,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   esSuperviviente: 0
-  vidaMaxima: 100
+  vidaMaxima: 6000
   vidaIncapacidadMax: 300
   desangradoPorSegundo: 2
   tiempoInmunidad: 0.2
@@ -220,11 +220,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dfbd8425aad919c4fb7d0b344156f667, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  etiquetaPool: ZombiBase
-  esDeHorda: 0
+  etiquetaPool: Zombi_Tank
+  esDeHorda: 1
   esEstatico: 0
-  velocidadMovimiento: 4
-  multiplicadorVelocidadPatrulla: 0.3
+  velocidadMovimiento: 4.5
+  multiplicadorVelocidadPatrulla: 0.1
   radioVision: 5
   radioPatrullaje: 8
   danoAlJugador: 10
@@ -242,24 +242,6 @@ MonoBehaviour:
   objetivoJugador: {fileID: 0}
   tiempoSiguienteAtaque: 0
   tiempoEsperaPatrulla: 0
---- !u!114 &3078536054224421438
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2075032916746073749}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 46dae816676b1574f92013b183deaa2c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  esSuperviviente: 0
-  vidaMaxima: 100
-  vidaIncapacidadMax: 300
-  desangradoPorSegundo: 2
-  tiempoInmunidad: 0.2
-  etiquetaSangrePool: SangreZombi
 --- !u!114 &2460270746568832450
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -273,7 +255,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rangoPunetazo: 2.5
-  danoPunetazo: 35
+  danoPunetazo: 15
   fuerzaKnockback: 25
   cooldownPunetazo: 1.5
   etiquetaRocaPool: RocaTank
@@ -281,11 +263,27 @@ MonoBehaviour:
   cooldownRoca: 6
   tiempoCasteoRoca: 1.2
   multiplicadorVelocidadFuego: 1.4
-  sonidoPunetazo: {fileID: 0}
+  musicaTank: {fileID: 8300000, guid: a821bf68e78eb4746b42b625b05f6261, type: 3}
+  "sonidoGru\xF1idoConstante": {fileID: 8300000, guid: b9566672f8e09da4ea9bb0a2556401f1, type: 3}
+  sonidoPunetazo: {fileID: 8300000, guid: ca2901544233a33448af4ec66a691eea, type: 3}
   sonidoArrancarRoca: {fileID: 0}
   sonidoLanzarRoca: {fileID: 0}
-  sonidoFuriaFuego: {fileID: 0}
+  sonidoFuriaFuego: {fileID: 8300000, guid: 7ae0f62accb31fc45b459e7579f18d1a, type: 3}
   sonidoMuertePesada: {fileID: 0}
+--- !u!114 &7333449552616175373
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2075032916746073749}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 718864f84b15dc94e9c51c4a924ec949, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  danoPorSegundo: 18
+  esPermanente: 1
 --- !u!1 &2242285297850127670
 GameObject:
   m_ObjectHideFlags: 0
@@ -297,8 +295,7 @@ GameObject:
   - component: {fileID: 2362744827427437848}
   - component: {fileID: 2004193977278802980}
   - component: {fileID: 5596524356292473104}
-  - component: {fileID: 32941172099372276}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: PuntoLanzamientoRoca
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -314,7 +311,7 @@ Transform:
   m_GameObject: {fileID: 2242285297850127670}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.058, y: 0.387, z: 0}
+  m_LocalPosition: {x: 0.028, y: 0.651, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -383,20 +380,3 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
   m_Radius: 0.5
---- !u!114 &32941172099372276
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2242285297850127670}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 593e68f3d55cb8745a7b0412f89e53c8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  velocidad: 15
-  danoImpacto: 40
-  fuerzaKnockback: 15
-  tiempoDeVida: 4
-  etiquetaPool: RocaTank

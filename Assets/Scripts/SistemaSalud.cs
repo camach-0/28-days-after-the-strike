@@ -319,7 +319,12 @@ public class SistemaSalud : MonoBehaviour, IReceptorDano
             if (agente != null)
             {
                 agente.enabled = true;
-                agente.isStopped = false;
+
+                // ¡PARCHE DE SEGURIDAD! Solo lo movemos si Unity confirma que está tocando el NavMesh
+                if (agente.isOnNavMesh)
+                {
+                    agente.isStopped = false;
+                }
             }
 
             MonoBehaviour botCtrl = GetComponent("AliadoBotController") as MonoBehaviour;
@@ -349,11 +354,23 @@ public class SistemaSalud : MonoBehaviour, IReceptorDano
     }
 
     // ESTADO 2: Revivir de la muerte absoluta
+    // ESTADO 2: Revivir de la muerte absoluta
     public void Revivir()
     {
         estaIncapacitado = false;
 
-        vidaActual = 50f;
+        // ¡LA MAGIA ESTÁ AQUÍ! Separamos la lógica usando tu variable esSuperviviente
+        if (esSuperviviente)
+        {
+            // Los jugadores reviven con el desfibrilador a 50 HP
+            vidaActual = 50f;
+        }
+        else
+        {
+            // Los zombis (y el Tank) nacen del Pool con su vida máxima intacta (ej. 6000)
+            vidaActual = vidaMaxima;
+        }
+
         vidaTemporal = 0f;
 
         ReactivarCuerpo();

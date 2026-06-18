@@ -5,6 +5,9 @@ using UnityEngine.AI;
 
 public class GameDirector : MonoBehaviour
 {
+    [Header("Configuración del Tank")]
+    public string etiquetaTank = "Zombi_Tank";
+    public bool tankGenerado = false;
     [Header("Configuración de la Horda")]
     public string etiquetaZombi = "ZombiBase";
     public float distanciaDeAparicion = 20f;
@@ -188,5 +191,14 @@ public class GameDirector : MonoBehaviour
             }
         }
         yield return null;
+    }
+    public void GenerarTank(Vector2 posicionAparicion)
+    {
+        if (!tankGenerado)
+        {
+            tankGenerado = true;
+            Debug.Log("<color=red>¡EL DIRECTOR HA SOLTADO AL TANK!</color>");
+            PoolManager.Instancia.SolicitarObjeto(etiquetaTank, posicionAparicion, Quaternion.identity);
+        }
     }
 }

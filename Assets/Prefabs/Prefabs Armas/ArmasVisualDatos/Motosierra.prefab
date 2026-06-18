@@ -144,6 +144,9 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 768
   etiquetaSuelo: ItemMotosierra
+  audioMotosierra: {fileID: 0}
+  sonidoAtacando: {fileID: 8300000, guid: e8b9df86efdc64349858259d8d10025a, type: 3}
+  sonidoRotura: {fileID: 0}
 --- !u!1 &7984054316178748915
 GameObject:
   m_ObjectHideFlags: 0

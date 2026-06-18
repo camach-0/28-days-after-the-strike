@@ -35,9 +35,10 @@ public class ProyectilRoca : MonoBehaviour
             }
             Desaparecer();
         }
-        else if (collision.CompareTag("Obstaculos"))
+        // SOLUCIÓN: Ahora verifica si choca con la capa (Layer) Obstaculos en lugar del Tag
+        else if (collision.gameObject.layer == LayerMask.NameToLayer("Obstaculos"))
         {
-            Desaparecer(); // Se destruye si choca con la pared
+            Desaparecer();
         }
     }
 
