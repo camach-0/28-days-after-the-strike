@@ -64,8 +64,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7551775808541604476, guid: 94c3db6f2d7697143a2c453531c992a6, type: 3}
+      propertyPath: particulasMovimiento
+      value: 
+      objectReference: {fileID: 7196551423885488728}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 2817441086283879919, guid: 94c3db6f2d7697143a2c453531c992a6, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 94c3db6f2d7697143a2c453531c992a6, type: 3}
+--- !u!198 &7196551423885488728 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 3327047455528947470, guid: 94c3db6f2d7697143a2c453531c992a6, type: 3}
+  m_PrefabInstance: {fileID: 5616909492922694998}
+  m_PrefabAsset: {fileID: 0}
