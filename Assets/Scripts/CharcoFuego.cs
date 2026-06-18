@@ -54,6 +54,10 @@ public class CharcoFuego : MonoBehaviour
 
                         receptor.RecibirDano(dps, Vector2.zero, 0f);
                         AplicarEfecto(col.gameObject, dps, 0f, true);
+
+                        // ¡NUEVO! Le avisamos al Tank que se está quemando
+                        InfectadoTank tank = col.GetComponent<InfectadoTank>();
+                        if (tank != null) tank.EnfurecerPorFuego();
                     }
                     // 3. JUGADOR
                     else if (((1 << col.gameObject.layer) & capaJugadores) != 0)

@@ -8,21 +8,22 @@ public class InfectadoTank : MonoBehaviour
     [Header("Ataque: Puñetazo Masivo")]
     public float rangoPunetazo = 2.5f;
     public float danoPunetazo = 35f;
-    public float fuerzaKnockback = 25f; // Knockback masivo del diagrama
+    public float fuerzaKnockback = 25f;
     public float cooldownPunetazo = 1.5f;
 
     [Header("Ataque: Lanzar Roca")]
-    [Tooltip("Etiqueta para usar con tu PoolManager")]
     public string etiquetaRocaPool = "RocaTank";
     public Transform puntoLanzamientoRoca;
     public float cooldownRoca = 6f;
-    public float tiempoCasteoRoca = 1.2f; // Tiempo arrancando la roca antes de lanzarla
+    public float tiempoCasteoRoca = 1.2f;
 
     [Header("Estado: Fuego")]
     public float multiplicadorVelocidadFuego = 1.4f;
     private bool estaEnLlamas = false;
 
-    [Header("Audios Listos para Agregar")]
+    [Header("Audios y Música")]
+    public AudioClip musicaTank;
+    public AudioClip sonidoGruñidoConstante;
     public AudioClip sonidoPunetazo;
     public AudioClip sonidoArrancarRoca;
     public AudioClip sonidoLanzarRoca;
@@ -34,6 +35,9 @@ public class InfectadoTank : MonoBehaviour
     private SistemaSalud salud;
     private Animator anim;
 
+    private AudioSource fuenteMusica;
+    private AudioSource fuenteGruñido;
+
     private float timerPunetazo = 0f;
     private float timerRoca = 0f;
     private bool realizandoAccionPesada = false;
@@ -44,65 +48,80 @@ public class InfectadoTank : MonoBehaviour
         agente = GetComponent<NavMeshAgent>();
         salud = GetComponent<SistemaSalud>();
         anim = GetComponent<Animator>();
+
+        // Configuramos los altavoces constantes del Tank
+        fuenteMusica = gameObject.AddComponent<AudioSource>();
+        fuenteMusica.spatialBlend = 0f; // 2D (Se escucha en toda la pantalla)
+        fuenteMusica.loop = true;
+
+        fuenteGruñido = gameObject.AddComponent<AudioSource>();
+        fuenteGruñido.spatialBlend = 1f; // 3D (Se escucha más fuerte si el Tank está cerca)
+        fuenteGruñido.loop = true;
     }
 
     private void OnEnable()
     {
         estaEnLlamas = false;
         realizandoAccionPesada = false;
-        if (salud != null) salud.OnMuerte += EjecutarMuertePesada; // Evento Global de Daño
+        if (salud != null) salud.OnMuerte += EjecutarMuertePesada;
+
+        // Iniciar Música y Gruñidos
+        if (musicaTank != null) { fuenteMusica.clip = musicaTank; fuenteMusica.Play(); }
+        if (sonidoGruñidoConstante != null) { fuenteGruñido.clip = sonidoGruñidoConstante; fuenteGruñido.Play(); }
     }
 
     private void OnDisable()
     {
         if (salud != null) salud.OnMuerte -= EjecutarMuertePesada;
+        fuenteMusica.Stop();
+        fuenteGruñido.Stop();
     }
 
     private void Update()
     {
-        // Si está muerto o en medio de una animación de ataque, no toma nuevas decisiones
         if (salud.vidaActual <= 0 || realizandoAccionPesada) return;
 
         Transform objetivo = zombiController.objetivoJugador;
 
         if (objetivo != null)
         {
+            // ¡MECÁNICA NUEVA! Si el objetivo cae al suelo, el Tank lo ignora y busca otro.
+            SistemaSalud saludObjetivo = objetivo.GetComponent<SistemaSalud>();
+            if (saludObjetivo != null && (saludObjetivo.estaIncapacitado || saludObjetivo.estaMuertoDefinitivo))
+            {
+                zombiController.objetivoJugador = null; // Forza al ZombiController a escanear de nuevo
+                return;
+            }
+
             float distancia = Vector2.Distance(transform.position, objetivo.position);
 
-            // DIAGRAMA: ¿Jugador cerca y camino libre? -> Puñetazo con Knockback
             if (distancia <= rangoPunetazo && Time.time >= timerPunetazo)
             {
                 StartCoroutine(RutinaPunetazo(objetivo));
             }
-            // DIAGRAMA: ¿Roca recargada? -> Lanzar Roca (Si está lejos)
             else if (distancia > rangoPunetazo && Time.time >= timerRoca)
             {
-                // Validación extra: Comprobar que no haya una pared entre el Tank y el jugador
                 Vector2 direccionAlJugador = (objetivo.position - transform.position).normalized;
                 RaycastHit2D hit = Physics2D.Raycast(transform.position, direccionAlJugador, distancia, LayerMask.GetMask("Obstaculos"));
 
-                if (hit.collider == null) // Camino visual libre
+                if (hit.collider == null)
                 {
                     StartCoroutine(RutinaLanzarRoca(objetivo));
                 }
             }
-            // DIAGRAMA: Si no -> Perseguir Objetivo destructivamente 
-            // (Tu ZombiController ya se encarga de mover el NavMeshAgent hacia el jugador)
         }
     }
 
     private IEnumerator RutinaPunetazo(Transform objetivo)
     {
         realizandoAccionPesada = true;
-        agente.isStopped = true; // Se frena para golpear
+        agente.isStopped = true;
 
         if (anim != null) anim.SetTrigger("Atacar");
-
-        yield return new WaitForSeconds(0.3f); // Sincronización con la animación
+        yield return new WaitForSeconds(0.3f);
 
         if (sonidoPunetazo != null) AudioSource.PlayClipAtPoint(sonidoPunetazo, transform.position);
 
-        // Aplica el daño y el knockback si el jugador no lo esquivó
         if (objetivo != null && Vector2.Distance(transform.position, objetivo.position) <= rangoPunetazo + 1f)
         {
             SistemaSalud saludObjetivo = objetivo.GetComponent<SistemaSalud>();
@@ -122,7 +141,7 @@ public class InfectadoTank : MonoBehaviour
     {
         realizandoAccionPesada = true;
         agente.isStopped = true;
-        timerRoca = Time.time + cooldownRoca; // Inicia el cooldown
+        timerRoca = Time.time + cooldownRoca;
 
         if (anim != null) anim.SetTrigger("ArrancarRoca");
         if (sonidoArrancarRoca != null) AudioSource.PlayClipAtPoint(sonidoArrancarRoca, transform.position);
@@ -134,7 +153,6 @@ public class InfectadoTank : MonoBehaviour
             if (anim != null) anim.SetTrigger("LanzarRoca");
             if (sonidoLanzarRoca != null) AudioSource.PlayClipAtPoint(sonidoLanzarRoca, transform.position);
 
-            // Generar proyectil con PoolManager
             GameObject roca = PoolManager.Instancia.SolicitarObjeto(etiquetaRocaPool, puntoLanzamientoRoca.position, Quaternion.identity);
             if (roca != null)
             {
@@ -151,24 +169,22 @@ public class InfectadoTank : MonoBehaviour
         agente.isStopped = false;
     }
 
-    // DIAGRAMA: Pierde HP continuamente + Aumento de velocidad
-    // Conecta esta función a tu script "SensibilidadFuego" o al trigger del molotov
     public void EnfurecerPorFuego()
     {
         if (!estaEnLlamas)
         {
             estaEnLlamas = true;
             zombiController.velocidadMovimiento *= multiplicadorVelocidadFuego;
-            zombiController.RestaurarVelocidad(); // Actualiza el NavMeshAgent
+            zombiController.RestaurarVelocidad();
 
             if (sonidoFuriaFuego != null) AudioSource.PlayClipAtPoint(sonidoFuriaFuego, transform.position);
-            // La pérdida de HP continua la debe seguir manejando tu componente "SensibilidadFuego"
         }
     }
 
     private void EjecutarMuertePesada()
     {
         if (sonidoMuertePesada != null) AudioSource.PlayClipAtPoint(sonidoMuertePesada, transform.position);
-        // Desaparecer / Object Pool se ejecuta mediante tu ZombiController o el trigger del Animator
+        fuenteMusica.Stop();
+        fuenteGruñido.Stop();
     }
 }
