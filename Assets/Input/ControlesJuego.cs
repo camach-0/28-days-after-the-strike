@@ -693,6 +693,15 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""EntrarLobby"",
+                    ""type"": ""Button"",
+                    ""id"": ""19a7f9a6-f779-4b33-9199-065a42bc2487"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -915,6 +924,28 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
                     ""action"": ""Click"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""0e25f216-4b0d-4a22-bb5f-b6e9a096f0ef"",
+                    ""path"": ""<Keyboard>/enter"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""EntrarLobby"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a7a69acb-8d48-48d2-aa1e-c3c385e6abab"",
+                    ""path"": ""<DualShockGamepad>/start"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""EntrarLobby"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -975,6 +1006,7 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
         m_UI_Cancel = m_UI.FindAction("Cancel", throwIfNotFound: true);
         m_UI_Point = m_UI.FindAction("Point", throwIfNotFound: true);
         m_UI_Click = m_UI.FindAction("Click", throwIfNotFound: true);
+        m_UI_EntrarLobby = m_UI.FindAction("EntrarLobby", throwIfNotFound: true);
     }
 
     ~@ControlesJuego()
@@ -1333,6 +1365,7 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
     private readonly InputAction m_UI_Cancel;
     private readonly InputAction m_UI_Point;
     private readonly InputAction m_UI_Click;
+    private readonly InputAction m_UI_EntrarLobby;
     /// <summary>
     /// Provides access to input actions defined in input action map "UI".
     /// </summary>
@@ -1364,6 +1397,10 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "UI/Click".
         /// </summary>
         public InputAction @Click => m_Wrapper.m_UI_Click;
+        /// <summary>
+        /// Provides access to the underlying input action "UI/EntrarLobby".
+        /// </summary>
+        public InputAction @EntrarLobby => m_Wrapper.m_UI_EntrarLobby;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -1405,6 +1442,9 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
             @Click.started += instance.OnClick;
             @Click.performed += instance.OnClick;
             @Click.canceled += instance.OnClick;
+            @EntrarLobby.started += instance.OnEntrarLobby;
+            @EntrarLobby.performed += instance.OnEntrarLobby;
+            @EntrarLobby.canceled += instance.OnEntrarLobby;
         }
 
         /// <summary>
@@ -1431,6 +1471,9 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
             @Click.started -= instance.OnClick;
             @Click.performed -= instance.OnClick;
             @Click.canceled -= instance.OnClick;
+            @EntrarLobby.started -= instance.OnEntrarLobby;
+            @EntrarLobby.performed -= instance.OnEntrarLobby;
+            @EntrarLobby.canceled -= instance.OnEntrarLobby;
         }
 
         /// <summary>
@@ -1659,5 +1702,12 @@ public partial class @ControlesJuego: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnClick(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "EntrarLobby" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnEntrarLobby(InputAction.CallbackContext context);
     }
 }

@@ -1,79 +1,115 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Collections;
 using System.Linq;
 
 public class ControladorLobby : MonoBehaviour
 {
-    public int miIDJugador; // 0 (P1), 1 (P2), etc.
-    public int indicePersonajeActual = 0; // En qué panel está parado (0 al 3)
+    public int miIDJugador; 
+    public int indicePersonajeActual = 0;
     public bool estaListo = false;
 
-    private bool ejeEnUso = false; // Filtro para que el mando no "patine" súper rápido
+    // Variables para evitar que la cruceta se mueva demasiado rápido
+    private bool puedeMoverse = true;
+    private float tiempoEsperaMovimiento = 0.2f;
+    private float temporizadorMovimiento = 0f;
 
     private void Start()
     {
-        // Pedimos un ID al Manager al aparecer en pantalla
+
         miIDJugador = LobbyManager.Instancia.RegistrarNuevoJugador(this);
-        indicePersonajeActual = miIDJugador; // Cada quien empieza en su propio panel
+        indicePersonajeActual = miIDJugador;
+
+        PlayerInput miInput = GetComponent<PlayerInput>();
+        if (miInput != null)
+        {
+            DatosGlobales.dispositivosPorJugador[miIDJugador] = miInput.devices.ToArray();
+            DatosGlobales.esquemasControlPorJugador[miIDJugador] = miInput.currentControlScheme;
+        }
+
         LobbyManager.Instancia.ActualizarVisuales();
     }
 
-    // Usamos OnMover (tus flechas o joystick)
-    public void OnMover(InputValue valor)
+    private void Update()
     {
-        if (estaListo) return;
-
-        Vector2 input = valor.Get<Vector2>();
-
-        // EL CHISMOSO: Esto imprimirá en la consola las flechas que aprietes
-        Debug.Log("Moviendo cursor. Señal recibida: " + input);
-
-        if (input.x > 0.5f && !ejeEnUso)
+        if (!puedeMoverse)
         {
-            MoverCursor(1);
-            ejeEnUso = true;
+            temporizadorMovimiento += Time.deltaTime;
+            if (temporizadorMovimiento >= tiempoEsperaMovimiento)
+            {
+                puedeMoverse = true;
+                temporizadorMovimiento = 0f;
+            }
         }
-        else if (input.x < -0.5f && !ejeEnUso)
+    }
+
+    public void OnNavigate(InputValue valor)
+    {
+   
+        if (estaListo || !puedeMoverse) return;
+
+        Vector2 direccion = valor.Get<Vector2>();
+
+        if (direccion.x > 0.5f)
+        {
+            MoverCursor(1); 
+            puedeMoverse = false;
+        }
+        else if (direccion.x < -0.5f)
         {
             MoverCursor(-1);
-            ejeEnUso = true;
-        }
-        else if (Mathf.Abs(input.x) < 0.2f)
-        {
-            ejeEnUso = false;
+            puedeMoverse = false;
         }
     }
-
-    public void OnDisparar(InputValue valor)
+    public void OnSubmit()
     {
-        // EL CHISMOSO: Imprimirá si detecta tu botón de selección
-        Debug.Log("¡Botón de selección presionado!");
-
-        if (valor.isPressed && !estaListo)
+        if (!estaListo)
         {
-            estaListo = true;
-            DatosGlobales.personajesSeleccionados[miIDJugador] = indicePersonajeActual;
-            // --- NUEVO: GUARDAMOS EL MANDO O TECLADO EXACTO AQUÍ ---
-            PlayerInput pi = GetComponent<PlayerInput>();
-            if (pi != null)
+            if (!LobbyManager.Instancia.EstaPersonajeLibre(indicePersonajeActual))
             {
-                // Guardamos el control físico exacto y el nombre de su esquema (Teclado o Mando)
-                DatosGlobales.dispositivosPorJugador[miIDJugador] = pi.devices.ToArray();
-                DatosGlobales.esquemasControlPorJugador[miIDJugador] = pi.currentControlScheme;
+                return;
             }
 
-            LobbyManager.Instancia.ComprobarTodosListos();
+            estaListo = true;
+            DatosGlobales.GuardarPersonaje(miIDJugador, indicePersonajeActual);
             LobbyManager.Instancia.ActualizarVisuales();
+            LobbyManager.Instancia.ComprobarTodosListos();
         }
     }
+
+    public void OnCancel()
+    {
+        if (estaListo)
+        {
+            estaListo = false;
+            LobbyManager.Instancia.ActualizarVisuales();
+            LobbyManager.Instancia.ComprobarTodosListos();
+        }
+        else
+        {
+            if (miIDJugador == 0)
+            {
+                LobbyManager.Instancia.VolverAlMenu();
+            }
+        }
+    }
+
 
     private void MoverCursor(int direccion)
     {
-        indicePersonajeActual += direccion;
+        int intentos = 0;
+        do
+        {
+            indicePersonajeActual += direccion;
 
-        // Efecto "Pac-Man" (si pasas del último, vuelves al primero)
-        if (indicePersonajeActual > 3) indicePersonajeActual = 0;
-        if (indicePersonajeActual < 0) indicePersonajeActual = 3;
+            if (indicePersonajeActual >= LobbyManager.Instancia.slotsVisuales.Length)
+                indicePersonajeActual = 0;
+            else if (indicePersonajeActual < 0)
+                indicePersonajeActual = LobbyManager.Instancia.slotsVisuales.Length - 1;
+
+            intentos++;
+        }
+        while (!LobbyManager.Instancia.EstaPersonajeLibre(indicePersonajeActual) && intentos < 4);
 
         LobbyManager.Instancia.ActualizarVisuales();
     }

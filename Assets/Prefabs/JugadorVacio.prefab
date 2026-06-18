@@ -60,7 +60,7 @@ MonoBehaviour:
   m_ActionEvents: []
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
-  m_DefaultActionMap: Jugador
+  m_DefaultActionMap: a5500c1f-e937-4946-ad61-fd18a995c8bc
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
 --- !u!114 &-3042485312678882074

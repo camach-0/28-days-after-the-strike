@@ -1,8 +1,9 @@
-using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.SceneManagement;
-using TMPro;
+using System.Collections;
 using System.Collections.Generic;
+using TMPro;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class LobbyManager : MonoBehaviour
 {
@@ -17,6 +18,10 @@ public class LobbyManager : MonoBehaviour
     public Sprite[] fotosBlancoYNegro;
     [Tooltip("Las 4 fotos a TODO COLOR (Orden: Cholo, Colla, Camba, Chola)")]
     public Sprite[] fotosColor;
+
+
+    [Header("Sistema de Carga")]
+    public CargadorEscenas sistemaCarga;
 
     private List<ControladorLobby> jugadoresConectados = new List<ControladorLobby>();
 
@@ -42,48 +47,40 @@ public class LobbyManager : MonoBehaviour
 
     public void ActualizarVisuales()
     {
-        // Revisamos los 4 paneles (0 al 3)
         for (int i = 0; i < slotsVisuales.Length; i++)
         {
             GameObject panel = slotsVisuales[i];
-
-            // Buscamos la foto y el texto dentro de este panel
             Transform objetoFoto = panel.transform.Find("FOTO");
             Transform objetoTexto = panel.transform.Find("STAR");
 
             Image imagenFoto = objetoFoto != null ? objetoFoto.GetComponent<Image>() : null;
             TMP_Text textoStar = objetoTexto != null ? objetoTexto.GetComponent<TMP_Text>() : null;
 
-            // Variables para saber qué pasa en este panel específico
             bool hayAlguienAqui = false;
             bool estanListos = false;
             string nombresJugadores = "";
 
-            // Preguntamos a todos los jugadores si están parados en este panel
             foreach (ControladorLobby jug in jugadoresConectados)
             {
                 if (jug.indicePersonajeActual == i)
                 {
                     hayAlguienAqui = true;
                     if (jug.estaListo) estanListos = true;
-                    nombresJugadores += "P" + (jug.miIDJugador + 1) + " "; // Ej: "P1 " o "P1 P2 "
+                    nombresJugadores += "P" + (jug.miIDJugador + 1) + " ";
                 }
             }
 
-            // APLICAMOS EL EFECTO METAL SLUG
             if (imagenFoto != null)
             {
                 if (hayAlguienAqui)
                 {
-                    // Alguien está encima: PONEMOS LA FOTO A COLOR
                     if (fotosColor.Length > i) imagenFoto.sprite = fotosColor[i];
-                    imagenFoto.color = Color.white; // Color puro
+                    imagenFoto.color = Color.white;
                 }
                 else
                 {
-                    // Nadie está encima: PONEMOS LA FOTO EN BLANCO Y NEGRO
                     if (fotosBlancoYNegro.Length > i) imagenFoto.sprite = fotosBlancoYNegro[i];
-                    imagenFoto.color = new Color(0.7f, 0.7f, 0.7f); // Un poco oscurecido para dar contraste
+                    imagenFoto.color = new Color(0.7f, 0.7f, 0.7f);
                 }
             }
 
@@ -96,7 +93,7 @@ public class LobbyManager : MonoBehaviour
                 }
                 else
                 {
-                    textoStar.text = ""; // Si no hay nadie, ocultamos el texto de "P1"
+                    textoStar.text = "";
                 }
             }
         }
@@ -104,20 +101,57 @@ public class LobbyManager : MonoBehaviour
 
     public void ComprobarTodosListos()
     {
+        if (jugadoresConectados.Count == 0) return;
+
         bool todosListos = true;
         foreach (ControladorLobby jug in jugadoresConectados)
         {
             if (!jug.estaListo) todosListos = false;
         }
 
-        if (jugadoresConectados.Count > 0 && todosListos)
+        botonEmpezar.interactable = todosListos;
+
+        if (todosListos)
         {
-            botonEmpezar.interactable = true;
+            StartCoroutine(MoverFocoAlBoton());
         }
+        else
+        {
+            if (UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject == botonEmpezar.gameObject)
+            {
+                UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(null);
+            }
+        }
+    }
+
+    private IEnumerator MoverFocoAlBoton()
+    {
+        yield return new WaitForSeconds(0.2f);
+        UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(null);
+        UnityEngine.EventSystems.EventSystem.current.SetSelectedGameObject(botonEmpezar.gameObject);
     }
 
     public void ConfirmarYJugar()
     {
-        SceneManager.LoadScene("Escena_3_Juego");
+      
+        sistemaCarga.IniciarCarga("Escena_3_Juego");
+    }
+
+    public bool EstaPersonajeLibre(int indiceFoto)
+    {
+        foreach (ControladorLobby jug in jugadoresConectados)
+        {
+            if (jug.indicePersonajeActual == indiceFoto && jug.estaListo)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public void VolverAlMenu()
+    {
+        DatosGlobales.cantidadJugadoresHumanos = 0;
+        SceneManager.LoadScene("Escena_1_Menu");
     }
 }
