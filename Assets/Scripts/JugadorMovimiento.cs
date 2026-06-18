@@ -4,6 +4,10 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D))]
 public class JugadorMovimiento : MonoBehaviour
 {
+    [Header("Particulas de movimiento")]
+    public ParticleSystem particulasMovimiento;
+    private ParticleSystem.EmissionModule emisionParticulas;
+
     [Header("Referencias Visuales")]
     public Transform pivoteArma;
 
@@ -19,6 +23,20 @@ public class JugadorMovimiento : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         rb.gravityScale = 0f;
+        if (particulasMovimiento != null)
+        {
+            emisionParticulas = particulasMovimiento.emission;
+        }
+    }
+
+    private void Update()
+    {
+        bool estaMoviendo = direccionMovimiento.sqrMagnitude > 0.0001f;
+        if (particulasMovimiento != null)
+        {
+            float rate = estaMoviendo ? 35f : 0f;
+            emisionParticulas.rateOverTime = new ParticleSystem.MinMaxCurve(rate);
+        }
     }
 
     public void Mover(Vector2 inputMovimiento, float velocidad)
