@@ -10,6 +10,8 @@ public class JugadorInput : MonoBehaviour
     public Vector2 DireccionMirando { get; private set; } = Vector2.right;
     public bool EstaDisparando { get; private set; }
 
+    public bool IntentoPausar { get; set; }
+    public bool IntentoCancelarUI { get; set; }
     public bool IntentoRecargar { get; set; }
     public bool IntentoLinterna { get; set; }
     public bool IntentoInteractuar { get; set; }
@@ -47,6 +49,8 @@ public class JugadorInput : MonoBehaviour
             DireccionMirando = inputApunte.normalized;
         }
     }
+    public void OnPausa(InputValue valor) { if (valor.isPressed) IntentoPausar = true; }
+    public void OnCancel(InputValue valor) { if (valor.isPressed) IntentoCancelarUI = true; }
 
     public void OnDisparar(InputValue valor) { EstaDisparando = valor.isPressed; }
     public void OnRecargar(InputValue valor) { if (valor.isPressed) IntentoRecargar = true; }
