@@ -76,7 +76,10 @@ public class SistemaSalud : MonoBehaviour, IReceptorDano
         }
     }
 
-    public void RecibirDano(float cantidad, Vector2 direccion, float fuerza)
+    // ==========================================
+    // ¡CORREGIDO! Firma actualizada con idAtacante = -1
+    // ==========================================
+    public void RecibirDano(float cantidad, Vector2 direccion, float fuerza, int idAtacante = -1)
     {
         if (estaMuertoDefinitivo) return;
 
@@ -128,6 +131,14 @@ public class SistemaSalud : MonoBehaviour, IReceptorDano
 
         if (cantidad > 0)
         {
+            // ==========================================
+            // ¡ESTADÍSTICA! Sumamos el daño recibido al jugador
+            // ==========================================
+            if (esSuperviviente && controladorJugador != null && controladorJugador.idJugador != -1)
+            {
+                DatosGlobales.statsDanoRecibido[controladorJugador.idJugador] += cantidad;
+            }
+
             vidaActual -= cantidad;
             if (vidaActual < 0) vidaActual = 0;
             OnVidaCambiada?.Invoke(vidaActual / vidaMaxima);
@@ -147,6 +158,24 @@ public class SistemaSalud : MonoBehaviour, IReceptorDano
             }
             else
             {
+                // ==========================================
+                // ¡ESTADÍSTICA! Un zombi acaba de morir, le damos la Kill al atacante
+                // ==========================================
+                if (idAtacante >= 0 && idAtacante < 4)
+                {
+                    ZombiController zombiBase = GetComponent<ZombiController>();
+                    if (zombiBase != null)
+                    {
+                        DatosGlobales.statsZombiesMuertos[idAtacante]++;
+
+                        // Si el zombi tiene la casilla "esEspecial" marcada, le suma a la cuenta de especiales
+                        /*if (zombiBase.esEspecial)
+                        {
+                            DatosGlobales.statsEspecialesMuertos[idAtacante]++;
+                        }*/
+                    }
+                }
+
                 StopAllCoroutines();
                 OnMuerte?.Invoke();
             }
@@ -353,7 +382,6 @@ public class SistemaSalud : MonoBehaviour, IReceptorDano
         rutinaDecaimiento = StartCoroutine(RutinaDecaimientoTemporal());
     }
 
-    // ESTADO 2: Revivir de la muerte absoluta
     // ESTADO 2: Revivir de la muerte absoluta
     public void Revivir()
     {

@@ -24,8 +24,8 @@ public class ControladorMotosierra : ControladorArma
     public AudioClip sonidoAtacando;
     [Tooltip("Sonido de motor ahogándose o rompiéndose")]
     public AudioClip sonidoRotura;
- 
 
+    private int miIDJugador = -1;
     private float gasolinaActual;
     private bool botonPresionado = false;
     private InventarioJugador miInventario;
@@ -41,6 +41,11 @@ public class ControladorMotosierra : ControladorArma
     private void Start()
     {
         miInventario = GetComponentInParent<InventarioJugador>();
+        JugadorController miJugador = GetComponentInParent<JugadorController>();
+        if (miJugador != null)
+        {
+            miIDJugador = miJugador.idJugador;
+        }
     }
 
     private void Update()
