@@ -46,6 +46,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   puntoDisparo: {fileID: 0}
+  prefabSuelo: {fileID: 0}
   etiquetaBombaVuelo: BombaCasera
   fuerzaLanzamiento: 30
 --- !u!212 &278602896439518374
@@ -92,7 +93,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 4393144724371310382, guid: d967faf38f1f4c34493cefec383a8aa8, type: 3}
+  m_Sprite: {fileID: -5533882970228786351, guid: b4635829cd2c2704ca60668b0f421495, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

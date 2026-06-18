@@ -78,8 +78,8 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 0.47058824, g: 0.10234112, b: 0, a: 1}
+  m_Sprite: {fileID: 5954067073974497741, guid: 7fd69715190dc564d8a47ef51b47ea70, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -101,9 +101,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7816d63e6693f334e9c7c3772d4e215c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  etiquetaPool: ItemBotiquin
   armaPrefabParaMano: {fileID: 5017271401101742472, guid: abc6ca255e85b7e458e4be315f4fd548, type: 3}
   indiceSlot: 3
+  tieneMemoria: 0
+  cargadorGuardado: 0
+  reservaGuardada: 0
 --- !u!61 &1490990833323198406
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -142,7 +144,7 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
+    oldSize: {x: 3.02, y: 2.32}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
