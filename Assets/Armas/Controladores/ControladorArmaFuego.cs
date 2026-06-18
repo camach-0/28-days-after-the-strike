@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using Unity.Cinemachine;
 
 public class ControladorArmaFuego : ControladorArma
 {
@@ -23,6 +24,8 @@ public class ControladorArmaFuego : ControladorArma
     [Tooltip("Debe coincidir con la etiqueta del PoolManager (ej. 'CasquilloUzi')")]
     public string etiquetaPoolCasquillo = "CasquilloBase";
 
+    [Header("Efectos de Cámara")]
+    public CinemachineImpulseSource fuenteTemblor;
 
     [Header("Animaciones del Arma")]
     public Animator animatorArma;
@@ -170,7 +173,10 @@ public class ControladorArmaFuego : ControladorArma
         {
             animatorArma.SetTrigger(hashDisparar);
         }
-
+        if (fuenteTemblor != null)
+        {
+            fuenteTemblor.GenerateImpulse();
+        }
         if (puntoExpulsionCasquillo != null && !string.IsNullOrEmpty(etiquetaPoolCasquillo))
         {
             GameObject casquilloObj = PoolManager.Instancia.SolicitarObjeto(etiquetaPoolCasquillo, puntoExpulsionCasquillo.position, puntoExpulsionCasquillo.rotation);

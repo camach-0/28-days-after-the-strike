@@ -25,6 +25,10 @@ public class SistemaSalud : MonoBehaviour, IReceptorDano
     private float ultimoTiempoDano = -100f;
     private JugadorController controladorJugador;
 
+    [Header("Efectos Visuales (VFX)")]
+    [Tooltip("Etiqueta del PoolManager para la sangre")]
+    public string etiquetaSangrePool = "SangreZombi";
+
     private Rigidbody2D rb;
 
     // ¡CORRECCIÓN! Para estar 100% muerto no debes tener ni vida real ni temporal.
@@ -80,6 +84,13 @@ public class SistemaSalud : MonoBehaviour, IReceptorDano
 
         if (Time.time - ultimoTiempoDano < tiempoInmunidad) return;
         ultimoTiempoDano = Time.time;
+
+        if (!string.IsNullOrEmpty(etiquetaSangrePool) && PoolManager.Instancia != null)
+        {
+            // Calculamos el ángulo para que la sangre salpique en la dirección del impacto
+            float angulo = Mathf.Atan2(direccion.y, direccion.x) * Mathf.Rad2Deg;
+            PoolManager.Instancia.SolicitarObjeto(etiquetaSangrePool, transform.position, Quaternion.Euler(0, 0, angulo));
+        }
 
         if (estaIncapacitado)
         {
