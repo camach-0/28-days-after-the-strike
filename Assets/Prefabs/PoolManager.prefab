@@ -111,3 +111,6 @@ MonoBehaviour:
   - etiqueta: ItemDesfibrilador
     prefab: {fileID: 3755532917166824391, guid: d5c32074dbd39a743af5edb25f36baeb, type: 3}
     cantidadInicial: 5
+  - etiqueta: RocaTank
+    prefab: {fileID: 2075032916746073749, guid: 36b153817b124394e8f513e00b7cafaa, type: 3}
+    cantidadInicial: 5

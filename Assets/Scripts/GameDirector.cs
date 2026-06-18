@@ -23,6 +23,10 @@ public class GameDirector : MonoBehaviour
     public float tiempoPaz_SaludMedia = 35f;
     public float tiempoPaz_SaludBaja = 50f;
 
+    [Header("Efectos de Sonido")]
+    [Tooltip("El sonido aterrador cuando llega una horda")]
+    public AudioClip sonidoHorda;
+
     public static GameDirector Instancia;
     private void Awake()
     {
@@ -52,18 +56,21 @@ public class GameDirector : MonoBehaviour
 
                 Debug.Log($"¡HORDA DETECTADA! {tamanoHorda} zombis atacando desde {cantidadGrupos} direcciones.");
 
+                // Reproducimos el sonido global en la cámara para asegurarnos de que todos lo escuchen
+                if (sonidoHorda != null && Camera.main != null)
+                {
+                    AudioSource.PlayClipAtPoint(sonidoHorda, Camera.main.transform.position, 1f);
+                }
+
                 for (int i = 0; i < cantidadGrupos; i++)
                 {
                     Vector2 direccionAtaque = Random.insideUnitCircle.normalized;
                     Vector2 puntoGeneracionBase = centroEquipo + (direccionAtaque * distanciaDeAparicion);
 
-                    // VALIDACIÓN CORRECTA: Calculamos y validamos zombi por zombi
                     for (int j = 0; j < zombisPorGrupo; j++)
                     {
-                        // 1. Aplicamos el desfase PRIMERO
                         Vector3 posicionDeseada = (Vector3)puntoGeneracionBase + (Vector3)(Random.insideUnitCircle * 3f);
 
-                        // 2. LUEGO validamos que la posición desfasada esté en el NavMesh
                         NavMeshHit hit;
                         if (NavMesh.SamplePosition(posicionDeseada, out hit, 4f, NavMesh.AllAreas))
                         {
@@ -135,6 +142,12 @@ public class GameDirector : MonoBehaviour
     public void DesatarHordaPorVomito(Transform victima)
     {
         Debug.Log($"<color=red>¡EL DIRECTOR SE ENFADA! ¡Enviando horda masiva hacia {victima.name}!</color>");
+
+        if (sonidoHorda != null && Camera.main != null)
+        {
+            AudioSource.PlayClipAtPoint(sonidoHorda, Camera.main.transform.position, 1f);
+        }
+
         StopAllCoroutines();
         StartCoroutine(RutinaHordaDirigida(victima));
         StartCoroutine(GenerarHordasDinamicas());
@@ -155,7 +168,6 @@ public class GameDirector : MonoBehaviour
 
             for (int j = 0; j < zombisPorGrupo; j++)
             {
-                // Mismo parche de seguridad aquí
                 Vector3 posicionDeseada = (Vector3)puntoGeneracionBase + (Vector3)(Random.insideUnitCircle * 3f);
 
                 NavMeshHit hit;

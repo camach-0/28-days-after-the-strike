@@ -16,7 +16,7 @@ MonoBehaviour:
   iconoArma: {fileID: 0}
   danoBase: 50
   cadenciaAtaque: 0.11
-  sonidoAtaque: {fileID: 0}
+  sonidoAtaque: {fileID: 8300000, guid: af344261d5f594444a19533f2fe3e2c6, type: 3}
   etiquetaPoolSuelo: ItemM60
   esAutomatica: 1
   esRafaga: 0

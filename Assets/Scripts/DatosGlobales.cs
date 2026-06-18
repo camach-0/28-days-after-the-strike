@@ -13,17 +13,36 @@ public static class DatosGlobales
     public static string[] nombresPersonajes = { "CHOLO", "COLLA", "CAMBA", "CHOLA" };
     public static Color[] coloresPersonajes = {
         Color.red,
-        new Color(0.5f, 0f, 1f), // Morado
+        new Color(0.5f, 0f, 1f), 
         Color.cyan,
         Color.magenta
     };
 
-    // ¡La función que faltaba para guardar la selección!
+
     public static void GuardarPersonaje(int idJugador, int indicePersonaje)
     {
         if (idJugador >= 0 && idJugador < 4)
         {
             personajesSeleccionados[idJugador] = indicePersonaje;
+        }
+    }
+  
+    public static int[] statsZombiesMuertos = new int[4];
+    public static int[] statsEspecialesMuertos = new int[4];
+    public static int[] statsBajasMelee = new int[4];
+    public static float[] statsDanoRecibido = new float[4];
+    public static int[] statsVecesMuerto = new int[4];
+
+
+    public static void LimpiarEstadisticas()
+    {
+        for (int i = 0; i < 4; i++)
+        {
+            statsZombiesMuertos[i] = 0;
+            statsEspecialesMuertos[i] = 0;
+            statsBajasMelee[i] = 0;
+            statsDanoRecibido[i] = 0;
+            statsVecesMuerto[i] = 0;
         }
     }
 }

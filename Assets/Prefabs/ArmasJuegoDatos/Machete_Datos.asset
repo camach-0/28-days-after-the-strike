@@ -16,7 +16,7 @@ MonoBehaviour:
   iconoArma: {fileID: -6455951945800486476, guid: 2f0819b151dbda04595226aa4b189775, type: 3}
   danoBase: 45
   cadenciaAtaque: 0.4
-  sonidoAtaque: {fileID: 8300000, guid: 0cad7184a96359b4ba784b1897061e3f, type: 3}
+  sonidoAtaque: {fileID: 8300000, guid: 1e4a8edf6b6f99646810ac373573d170, type: 3}
   etiquetaPoolSuelo: ItemMachete
   radioImpacto: 1.2
   fuerzaEmpuje: 4

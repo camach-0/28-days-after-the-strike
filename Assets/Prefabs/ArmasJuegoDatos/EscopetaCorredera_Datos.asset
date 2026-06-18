@@ -16,7 +16,7 @@ MonoBehaviour:
   iconoArma: {fileID: 0}
   danoBase: 45
   cadenciaAtaque: 0.8
-  sonidoAtaque: {fileID: 0}
+  sonidoAtaque: {fileID: 8300000, guid: bae26c2de6015334fa2adb5a0e822102, type: 3}
   etiquetaPoolSuelo: ItemEscopeta
   esAutomatica: 0
   esRafaga: 0
@@ -30,7 +30,7 @@ MonoBehaviour:
   fuerzaEmpuje: 1.5
   causaTambaleo: 0
   alcance: 20
-  dispersionMinima: 2
+  dispersionMinima: 10
   dispersionMaxima: 8
   incrementoRecoil: 2
   velocidadRecuperacion: 10

@@ -11,6 +11,12 @@ public class JugadorMovimiento : MonoBehaviour
     [Header("Referencias Visuales")]
     public Transform pivoteArma;
 
+    [Header("Efectos de Sonido (Pasos)")]
+    public AudioClip sonidoPasos;
+    [Tooltip("Tiempo en segundos entre cada sonido de paso")]
+    public float tiempoEntrePasos = 0.35f;
+    private float tiempoProximoPaso = 0f;
+
     private Rigidbody2D rb;
     private Vector2 direccionMovimiento;
 
@@ -32,10 +38,23 @@ public class JugadorMovimiento : MonoBehaviour
     private void Update()
     {
         bool estaMoviendo = direccionMovimiento.sqrMagnitude > 0.0001f;
+
         if (particulasMovimiento != null)
         {
             float rate = estaMoviendo ? 35f : 0f;
             emisionParticulas.rateOverTime = new ParticleSystem.MinMaxCurve(rate);
+        }
+
+        // --- LÓGICA DE SONIDO DE PASOS ---
+        if (estaMoviendo && Time.time >= tiempoProximoPaso && sonidoPasos != null)
+        {
+            // Reproducimos el paso con volumen al 30% (0.3f) para que no aturda
+            AudioSource.PlayClipAtPoint(sonidoPasos, transform.position, 0.3f);
+
+            // Calculamos cuándo debe sonar el siguiente. 
+            // Si el jugador corre más rápido por adrenalina, los pasos suenan más rápido.
+            float intervaloReal = tiempoEntrePasos / multiplicadorActivo;
+            tiempoProximoPaso = Time.time + intervaloReal;
         }
     }
 

@@ -65,6 +65,14 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7551775808541604476, guid: 94c3db6f2d7697143a2c453531c992a6, type: 3}
+      propertyPath: sonidoPasos
+      value: 
+      objectReference: {fileID: 8300000, guid: 7454abf7c3b91774e9a07fb1a9a1a62c, type: 3}
+    - target: {fileID: 7551775808541604476, guid: 94c3db6f2d7697143a2c453531c992a6, type: 3}
+      propertyPath: tiempoEntrePasos
+      value: 0.35
+      objectReference: {fileID: 0}
+    - target: {fileID: 7551775808541604476, guid: 94c3db6f2d7697143a2c453531c992a6, type: 3}
       propertyPath: particulasMovimiento
       value: 
       objectReference: {fileID: 7196551423885488728}
