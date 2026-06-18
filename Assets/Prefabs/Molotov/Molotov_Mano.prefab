@@ -77,7 +77,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -457698979394892325, guid: 2d54110326f21aa49928315be2794771, type: 3}
+  m_Sprite: {fileID: 1094486563567290229, guid: 497dcc14514ad524bb9db67fd3168f48, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -101,5 +101,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   puntoDisparo: {fileID: 0}
+  prefabSuelo: {fileID: 0}
   etiquetaBombaVuelo: BombaMolotov
   fuerzaLanzamiento: 15

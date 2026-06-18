@@ -77,7 +77,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -8941912155155970338, guid: 6f071ce91f4b47542a1bc8ff75920d0e, type: 3}
+  m_Sprite: {fileID: -5177136673078335345, guid: 263153e936de48e49a2e33e56dcbdf81, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -103,4 +103,5 @@ MonoBehaviour:
   puntoDisparo: {fileID: 0}
   prefabSuelo: {fileID: 5017271401101742472, guid: bd1e6355420894b43b73790aaa342e2a, type: 3}
   cantidadCuracion: 50
+  tiempoUso: 4
   etiquetaSuelo: Pickup_Botiquin

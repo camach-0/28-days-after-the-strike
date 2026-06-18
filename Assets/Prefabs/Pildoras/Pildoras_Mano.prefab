@@ -77,7 +77,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: -3514112563475813233, guid: d7b2509125e296c41bdd7a089530b720, type: 3}
+  m_Sprite: {fileID: -6414644470441645134, guid: b6d40832546f71e40b35cb42096dd13d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -103,3 +103,4 @@ MonoBehaviour:
   puntoDisparo: {fileID: 0}
   prefabSuelo: {fileID: 9088521424709666215, guid: e1acefe8f01920e419dc1e98c7ec6303, type: 3}
   cantidadSaludTemporal: 60
+  etiquetaSuelo: Pickup_Pildoras

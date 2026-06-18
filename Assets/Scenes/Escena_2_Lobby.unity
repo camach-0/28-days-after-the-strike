@@ -255,7 +255,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: CAMBA
+  m_text: COLLA
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -529,7 +529,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: COLLA
+  m_text: CHOLITA
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1321,7 +1321,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: CHOLITA
+  m_text: CAMBA
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -2724,14 +2724,14 @@ MonoBehaviour:
   - {fileID: 1836040169}
   botonEmpezar: {fileID: 968378522}
   fotosBlancoYNegro:
+  - {fileID: -8069783650239218383, guid: b9572103c45d2844c9e1f7ed85853e0d, type: 3}
   - {fileID: -164860701280030663, guid: 3235cfc38aaa24f4d84ab0a5e7d2e34b, type: 3}
   - {fileID: 7716153224219641526, guid: 792338b68a52b2b449c5e5a35b2f4f02, type: 3}
-  - {fileID: -8069783650239218383, guid: b9572103c45d2844c9e1f7ed85853e0d, type: 3}
   - {fileID: 6503309349473129628, guid: 8d572f69932889d49a84af0eef8d9e2b, type: 3}
   fotosColor:
+  - {fileID: -6518895791026664879, guid: e897f7de28443714da270f74806f3b8a, type: 3}
   - {fileID: -5094656515766970518, guid: fb8d6bc227a3c96428d5a44d32e3d4d2, type: 3}
   - {fileID: 1019635018544608385, guid: 583b20e1ee5b61a4d96e3061a31ea627, type: 3}
-  - {fileID: -6518895791026664879, guid: e897f7de28443714da270f74806f3b8a, type: 3}
   - {fileID: 7463316971211077322, guid: a751fea7b44eda943907949c339f12aa, type: 3}
   sistemaCarga: {fileID: 1261443416}
 --- !u!4 &1721786111
