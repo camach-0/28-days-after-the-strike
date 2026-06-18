@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: a252fc86b1bbb23418d726fa79c127be
+guid: 7dd6007c85eda364588364b4d1d9031a
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 7430966589562845622
-    second: Fondo_Incio_0
+      213: 7016211617873862312
+    second: Boton_Jugar_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -113,13 +113,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Fondo_Incio_0
+      name: Boton_Jugar_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 1662
-        height: 946
+        x: 12
+        y: 19
+        width: 382
+        height: 112
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -128,8 +128,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 6b970b40eb8102760800000000000000
-      internalID: 7430966589562845622
+      spriteID: 8ae17500b479e5160800000000000000
+      internalID: 7016211617873862312
       vertices: []
       indices: 
       edges: []
@@ -148,7 +148,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Fondo_Incio_0: 7430966589562845622
+      Boton_Jugar_0: 7016211617873862312
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
