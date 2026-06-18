@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
-using System.Collections; // ¡NUEVO! Vital para poder "esperar un frame"
+using System.Collections; 
 
 public class NavegacionOpciones : MonoBehaviour
 {

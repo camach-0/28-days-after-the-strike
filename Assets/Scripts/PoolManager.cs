@@ -5,11 +5,11 @@ public class PoolManager : MonoBehaviour
 {
     public static PoolManager Instancia;
 
-    // Esta clase nos permite configurar las piscinas desde el Inspector de Unity
+
     [System.Serializable]
     public class ConfiguracionPool
     {
-        public string etiqueta; // Ej: "BalaPistola", "ZombiNormal", "Botiquin"
+        public string etiqueta; 
         public GameObject prefab;
         public int cantidadInicial;
     }
@@ -38,7 +38,7 @@ public class PoolManager : MonoBehaviour
 
             for (int i = 0; i < pool.cantidadInicial; i++)
             {
-                // Los creamos como hijos de este Manager para que la jerarquía esté limpia
+              
                 GameObject obj = Instantiate(pool.prefab, transform);
                 obj.SetActive(false); // Nacen apagados
                 colaDeObjetos.Enqueue(obj);
@@ -48,7 +48,7 @@ public class PoolManager : MonoBehaviour
         }
     }
 
-    // Cualquier script llama a esta función en lugar de usar Instantiate()
+    
     public GameObject SolicitarObjeto(string etiqueta, Vector3 posicion, Quaternion rotacion)
     {
         if (!diccionarioPiscinas.ContainsKey(etiqueta))
@@ -67,20 +67,20 @@ public class PoolManager : MonoBehaviour
             Debug.Log($"[PoolManager] La piscina {etiqueta} se quedó corta. Creando objeto extra.");
         }
 
-        // Sacamos el primer objeto de la fila
+      
         GameObject objetoASacar = diccionarioPiscinas[etiqueta].Dequeue();
 
         objetoASacar.transform.position = posicion;
         objetoASacar.transform.rotation = rotacion;
-        objetoASacar.SetActive(true); // Lo encendemos
+        objetoASacar.SetActive(true); 
 
         return objetoASacar;
     }
 
-    // Cualquier script llama a esta función en lugar de usar Destroy()
+    
     public void DevolverObjeto(string etiqueta, GameObject objeto)
     {
-        objeto.SetActive(false); // Lo apagamos
-        diccionarioPiscinas[etiqueta].Enqueue(objeto); // Lo volvemos a meter al final de la fila
+        objeto.SetActive(false);
+        diccionarioPiscinas[etiqueta].Enqueue(objeto);
     }
 }
