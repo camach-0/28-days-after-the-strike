@@ -31,8 +31,10 @@ public class SistemaSalud : MonoBehaviour, IReceptorDano
 
     private Rigidbody2D rb;
 
+    // ¡CORRECCIÓN! Para estar 100% muerto no debes tener ni vida real ni temporal.
     public bool estaMuertoDefinitivo => vidaActual <= 0 && vidaTemporal <= 0 && !estaIncapacitado;
 
+    // EVENTOS
     public event Action OnMuerte;
     public event Action OnIncapacitado;
     public event Action<float> OnVidaCambiada;
@@ -74,7 +76,9 @@ public class SistemaSalud : MonoBehaviour, IReceptorDano
         }
     }
 
-    // ¡ACTUALIZADO! Añadimos idAtacante = -1
+    // ==========================================
+    // ¡CORREGIDO! Firma actualizada con idAtacante = -1
+    // ==========================================
     public void RecibirDano(float cantidad, Vector2 direccion, float fuerza, int idAtacante = -1)
     {
         if (estaMuertoDefinitivo) return;
@@ -86,6 +90,7 @@ public class SistemaSalud : MonoBehaviour, IReceptorDano
 
         if (!string.IsNullOrEmpty(etiquetaSangrePool) && PoolManager.Instancia != null)
         {
+            // Calculamos el ángulo para que la sangre salpique en la dirección del impacto
             float angulo = Mathf.Atan2(direccion.y, direccion.x) * Mathf.Rad2Deg;
             PoolManager.Instancia.SolicitarObjeto(etiquetaSangrePool, transform.position, Quaternion.Euler(0, 0, angulo));
         }
@@ -108,6 +113,7 @@ public class SistemaSalud : MonoBehaviour, IReceptorDano
             return;
         }
 
+        // LÓGICA DE DAÑO: PRIMERO ABSORBE LA VIDA TEMPORAL
         if (vidaTemporal > 0)
         {
             if (cantidad <= vidaTemporal)
@@ -125,7 +131,9 @@ public class SistemaSalud : MonoBehaviour, IReceptorDano
 
         if (cantidad > 0)
         {
-            // ¡NUEVO! Sumamos el daño recibido a las estadísticas si es un superviviente
+            // ==========================================
+            // ¡ESTADÍSTICA! Sumamos el daño recibido al jugador
+            // ==========================================
             if (esSuperviviente && controladorJugador != null && controladorJugador.idJugador != -1)
             {
                 DatosGlobales.statsDanoRecibido[controladorJugador.idJugador] += cantidad;
@@ -150,15 +158,21 @@ public class SistemaSalud : MonoBehaviour, IReceptorDano
             }
             else
             {
-                // ¡NUEVO! El zombi ha muerto, le damos el punto al atacante
+                // ==========================================
+                // ¡ESTADÍSTICA! Un zombi acaba de morir, le damos la Kill al atacante
+                // ==========================================
                 if (idAtacante >= 0 && idAtacante < 4)
                 {
                     ZombiController zombiBase = GetComponent<ZombiController>();
                     if (zombiBase != null)
                     {
                         DatosGlobales.statsZombiesMuertos[idAtacante]++;
-                        // Si luego añades especiales, aquí iría:
-                        // if (zombiBase.esEspecial) DatosGlobales.statsEspecialesMuertos[idAtacante]++;
+
+                        // Si el zombi tiene la casilla "esEspecial" marcada, le suma a la cuenta de especiales
+                        /*if (zombiBase.esEspecial)
+                        {
+                            DatosGlobales.statsEspecialesMuertos[idAtacante]++;
+                        }*/
                     }
                 }
 
@@ -227,7 +241,7 @@ public class SistemaSalud : MonoBehaviour, IReceptorDano
 
     public void AñadirVidaTemporal(float cantidad)
     {
-
+        // ¡CORRECCIÓN! Usamos estaMuertoDefinitivo para saber si realmente es un cadáver
         if (estaMuertoDefinitivo || estaIncapacitado) return;
 
         float espacioDisponible = vidaMaxima - vidaActual;
@@ -243,12 +257,13 @@ public class SistemaSalud : MonoBehaviour, IReceptorDano
 
     public void Curar(float cantidad)
     {
-
+        // ¡CORRECCIÓN! Evitamos que rechace curar si tiene 1 de vida o vida temporal
         if (estaMuertoDefinitivo || estaIncapacitado) return;
 
         vidaActual += cantidad;
         if (vidaActual > vidaMaxima) vidaActual = vidaMaxima;
 
+        // Al curar con botiquín, la vida temporal desaparece porque ya tienes vida real
         vidaTemporal = 0;
 
         OnVidaTemporalCambiada?.Invoke(0f);
@@ -346,6 +361,7 @@ public class SistemaSalud : MonoBehaviour, IReceptorDano
         }
     }
 
+    // ESTADO 1: Levantar de estar abatido en el suelo
     public void LevantarRescatado(float vidaAlLevantar = 30f)
     {
         if (!estaIncapacitado) return;
@@ -353,8 +369,8 @@ public class SistemaSalud : MonoBehaviour, IReceptorDano
         estaIncapacitado = false;
         StopCoroutine(RutinaDesangrado());
 
-
-        vidaActual = 1f;
+        // ¡EL ARREGLO CRÍTICO DEL FANTASMA!
+        vidaActual = 1f;  // Te damos 1 HP real para que no te consideren muerto.
         vidaTemporal = vidaAlLevantar;
 
         ReactivarCuerpo();
@@ -366,11 +382,7 @@ public class SistemaSalud : MonoBehaviour, IReceptorDano
         rutinaDecaimiento = StartCoroutine(RutinaDecaimientoTemporal());
     }
 
-<<<<<<< Updated upstream
     // ESTADO 2: Revivir de la muerte absoluta
-    // ESTADO 2: Revivir de la muerte absoluta
-=======
->>>>>>> Stashed changes
     public void Revivir()
     {
         estaIncapacitado = false;
