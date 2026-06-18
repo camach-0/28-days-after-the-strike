@@ -25,7 +25,7 @@ public class JugadorController : MonoBehaviour
 
     [Header("Sistema de Muerte")]
     [Tooltip("El prefab del cuerpo sin vida que quedará en el suelo")]
-    public GameObject prefabCadaver; // ¡NUEVO!
+    public GameObject prefabCadaver; 
 
     [Header("Linterna")]
     public GameObject objetoLinterna;
@@ -34,7 +34,7 @@ public class JugadorController : MonoBehaviour
 
     private bool estaMuerto = false;
 
-    // Variables para recuperar la cámara tras resucitar
+
     private Transform padreOriginalCamara;
     private Vector3 posicionOriginalCamara;
 
@@ -55,7 +55,6 @@ public class JugadorController : MonoBehaviour
 
         if (camaraPrincipal == null) camaraPrincipal = Camera.main;
 
-        // Guardamos dónde estaba la cámara para devolvérsela si revive
         Camera miCamara = GetComponentInChildren<Camera>();
         if (miCamara != null)
         {
@@ -79,13 +78,30 @@ public class JugadorController : MonoBehaviour
 
     private void Update()
     {
+        if (moduloInput.IntentoPausar)
+        {
+            moduloInput.IntentoPausar = false;
+            if (GestorPausa.Instancia != null && !GestorPausa.Instancia.juegoPausado)
+            {
+              
+                GestorPausa.Instancia.PausarJuego(GetComponent<PlayerInput>());
+            }
+        }
 
+        if (moduloInput.IntentoCancelarUI)
+        {
+            moduloInput.IntentoCancelarUI = false;
+            if (GestorPausa.Instancia != null && GestorPausa.Instancia.juegoPausado)
+            {
+                GestorPausa.Instancia.ReanudarJuego();
+            }
+        }
         if (estaMuerto || estaSaltando)
         {
             moduloMovimiento.Mover(Vector2.zero, 0f);
             moduloCombate.ProcesarInputDisparo(false, moduloInput.DireccionMirando);
 
-            if (estaSaltando) moduloInput.IntentoSalto = false; // Consumimos el input para evitar bugs
+            if (estaSaltando) moduloInput.IntentoSalto = false; 
             return;
         }
 
@@ -150,7 +166,6 @@ public class JugadorController : MonoBehaviour
         moduloMovimiento.Mover(Vector2.zero, 0f);
         moduloCombate.ProcesarInputDisparo(false, moduloInput.DireccionMirando);
 
-        // --- CREACIÓN DEL CADÁVER ---
         if (prefabCadaver != null)
         {
             GameObject miCadaver = Instantiate(prefabCadaver, transform.position, transform.rotation);
@@ -163,7 +178,6 @@ public class JugadorController : MonoBehaviour
         Camera miCamara = GetComponentInChildren<Camera>();
         if (miCamara != null) miCamara.transform.SetParent(null);
 
-        // --- ¡NUEVO! LIMPIAR INVENTARIO Y DAR PISTOLA ANTES DE MORIR ---
         if (moduloInventario != null) moduloInventario.ResetearInventarioPorMuerte();
 
         gameObject.SetActive(false);
@@ -235,14 +249,12 @@ public class JugadorController : MonoBehaviour
     {
         estaSaltando = true;
 
-        // Apagamos la colisión para atravesar la valla físicamente
         Collider2D miCollider = GetComponent<Collider2D>();
         if (miCollider != null) miCollider.enabled = false;
 
         Vector3 inicio = transform.position;
         float tiempoPasado = 0f;
 
-        // Movimiento ultra-fluido (Lerp matemático)
         while (tiempoPasado < duracion)
         {
             transform.position = Vector3.Lerp(inicio, destino, tiempoPasado / duracion);
@@ -250,10 +262,8 @@ public class JugadorController : MonoBehaviour
             yield return null;
         }
 
-        // Aseguramos que termine exactamente en el punto
         transform.position = destino;
 
-        // Restauramos al jugador
         if (miCollider != null) miCollider.enabled = true;
         estaSaltando = false;
     }
