@@ -32412,7 +32412,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4341876234765524083, guid: 05da7ed88bd1df94e88877b089815d2a, type: 3}
       propertyPath: listaDePiscinas.Array.size
-      value: 24
+      value: 28
       objectReference: {fileID: 0}
     - target: {fileID: 4341876234765524083, guid: 05da7ed88bd1df94e88877b089815d2a, type: 3}
       propertyPath: listaDePiscinas.Array.data[22].prefab
@@ -32423,6 +32423,22 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 2238709258376141011, guid: 68292cfdc89e2944c9016d2edc1226ac, type: 3}
     - target: {fileID: 4341876234765524083, guid: 05da7ed88bd1df94e88877b089815d2a, type: 3}
+      propertyPath: listaDePiscinas.Array.data[24].prefab
+      value: 
+      objectReference: {fileID: 3587624554849675590, guid: 01d6ce3fe6baea4469e3c0ef34a4fa18, type: 3}
+    - target: {fileID: 4341876234765524083, guid: 05da7ed88bd1df94e88877b089815d2a, type: 3}
+      propertyPath: listaDePiscinas.Array.data[25].prefab
+      value: 
+      objectReference: {fileID: 4078695461442547350, guid: db3f07870f50f864cbbaf41509473e04, type: 3}
+    - target: {fileID: 4341876234765524083, guid: 05da7ed88bd1df94e88877b089815d2a, type: 3}
+      propertyPath: listaDePiscinas.Array.data[26].prefab
+      value: 
+      objectReference: {fileID: 715580906502479141, guid: c3f51b0c3bc87bd4e827e89858624af2, type: 3}
+    - target: {fileID: 4341876234765524083, guid: 05da7ed88bd1df94e88877b089815d2a, type: 3}
+      propertyPath: listaDePiscinas.Array.data[27].prefab
+      value: 
+      objectReference: {fileID: 2075032916746073749, guid: 36b153817b124394e8f513e00b7cafaa, type: 3}
+    - target: {fileID: 4341876234765524083, guid: 05da7ed88bd1df94e88877b089815d2a, type: 3}
       propertyPath: listaDePiscinas.Array.data[22].etiqueta
       value: CasquilloBase
       objectReference: {fileID: 0}
@@ -32431,12 +32447,44 @@ PrefabInstance:
       value: SangreZombi
       objectReference: {fileID: 0}
     - target: {fileID: 4341876234765524083, guid: 05da7ed88bd1df94e88877b089815d2a, type: 3}
+      propertyPath: listaDePiscinas.Array.data[24].etiqueta
+      value: ZombiJokey
+      objectReference: {fileID: 0}
+    - target: {fileID: 4341876234765524083, guid: 05da7ed88bd1df94e88877b089815d2a, type: 3}
+      propertyPath: listaDePiscinas.Array.data[25].etiqueta
+      value: ZombiHunter
+      objectReference: {fileID: 0}
+    - target: {fileID: 4341876234765524083, guid: 05da7ed88bd1df94e88877b089815d2a, type: 3}
+      propertyPath: listaDePiscinas.Array.data[26].etiqueta
+      value: ZombiBoomer
+      objectReference: {fileID: 0}
+    - target: {fileID: 4341876234765524083, guid: 05da7ed88bd1df94e88877b089815d2a, type: 3}
+      propertyPath: listaDePiscinas.Array.data[27].etiqueta
+      value: Zombi_Tank
+      objectReference: {fileID: 0}
+    - target: {fileID: 4341876234765524083, guid: 05da7ed88bd1df94e88877b089815d2a, type: 3}
       propertyPath: listaDePiscinas.Array.data[22].cantidadInicial
       value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 4341876234765524083, guid: 05da7ed88bd1df94e88877b089815d2a, type: 3}
       propertyPath: listaDePiscinas.Array.data[23].cantidadInicial
       value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 4341876234765524083, guid: 05da7ed88bd1df94e88877b089815d2a, type: 3}
+      propertyPath: listaDePiscinas.Array.data[24].cantidadInicial
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4341876234765524083, guid: 05da7ed88bd1df94e88877b089815d2a, type: 3}
+      propertyPath: listaDePiscinas.Array.data[25].cantidadInicial
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4341876234765524083, guid: 05da7ed88bd1df94e88877b089815d2a, type: 3}
+      propertyPath: listaDePiscinas.Array.data[26].cantidadInicial
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4341876234765524083, guid: 05da7ed88bd1df94e88877b089815d2a, type: 3}
+      propertyPath: listaDePiscinas.Array.data[27].cantidadInicial
+      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
