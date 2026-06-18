@@ -14,7 +14,7 @@ public class JugadorController : MonoBehaviour
     private JugadorInput moduloInput;
     private InventarioJugador moduloInventario;
     private InteraccionJugador moduloInteraccion;
-    [HideInInspector] public int idJugador = -1; // -1 significa que es un bot
+    [HideInInspector] public int idJugador = -1; 
     public SistemaSalud moduloSalud;
 
     [Header("Estadísticas Base")]
